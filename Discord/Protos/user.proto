@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option csharp_namespace = "WebApi.Protos";
+
+import "Protos/base/response.proto";
+
+package user;
+
+// The User service definition.
+service User {
+	rpc Create (CreateUserRequest) returns (Response);
+}
+
+// The request message containing the user's name.
+message CreateUserRequest {
+	string id = 1;
+	string name = 2;
+	string userName = 3;
+	string email = 4;
+	string phoneNumber = 5;
+	string globalName = 6;
+}

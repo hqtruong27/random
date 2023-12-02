@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  webapi:
+    image: ${DOCKER_REGISTRY-}webapi
+    build:
+      context: .
+      dockerfile: WebApi/Dockerfile
+
+  discord:
+    image: ${DOCKER_REGISTRY-}discord
+    build:
+      context: .
+      dockerfile: Discord/Dockerfile
+

@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+option csharp_namespace = "WebApi.Protos";
+option java_multiple_files = true;
+
+import "Protos/base/request.proto";
+import "Protos/base/response.proto";
+import "google/protobuf/wrappers.proto";
+
+
+package spending;
+
+service Spending {
+	rpc Get(GetRequest) returns (GetSpendingResponse);
+	rpc GetSpendingsByUserId(GetSpendingsByUserIdRequest) returns (GetSpendingsByUserIdResponse);
+	rpc Create(CreateSpendingRequest) returns (Response);
+}
+
+message GetSpendingsByUserIdRequest {
+	optional string userId = 1;
+}
+
+message GetSpendingsByUserIdResponse {
+	repeated GetSpendingResponse Items = 1;
+}
+
+
+message GetSpendingResponse {
+	string id = 1;
+	string name = 2;
+	string amount = 3;
+	string status = 4;
+	string description = 5;
+	string userId = 6;
+}
+
+message CreateSpendingRequest {
+	string name = 1;
+	string amount = 2;
+	string status = 4;
+	string description = 5;
+	google.protobuf.StringValue userId = 6;
+}

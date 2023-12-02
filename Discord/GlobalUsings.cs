@@ -1,0 +1,11 @@
+﻿global using System.Data;
+global using static WebApi.Protos.Spending;
+global using static WebApi.Protos.User;
+global using WebApi.Protos;
+global using Discord;
+global using Discord.Services.Commands;
+global using Discord.Services.Interactions;
+global using Discord.WebSocket;
+global using Discord.Extensions;
+global using Microsoft.Extensions.DependencyInjection;
+global using Models.Settings;

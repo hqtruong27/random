@@ -1,0 +1,22 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  DOCKER_HOST: tcp://192.168.0.124:2375
+
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker-compose build
+
+deploy:
+  stage: deploy
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker-compose up
