@@ -11,7 +11,7 @@ public class SpendingService : SpendingClient, ISpendingService
     private readonly SpendingClient _client;
     public SpendingService(StatisticSettings settings)
     {
-        _client = new(GrpcChannel.ForAddress(settings.Proxy));
+        _client = new(GrpcChannel.ForAddress(settings.Gateway));
     }
 
     public async Task<GetSpendingResponse> GetAsync(GetRequest request)
