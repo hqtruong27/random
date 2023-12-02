@@ -74,6 +74,12 @@ jobs:
       - name: Publish WebApi Service
         run: dotnet publish ./WebApi/WebApi.csproj --configuration Release --output ./WebApi/publish
 
+  copy-ssh-key:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Copy SSH key
+        run: echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+        
   deploy:
     needs: [publish-discord, publish-webapi]
     runs-on: ubuntu-latest
