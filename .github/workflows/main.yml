@@ -40,15 +40,6 @@ jobs:
     needs: [build, copy-ssh-key]
     runs-on: ubuntu-latest
     steps:
-      - name: Copy Docker Compose file to server
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER_NAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: docker-compose.yml
-          target: random/docker-compose.yml
-          
       - name: Deploy to Docker Ubuntu server
         uses: appleboy/ssh-action@master
         with:
@@ -59,4 +50,5 @@ jobs:
             docker login harbor.kaname-madoka.com -u ${{ secrets.HARBOR_USERNAME }} -p ${{ secrets.HARBOR_PASSWORD }}
             docker pull harbor.kaname-madoka.com/demo/discord-service:${{ github.sha }}
             docker pull harbor.kaname-madoka.com/demo/webapi-service:${{ github.sha }}
+            scp docker-compose.yml ${{ secrets.USER_NAME }}@${{ secrets.HOST }}:random/docker-compose.yml
             docker compose -f random/docker-compose.yml up -d
