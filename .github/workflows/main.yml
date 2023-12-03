@@ -6,21 +6,17 @@ on:
       - main
 
 jobs:
-  docker-login:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Docker login
-        run: docker login harbor.kaname-madoka.com -u ${{ secrets.HARBOR_USERNAME }} -p ${{ secrets.HARBOR_PASSWORD }}
 
   build:
-    needs: docker-login
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Docker login
+        run: |
+          docker login harbor.kaname-madoka.com -u ${{ secrets.HARBOR_USERNAME }} -p ${{ secrets.HARBOR_PASSWORD }}
+          
       - name: Docker build and push Discord service
         run: |
           docker build -t harbor.kaname-madoka.com/demo/discord-service:${{ github.sha }} -f Discord/Dockerfile .
@@ -41,10 +37,18 @@ jobs:
         run: echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
         
   deploy:
-    needs: [build, copy-ssh-key, docker-login]
+    needs: [build, copy-ssh-key]
     runs-on: ubuntu-latest
-
     steps:
+      - name: Copy Docker Compose file to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER_NAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: docker-compose.yml
+          target: /random/docker-compose.yml
+          
       - name: Deploy to Docker Ubuntu server
         uses: appleboy/ssh-action@master
         with:
@@ -52,6 +56,7 @@ jobs:
           username: ${{ secrets.USER_NAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            docker login harbor.kaname-madoka.com -u ${{ secrets.HARBOR_USERNAME }} -p ${{ secrets.HARBOR_PASSWORD }}
             docker pull harbor.kaname-madoka.com/demo/discord-service:${{ github.sha }}
             docker pull harbor.kaname-madoka.com/demo/webapi-service:${{ github.sha }}
             docker compose up -d
