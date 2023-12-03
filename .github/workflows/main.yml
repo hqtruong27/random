@@ -1,104 +1,45 @@
-name: Build and Deploy Services
+name: CI/CD Build and Deploy
 
 on:
   push:
     branches:
       - main
-env:
-  ACTIONS_RUNNER_DEBUG: true
-  
+
 jobs:
-  build-discord:
+  docker-login:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Docker login
+        run: docker login harbor.kaname-madoka.com -u ${{ secrets.HARBOR_USERNAME }} -p ${{ secrets.HARBOR_PASSWORD }}
+
+  build:
+    needs: docker-login
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 8.x
+      - name: Build and push Docker images
+        run: |
+          docker build -t harbor.kaname-madoka.com/random/discord-service:${{ github.sha }} -f Discord/Dockerfile .
+          docker build -t harbor.kaname-madoka.com/random/webapi-service:${{ github.sha }} -f WebApi/Dockerfile .
+          docker push harbor.kaname-madoka.com/random/discord-service:${{ github.sha }}
+          docker push harbor.kaname-madoka.com/random/webapi-service:${{ github.sha }}
 
-      - name: Restore NuGet Packages
-        run: dotnet restore ./Discord/Discord.csproj
-
-      - name: Build Discord Service
-        run: dotnet build ./Discord/Discord.csproj --configuration Release
-
-  build-webapi:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 8.x
-
-      - name: Restore NuGet Packages
-        run: dotnet restore ./WebApi/WebApi.csproj
-
-      - name: Build WebApi Service
-        run: dotnet build ./WebApi/WebApi.csproj --configuration Release
-
-  publish-discord:
-    needs: build-discord
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 8.x
-
-      - name: Publish Discord Service
-        run: dotnet publish ./Discord/Discord.csproj --configuration Release --output ./Discord/publish
-
-  publish-webapi:
-    needs: build-webapi
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 8.x
-
-      - name: Publish WebApi Service
-        run: dotnet publish ./WebApi/WebApi.csproj --configuration Release --output ./WebApi/publish
-
-  copy-ssh-key:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Create SSH Directory
-        run: mkdir -p ~/.ssh
-
-      - name: Copy SSH key
-        run: echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
-        
   deploy:
-    needs: [publish-discord, publish-webapi]
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
-      - name: SSH into Ubuntu Server
+      - name: Deploy to Docker Ubuntu server
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER_NAME }}
+          username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /home/my-app
-
-            docker compose down
-            docker compose pull
-            docker compose up -d
+            docker pull harbor.kaname-madoka.com/random/discord-service:${{ github.sha }}
+            docker pull harbor.kaname-madoka.com/random/webapi-service:${{ github.sha }}
+            docker-compose up -d
