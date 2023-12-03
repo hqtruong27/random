@@ -23,7 +23,6 @@ jobs:
 
       - name: Build and push Docker images
         run: |
-          docker login harbor.kaname-madoka.com -u ${{ secrets.HARBOR_USERNAME }} -p ${{ secrets.HARBOR_PASSWORD }}
           docker build -t harbor.kaname-madoka.com/demo/discord-service:${{ github.sha }} -f Discord/Dockerfile .
           docker build -t harbor.kaname-madoka.com/demo/webapi-service:${{ github.sha }} -f WebApi/Dockerfile .
           docker push harbor.kaname-madoka.com/demo/discord-service:${{ github.sha }}
@@ -50,7 +49,6 @@ jobs:
           username: ${{ secrets.USER_NAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            docker login harbor.kaname-madoka.com -u ${{ secrets.HARBOR_USERNAME }} -p ${{ secrets.HARBOR_PASSWORD }}
             docker pull harbor.kaname-madoka.com/demo/discord-service:${{ github.sha }}
             docker pull harbor.kaname-madoka.com/demo/webapi-service:${{ github.sha }}
             docker compose up -d
