@@ -41,6 +41,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            docker login harbor.kaname-madoka.com -u ${{ secrets.HARBOR_USERNAME }} -p ${{ secrets.HARBOR_PASSWORD }}
             docker pull harbor.kaname-madoka.com/demo/discord-service:${{ github.sha }}
             docker pull harbor.kaname-madoka.com/demo/webapi-service:${{ github.sha }}
             docker-compose up -d
