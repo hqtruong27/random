@@ -21,11 +21,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build and push Docker images
+      - name: Docker build and push Discord service
         run: |
           docker build -t harbor.kaname-madoka.com/demo/discord-service:${{ github.sha }} -f Discord/Dockerfile .
-          docker build -t harbor.kaname-madoka.com/demo/webapi-service:${{ github.sha }} -f WebApi/Dockerfile .
           docker push harbor.kaname-madoka.com/demo/discord-service:${{ github.sha }}
+
+      - name: Docker build and push WebApi service
+        run: |
+          docker build -t harbor.kaname-madoka.com/demo/webapi-service:${{ github.sha }} -f WebApi/Dockerfile .
           docker push harbor.kaname-madoka.com/demo/webapi-service:${{ github.sha }}
 
   copy-ssh-key:
