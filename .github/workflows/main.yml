@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Build and push Docker images
         run: |
@@ -29,6 +29,15 @@ jobs:
           docker push harbor.kaname-madoka.com/demo/discord-service:${{ github.sha }}
           docker push harbor.kaname-madoka.com/demo/webapi-service:${{ github.sha }}
 
+  copy-ssh-key:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create SSH Directory
+        run: mkdir -p ~/.ssh
+
+      - name: Copy SSH key
+        run: echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+        
   deploy:
     needs: build
     runs-on: ubuntu-latest
