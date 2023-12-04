@@ -19,13 +19,13 @@ jobs:
           
       - name: Docker build and push Discord service
         run: |
-          docker build -t discord-service:latest -f Discord/Dockerfile .
-          docker push discord-service:latest
+          docker build -t hqtruong27/discord-service:latest -f Discord/Dockerfile .
+          docker push hqtruong27/discord-service:latest
 
       - name: Docker build and push WebApi service
         run: |
-          docker build -t webapi-service:latest -f WebApi/Dockerfile .
-          docker push webapi-service:latest
+          docker build -t hqtruong27/webapi-service:latest -f WebApi/Dockerfile .
+          docker push hqtruong27/webapi-service:latest
 
   copy-ssh-key:
     runs-on: ubuntu-latest
@@ -48,6 +48,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            docker pull discord-service:latest
-            docker pull webapi-service:latest
+            docker pull hqtruong27/discord-service:latest
+            docker pull hqtruong27/webapi-service:latest
             docker compose -f random/docker-compose.yml up -d
