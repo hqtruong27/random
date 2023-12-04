@@ -1,4 +1,3 @@
-using System;
 using WebApi.Mapper;
 using WebApi.Services;
 
@@ -47,15 +46,15 @@ if (app.Environment.IsDevelopment())
 
 app.MapGet("/", () => "Bot discord Statistics use gRPC");
 
-//await MigrateAsync();
+await MigrateAsync();
 
 app.Run();
 
-//async Task MigrateAsync()
-//{
-//    Console.WriteLine("START Migrate");
-//    using var scope = app.Services.CreateScope();
-//    var _context = scope.ServiceProvider.GetRequiredService<StatisticsDbContext>();
-//    await _context.Database.MigrateAsync();
-//    Console.WriteLine("END:Migrate success");
-//}
+async Task MigrateAsync()
+{
+    Console.WriteLine("START Migrate");
+    using var scope = app.Services.CreateScope();
+    var _context = scope.ServiceProvider.GetRequiredService<StatisticsDbContext>();
+    await _context.Database.MigrateAsync();
+    Console.WriteLine("END:Migrate success");
+}
