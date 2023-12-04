@@ -47,7 +47,7 @@ jobs:
           username: ${{ secrets.USER_NAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            docker login hub.docker.com -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker pull harbor.kaname-madoka.com/demo/discord-service:latest
             docker pull harbor.kaname-madoka.com/demo/webapi-service:latest
             docker compose -f random/docker-compose.yml up -d
