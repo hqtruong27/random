@@ -27,9 +27,11 @@ jobs:
           docker build -t hqtruong27/webapi-service:latest -f WebApi/Dockerfile .
           docker push hqtruong27/webapi-service:latest
 
-  copy-ssh-key:
+  setup-ssh-env:
     runs-on: ubuntu-latest
     steps:
+      - name: create env
+        run: echo "${{ secrets.PRODUCTION_ENV }}" > .env.production
       - name: Create SSH Directory
         run: mkdir -p ~/.ssh
 
@@ -37,7 +39,7 @@ jobs:
         run: echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
         
   deploy:
-    needs: [build, copy-ssh-key]
+    needs: [build, setup-ssh-env]
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to Docker Ubuntu server
@@ -47,6 +49,7 @@ jobs:
           username: ${{ secrets.USER_NAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            scp -o StrictHostKeyChecking=no -r .env.production ${{ secrets.USER_NAME }}@${{ secrets.HOST }}:/random
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker pull hqtruong27/discord-service:latest
             docker pull hqtruong27/webapi-service:latest
