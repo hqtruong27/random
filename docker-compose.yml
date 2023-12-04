@@ -1,25 +1,27 @@
 version: '3.4'
 
 services:
+   
   webapi:
+    env_file: .env.${ENV_NAME}
     image: hqtruong27/webapi-service:latest
     build:
       context: .
       dockerfile: WebApi/Dockerfile
     networks:
       - proxy-manager_default
-
+   
   discord:
-    image: hqtruong27/discord-service:latest
+    image: hqtruong27/discord-service:latest\
+    env_file: .env.${ENV_NAME}
     build:
       context: .
       dockerfile: Discord/Dockerfile
-    env_file:
-      - .env.${ENV_NAME}
 
   db:
     image: postgres
     restart: always
+    env_file: .env.${ENV_NAME}
     environment:
         POSTGRES_USER: ${POSTGRES_USER}
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
