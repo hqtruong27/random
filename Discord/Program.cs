@@ -77,6 +77,7 @@ async Task StartAsync()
     interactions.Log += Logging.LogAsync;
     client.Ready += ReadyAsync;
 
+    Console.WriteLine(discordSettings.Token);
     await client.LoginAsync(TokenType.Bot, discordSettings.Token);
 
     await client.StartAsync();
