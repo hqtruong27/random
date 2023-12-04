@@ -8,25 +8,25 @@ var environmentName = builder.Environment.EnvironmentName;
 Console.WriteLine(environmentName);
 
 var services = builder.Services;
-//var configuration = builder.Configuration
-//   .SetBasePath(builder.Environment.ContentRootPath)
-//   .AddJsonFile($"appsettings.{environmentName}.json", optional: true)
-//   .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-//   .AddEnvironmentVariables()
-//   .Build();
+var configuration = builder.Configuration
+   .SetBasePath(builder.Environment.ContentRootPath)
+   .AddJsonFile($"appsettings.{environmentName}.json", optional: true)
+   .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+   .AddEnvironmentVariables()
+   .Build();
 
-//var connectionString = configuration.GetConnectionString("StatisticsDbContext");
-//Console.WriteLine(connectionString);
+var connectionString = configuration.GetConnectionString("StatisticsDbContext");
+Console.WriteLine(connectionString);
 
-//services.AddDbContextPool<StatisticsDbContext>(options =>
-//{
-//    options.ConfigureWarnings(builder =>
-//    {
-//        builder.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.CoreEventId.PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning);
-//    });
+services.AddDbContextPool<StatisticsDbContext>(options =>
+{
+    options.ConfigureWarnings(builder =>
+    {
+        builder.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.CoreEventId.PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning);
+    });
 
-//    options.UseNpgsql(connectionString);
-//});
+    options.UseNpgsql(connectionString);
+});
 
 // Add services to the container.
 services.AddGrpc().AddJsonTranscoding();
@@ -36,8 +36,8 @@ services.AddAutoMapper(typeof(OrganizationProfile));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-//app.MapGrpcService<UserService>();
-//app.MapGrpcService<SpendingService>();
+app.MapGrpcService<UserService>();
+app.MapGrpcService<SpendingService>();
 
 if (app.Environment.IsDevelopment())
 {
