@@ -39,7 +39,7 @@ jobs:
         run: echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
         
   deploy:
-    needs: [build, setup-ssh-env]
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to Docker Ubuntu server
