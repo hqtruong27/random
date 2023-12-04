@@ -15,7 +15,7 @@ jobs:
 
       - name: Docker login
         run: |
-          docker login harbor.kaname-madoka.com -u ${{ secrets.HARBOR_USERNAME }} -p ${{ secrets.HARBOR_PASSWORD }}
+          docker login hub.docker.com -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           
       - name: Docker build and push Discord service
         run: |
@@ -47,7 +47,7 @@ jobs:
           username: ${{ secrets.USER_NAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            docker login harbor.kaname-madoka.com -u ${{ secrets.HARBOR_USERNAME }} -p ${{ secrets.HARBOR_PASSWORD }}
+            docker login hub.docker.com -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker pull harbor.kaname-madoka.com/demo/discord-service:latest
             docker pull harbor.kaname-madoka.com/demo/webapi-service:latest
             docker compose -f random/docker-compose.yml up -d
