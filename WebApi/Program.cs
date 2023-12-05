@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.HttpOverrides;
 using WebApi.Mapper;
 using WebApi.Services;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,11 +24,13 @@ services.AddDbContextPool<StatisticsDbContext>(options =>
 {
     options.ConfigureWarnings(builder =>
     {
-        builder.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.CoreEventId.PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning);
+        builder.Ignore(CoreEventId.PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning);
     });
 
     options.UseNpgsql(connectionString);
 });
+
+services.AddReverseProxy().LoadFromConfig(configuration.GetSection("ReverseProxy"));
 
 services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -44,6 +47,7 @@ services.AddAutoMapper(typeof(OrganizationProfile));
 
 var app = builder.Build();
 
+app.MapReverseProxy();
 // Configure the HTTP request pipeline.
 app.MapGrpcService<UserService>();
 app.MapGrpcService<SpendingService>();

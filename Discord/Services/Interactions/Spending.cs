@@ -50,6 +50,8 @@ public class Spending(DiscordSettings discord, ILogger<Spending> logger) : Inter
         {
             try
             {
+                AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2Support", true);
+                AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
                 var user = Context.User.ToSocketGuild();
                 var response = await _spendingClient.GetSpendingsByUserIdAsync(new GetSpendingsByUserIdRequest
                 {
