@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.HttpOverrides;
 using WebApi.Mapper;
 using WebApi.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,8 +29,16 @@ services.AddDbContextPool<StatisticsDbContext>(options =>
     options.UseNpgsql(connectionString);
 });
 
+services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+});
+
 // Add services to the container.
-services.AddGrpc().AddJsonTranscoding();
+services.AddGrpc(options =>
+{
+    options.EnableDetailedErrors = true;
+}).AddJsonTranscoding();
 services.AddGrpcReflection();
 services.AddAutoMapper(typeof(OrganizationProfile));
 
@@ -42,10 +52,11 @@ if (app.Environment.IsDevelopment())
 {
 }
 
+app.UseForwardedHeaders();
+app.UseHsts();
 app.MapGrpcReflectionService();
 
 app.MapGet("/", () => "Bot discord Statistics use gRPC");
-app.MapGet("/grpc", () => "Bot discord Statistics use gRPC");
 
 await MigrateAsync();
 

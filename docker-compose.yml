@@ -33,6 +33,19 @@ services:
     networks:
       - proxy-manager_default
 
+  # reverse-proxy:
+  #   image: nginx:latest
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   networks:
+  #     - proxy-manager_default
+
 networks:
   proxy-manager_default:
     external: true
+    driver: bridge
+    ipam:
+      driver: default

@@ -48,38 +48,46 @@ public class Spending(DiscordSettings discord, ILogger<Spending> logger) : Inter
 
         _ = Task.Run(async () =>
         {
-            var user = Context.User.ToSocketGuild();
-            var response = await _spendingClient.GetSpendingsByUserIdAsync(new GetSpendingsByUserIdRequest
+            try
             {
-                UserId = user.Id()
-            });
+                var user = Context.User.ToSocketGuild();
+                var response = await _spendingClient.GetSpendingsByUserIdAsync(new GetSpendingsByUserIdRequest
+                {
+                    UserId = user.Id()
+                });
 
-            // Determine the maximum length of each header
-            var expenses = response.Items;
-            // Calculate the header lengths based on values and headers
-            var headerLengths = new Dictionary<string, int>();
-            foreach (var expense in expenses)
-            {
-                UpdateHeaderLength(headerLengths, "Name", expense.Name.Length);
-                UpdateHeaderLength(headerLengths, "Amount", expense.Amount.ToString().Length);
-                UpdateHeaderLength(headerLengths, "Description", Math.Min(expense.Description.Length, 20));
-                UpdateHeaderLength(headerLengths, "Purpose", expense.Purpose.Length);
+                // Determine the maximum length of each header
+                var expenses = response.Items;
+                // Calculate the header lengths based on values and headers
+                var headerLengths = new Dictionary<string, int>();
+                foreach (var expense in expenses)
+                {
+                    UpdateHeaderLength(headerLengths, "Name", expense.Name.Length);
+                    UpdateHeaderLength(headerLengths, "Amount", expense.Amount.ToString().Length);
+                    UpdateHeaderLength(headerLengths, "Description", Math.Min(expense.Description.Length, 20));
+                    UpdateHeaderLength(headerLengths, "Purpose", expense.Purpose.Length);
+                }
+
+                // Print the headers
+                var message = $"{("Name".PadRight(headerLengths["Name"]))}  {("Amount".PadRight(headerLengths["Amount"]))}  {("Description".PadRight(headerLengths["Description"]))}  {("Purpose".PadRight(headerLengths["Purpose"]))}\n";
+
+                // Print the expense details
+                foreach (var expense in expenses)
+                {
+                    string description = expense.Description.Length > 20 ? $"{expense.Description.Substring(0, 17)}..." : expense.Description;
+                    message += $"{expense.Name.PadRight(headerLengths["Name"])}  {expense.Amount.ToString().PadRight(headerLengths["Amount"])}  {description.PadRight(headerLengths["Description"])}  {expense.Purpose.PadRight(headerLengths["Purpose"])}\n";
+                }
+
+                Console.WriteLine(message);
+                await Context.Channel.SendMessageAsync($"```{message}```");
+
+                _logger.LogInformation("End: list spending success");
             }
-
-            // Print the headers
-            var message = $"{("Name".PadRight(headerLengths["Name"]))}  {("Amount".PadRight(headerLengths["Amount"]))}  {("Description".PadRight(headerLengths["Description"]))}  {("Purpose".PadRight(headerLengths["Purpose"]))}\n";
-
-            // Print the expense details
-            foreach (var expense in expenses)
+            catch (Exception ex)
             {
-                string description = expense.Description.Length > 20 ? $"{expense.Description.Substring(0, 17)}..." : expense.Description;
-                message += $"{expense.Name.PadRight(headerLengths["Name"])}  {expense.Amount.ToString().PadRight(headerLengths["Amount"])}  {description.PadRight(headerLengths["Description"])}  {expense.Purpose.PadRight(headerLengths["Purpose"])}\n";
+
+                throw;
             }
-
-            Console.WriteLine(message);
-            await Context.Channel.SendMessageAsync($"```{message}```");
-
-            _logger.LogInformation("End: list spending success");
         });
 
         await RespondAsync("processing...");
