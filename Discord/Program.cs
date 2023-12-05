@@ -77,7 +77,6 @@ async Task StartAsync()
     interactions.Log += Logging.LogAsync;
     client.Ready += ReadyAsync;
 
-    Console.WriteLine(discordSettings.Token);
     await client.LoginAsync(TokenType.Bot, discordSettings.Token);
 
     await client.StartAsync();
@@ -126,7 +125,7 @@ async Task StartAsync()
             // You can send this error somewhere or just print it to the console, for this example we're just going to print it.
             Console.WriteLine(json);
         }
-   
+
         Console.WriteLine($"Connected as -> [{client.CurrentUser}] :)");
     }
 }

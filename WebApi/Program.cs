@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using WebApi.Mapper;
 using WebApi.Services;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using System.Net;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,8 +19,18 @@ var configuration = builder.Configuration
    .Build();
 
 var connectionString = configuration.GetConnectionString("StatisticsDbContext");
-Console.WriteLine(connectionString);
 
+builder.WebHost.ConfigureKestrel(options => {
+    options.Listen(IPAddress.Any, 5058, listenOptions => {
+        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1;
+    });
+    options.Listen(IPAddress.Any, 7072, listenOptions => {
+        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
+    });
+    options.Listen(IPAddress.Any, 8080, listenOptions => {
+        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2;
+    });
+});
 services.AddDbContextPool<StatisticsDbContext>(options =>
 {
     options.ConfigureWarnings(builder =>
@@ -64,7 +75,7 @@ app.MapGet("/", () => "Bot discord Statistics use gRPC");
 
 await MigrateAsync();
 
-app.Run();
+await app.RunAsync();
 
 async Task MigrateAsync()
 {
