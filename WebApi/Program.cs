@@ -22,7 +22,18 @@ var connectionString = configuration.GetConnectionString("StatisticsDbContext");
 
 builder.WebHost.ConfigureKestrel(options =>
 {
-
+    options.Listen(IPAddress.Any, 5058, listenOptions =>
+    {
+        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1;
+    });
+    options.Listen(IPAddress.Any, 7072, listenOptions =>
+    {
+        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
+    });
+    options.Listen(IPAddress.Any, 8080, listenOptions =>
+    {
+        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2;
+    });
 });
 services.AddDbContextPool<StatisticsDbContext>(options =>
 {
