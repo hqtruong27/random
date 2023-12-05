@@ -27,7 +27,6 @@ async Task StartAsync()
                        | GatewayIntents.Guilds
                        | GatewayIntents.DirectMessages
                        | GatewayIntents.GuildVoiceStates
-                       | GatewayIntents.AllUnprivileged
                        | GatewayIntents.GuildIntegrations
                        | GatewayIntents.DirectMessageReactions,
         AlwaysDownloadUsers = true,

@@ -28,7 +28,12 @@ builder.WebHost.ConfigureKestrel(options => {
         listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
     });
     options.Listen(IPAddress.Any, 8080, listenOptions => {
-        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2;
+        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2AndHttp3;
+    });
+
+    options.Listen(IPAddress.Any, 50051, listenOptions => {
+        Console.WriteLine("gRPC");
+        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1;
     });
 });
 services.AddDbContextPool<StatisticsDbContext>(options =>
@@ -70,6 +75,18 @@ if (app.Environment.IsDevelopment())
 app.UseForwardedHeaders();
 app.UseHsts();
 app.MapGrpcReflectionService();
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path.Value == "/favicon.ico")
+    {
+        context.Response.StatusCode = StatusCodes.Status200OK;
+        return;
+    }
+
+    // No favicon, call next middleware
+    await next.Invoke();
+});
 
 app.MapGet("/", () => "Bot discord Statistics use gRPC");
 
