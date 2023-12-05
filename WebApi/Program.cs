@@ -40,11 +40,12 @@ app.MapGrpcService<SpendingService>();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapGrpcReflectionService();
 }
 
+app.MapGrpcReflectionService();
 
 app.MapGet("/", () => "Bot discord Statistics use gRPC");
+app.MapGet("/grpc", () => "Bot discord Statistics use gRPC");
 
 await MigrateAsync();
 
