@@ -20,21 +20,9 @@ var configuration = builder.Configuration
 
 var connectionString = configuration.GetConnectionString("StatisticsDbContext");
 
-builder.WebHost.ConfigureKestrel(options => {
-    options.Listen(IPAddress.Any, 5058, listenOptions => {
-        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1;
-    });
-    options.Listen(IPAddress.Any, 7072, listenOptions => {
-        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
-    });
-    options.Listen(IPAddress.Any, 8080, listenOptions => {
-        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2AndHttp3;
-    });
+builder.WebHost.ConfigureKestrel(options =>
+{
 
-    options.Listen(IPAddress.Any, 50051, listenOptions => {
-        Console.WriteLine("gRPC");
-        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1;
-    });
 });
 services.AddDbContextPool<StatisticsDbContext>(options =>
 {
@@ -70,11 +58,11 @@ app.MapGrpcService<SpendingService>();
 
 if (app.Environment.IsDevelopment())
 {
+    app.MapGrpcReflectionService();
 }
 
 app.UseForwardedHeaders();
 app.UseHsts();
-app.MapGrpcReflectionService();
 
 app.Use(async (context, next) =>
 {
