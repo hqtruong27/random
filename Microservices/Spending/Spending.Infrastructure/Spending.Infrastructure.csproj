@@ -16,7 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Common\Common.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Models\Models.csproj" />
   </ItemGroup>
 
 </Project>
