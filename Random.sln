@@ -20,8 +20,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Libraries\Models\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Discord.Bot", "Microservices\Discord\Discord.Bot\Discord.Bot.csproj", "{41F48C82-4618-48FC-8D14-7092B2C2C8EA}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{FEA3BBE2-09A3-43F9-A444-492E2EE16461}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microservices", "Microservices", "{3566DB53-BB7C-4F9D-B102-5F011BBEDA4F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F5C3E5F0-4D22-4FCE-B780-C6A5FA304B7C}"
@@ -29,6 +27,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Spending", "Spending", "{FB2F534B-BBA0-411A-9025-F2E409F15D7A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Discord", "Discord", "{8CF69311-DFEA-43C1-B23E-7A2DE267965E}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{22551AA9-3A56-4B3B-A4BF-0F55D8395847}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,10 +56,10 @@ Global
 		{41F48C82-4618-48FC-8D14-7092B2C2C8EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41F48C82-4618-48FC-8D14-7092B2C2C8EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41F48C82-4618-48FC-8D14-7092B2C2C8EA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FEA3BBE2-09A3-43F9-A444-492E2EE16461}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FEA3BBE2-09A3-43F9-A444-492E2EE16461}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FEA3BBE2-09A3-43F9-A444-492E2EE16461}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FEA3BBE2-09A3-43F9-A444-492E2EE16461}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22551AA9-3A56-4B3B-A4BF-0F55D8395847}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22551AA9-3A56-4B3B-A4BF-0F55D8395847}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22551AA9-3A56-4B3B-A4BF-0F55D8395847}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22551AA9-3A56-4B3B-A4BF-0F55D8395847}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

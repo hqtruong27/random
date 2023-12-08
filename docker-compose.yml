@@ -12,7 +12,7 @@ services:
       - proxy-manager_default
    
   discord:
-    image: hqtruong27/discord-service:latest\
+    image: hqtruong27/discord-service:latest
     env_file: .env.${ENV_NAME}
     build:
       context: .

@@ -7,19 +7,19 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Discord/Discord.csproj", "Discord/"]
-COPY ["Common/Common.csproj", "Common/"]
-COPY ["Models/Models.csproj", "Models/"]
-RUN dotnet restore "./Discord/./Discord.csproj"
+COPY ["Microservices/Discord/Discord.Bot/Discord.Bot.csproj", "Microservices/Discord/Discord.Bot/"]
+COPY ["Libraries/Common/Common.csproj", "Libraries/Common/"]
+COPY ["Libraries/Models/Models.csproj", "Libraries/Models/"]
+RUN dotnet restore "./Microservices/Discord/Discord.Bot/./Discord.Bot.csproj"
 COPY . .
-WORKDIR "/src/Discord"
-RUN dotnet build "./Discord.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/Microservices/Discord/Discord.Bot"
+RUN dotnet build "./Discord.Bot.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Discord.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Discord.Bot.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Discord.dll"]
+ENTRYPOINT ["dotnet", "Discord.Bot.dll"]
