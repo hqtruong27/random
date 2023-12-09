@@ -1,6 +1,6 @@
-﻿global using WebApi.Protos;
-global using Spending = Data.Entities.Spending;
+﻿global using Spending.Api.Protos;
+global using Spending = Spending.Infrastructure.Entities.Spending;
 global using AutoMapper;
-global using Data;
 global using Grpc.Core;
 global using Microsoft.EntityFrameworkCore;
+global using Spending.Infrastructure;

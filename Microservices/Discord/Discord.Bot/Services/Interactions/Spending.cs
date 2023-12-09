@@ -2,7 +2,7 @@
 using Discord.Interactions;
 using Microsoft.Extensions.Logging;
 
-namespace Discord.Services.Interactions;
+namespace Discord.Bot.Services.Interactions;
 
 [Group(name: "spending", description: "This is spending")]
 public class Spending(DiscordSettings discord, ILogger<Spending> logger) : InteractionModuleBase<SocketInteractionContext>

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace WebApi.Services;
+namespace Spending.Api.Services;
 
 public interface ISpendingService
 {
@@ -36,7 +36,7 @@ public class SpendingService(ILogger<SpendingService> logger
     {
         _logger.LogInformation("Start: create spending {request}", JsonSerializer.Serialize(request));
 
-        await _context.Spendings.AddAsync(_mapper.Map<Spending>(request));
+        await _context.Spendings.AddAsync(_mapper.Map<Infrastructure.Entities.Spending>(request));
 
         await _context.SaveChangesAsync();
 

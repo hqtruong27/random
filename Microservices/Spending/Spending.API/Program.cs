@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.HttpOverrides;
-using WebApi.Mapper;
-using WebApi.Services;
+using Spending.Api.Services;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using System.Net;
+using Spending.Api.Mapper;
 
 
 var builder = WebApplication.CreateBuilder(args);

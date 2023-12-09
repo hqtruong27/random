@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Data.Migrations
+namespace Spending.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class AddTrackedEntity : Migration

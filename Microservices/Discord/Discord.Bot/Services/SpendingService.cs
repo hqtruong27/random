@@ -1,6 +1,6 @@
 ﻿using Grpc.Net.Client;
 
-namespace Discord.Services;
+namespace Discord.Bot.Services;
 public interface ISpendingService
 {
     Task<GetSpendingResponse> GetAsync(GetRequest request);

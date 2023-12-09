@@ -1,9 +1,8 @@
-﻿
-using Discord.Commands;
+﻿using Discord.Commands;
 using Discord.Interactions;
 using System.Reflection;
 
-namespace Discord.Services.Commands;
+namespace Discord.Bot.Services.Commands;
 
 public class CommandHandler(DiscordSocketClient client, CommandService commands, IServiceProvider services, InteractionService interaction)
 {

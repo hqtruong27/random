@@ -1,7 +1,6 @@
 syntax = "proto3";
 
-option csharp_namespace = "WebApi.Protos";
-
+option csharp_namespace = "Spending.Api.Protos";
 import "Protos/base/response.proto";
 
 package user;

@@ -1,4 +1,4 @@
-﻿namespace Data.Entities;
+﻿namespace Spending.Infrastructure.Entities;
 
 public class User : IdentityUser<string>, ITrackedEntity, IPersistentEntity
 {

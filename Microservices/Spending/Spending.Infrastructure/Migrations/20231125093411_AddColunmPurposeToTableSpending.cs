@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Data.Migrations
+namespace Spending.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class AddColumnPurposeToTableSpending : Migration

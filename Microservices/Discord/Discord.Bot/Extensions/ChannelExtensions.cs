@@ -1,4 +1,4 @@
-﻿namespace Discord.Extensions;
+﻿namespace Discord.Bot.Extensions;
 
 public static class ChannelExtensions
 {

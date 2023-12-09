@@ -1,3 +1,3 @@
-﻿namespace Discord.Services.Commands;
+﻿namespace Discord.Bot.Services.Commands;
 
 public class Spending { }

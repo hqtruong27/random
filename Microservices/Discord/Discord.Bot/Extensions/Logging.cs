@@ -1,6 +1,6 @@
 ﻿using Discord.Commands;
 
-namespace Discord.Extensions;
+namespace Discord.Bot.Extensions;
 
 public static class Logging
 {

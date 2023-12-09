@@ -1,14 +1,14 @@
 ﻿using Common.Enum;
 using System.Linq.Expressions;
 
-namespace WebApi.Mapper;
+namespace Spending.Api.Mapper;
 
 public class OrganizationProfile : Profile
 {
     public OrganizationProfile()
     {
-        CreateMap<Spending, GetSpendingResponse>();
-        CreateMap<CreateSpendingRequest, Spending>()
+        CreateMap<Infrastructure.Entities.Spending, GetSpendingResponse>();
+        CreateMap<CreateSpendingRequest, Infrastructure.Entities.Spending>()
             .Map(a => a.Status, x => Enum.Parse<SpendingStatus>(x.Status))
             .Map(a => a.Purpose, x => Enum.Parse<SpendingPurpose>(x.Purpose));
     }

@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace Data;
+namespace Spending.Infrastructure;
 
 public class StatisticsDbContext(DbContextOptions options) : IdentityDbContext<User, Role, string>(options)
 {
-    public DbSet<Spending> Spendings { get; set; } = default!;
+    public DbSet<Entities.Spending> Spendings { get; set; } = default!;
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

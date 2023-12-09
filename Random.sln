@@ -14,7 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Publish", "Publish", "{DFAB
 		forward.ps1 = forward.ps1
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spending.API", "Microservices\Spending\Spending.API\Spending.API.csproj", "{CB226802-B9E8-439D-84A2-24A7718E4965}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spending.Api", "Microservices\Spending\Spending.API\Spending.Api.csproj", "{CB226802-B9E8-439D-84A2-24A7718E4965}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Libraries\Models\Models.csproj", "{0DC65036-B773-4DBC-AF1D-C9F21FEFC23D}"
 EndProject
@@ -28,7 +28,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Spending", "Spending", "{FB
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Discord", "Discord", "{8CF69311-DFEA-43C1-B23E-7A2DE267965E}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{22551AA9-3A56-4B3B-A4BF-0F55D8395847}"
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{FEA3BBE2-09A3-43F9-A444-492E2EE16461}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,10 +56,10 @@ Global
 		{41F48C82-4618-48FC-8D14-7092B2C2C8EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41F48C82-4618-48FC-8D14-7092B2C2C8EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41F48C82-4618-48FC-8D14-7092B2C2C8EA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{22551AA9-3A56-4B3B-A4BF-0F55D8395847}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{22551AA9-3A56-4B3B-A4BF-0F55D8395847}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{22551AA9-3A56-4B3B-A4BF-0F55D8395847}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{22551AA9-3A56-4B3B-A4BF-0F55D8395847}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEA3BBE2-09A3-43F9-A444-492E2EE16461}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEA3BBE2-09A3-43F9-A444-492E2EE16461}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEA3BBE2-09A3-43F9-A444-492E2EE16461}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEA3BBE2-09A3-43F9-A444-492E2EE16461}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

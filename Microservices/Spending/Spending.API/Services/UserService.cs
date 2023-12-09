@@ -1,7 +1,7 @@
 using Models.Helpers;
 using System.Text.Json;
 
-namespace WebApi.Services;
+namespace Spending.Api.Services;
 
 public class UserService(ILogger<UserService> logger, StatisticsDbContext context) : User.UserBase
 {
@@ -23,7 +23,7 @@ public class UserService(ILogger<UserService> logger, StatisticsDbContext contex
 
         var (surname, givenName) = request.GlobalName.ConvertName();
 
-        _context.Users.Add(new Data.Entities.User
+        _context.Users.Add(new Infrastructure.Entities.User
         {
             Id = request.Id,
             Email = request.Email,
