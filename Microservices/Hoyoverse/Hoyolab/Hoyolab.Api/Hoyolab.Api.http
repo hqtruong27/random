@@ -1,0 +1,6 @@
+@Hoyolab.Api_HostAddress = http://localhost:5125
+
+GET {{Hoyolab.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
