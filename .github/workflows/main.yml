@@ -7,7 +7,7 @@ on:
 
 jobs:
 
-  build:
+  build-discord-bot:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -16,33 +16,57 @@ jobs:
       - name: Docker login
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          
+
       - name: Docker build and push Discord bot
         run: |
-          docker build -t hqtruong27/discord.bot:latest -f Microservices/Spending/Spending.Api/Dockerfile .
+          docker build -t hqtruong27/discord.bot:latest -f Microservices/Discord/Discord.Bot/Dockerfile .
           docker push hqtruong27/discord.bot:latest
+
+  build-spending-api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Docker login
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Docker build and push WebApi service
         run: |
-          docker build -t hqtruong27/spending.api:latest -f Microservices/Discord/Discord.Bot/Dockerfile .
+          docker build -t hqtruong27/spending.api:latest -f Microservices/Spending/Spending.Api/Dockerfile .
           docker push hqtruong27/spending.api:latest
 
   setup-ssh-env:
     runs-on: ubuntu-latest
     steps:
-      - name: create env
+      - name: Create env
         run: echo "${{ secrets.PRODUCTION_ENV }}" > .env.production
       - name: Create SSH Directory
         run: mkdir -p ~/.ssh
 
       - name: Copy SSH key
         run: echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
-        
-  deploy:
-    needs: [build]
+
+  deploy-discord-bot:
+    needs: [build-discord-bot]
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to Docker Ubuntu server
+      - name: Deploy Discord Bot
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER_NAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            docker pull hqtruong27/discord.bot:latest
+
+  deploy-spending-api:
+    needs: [build-spending-api]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Spending Api
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -51,5 +75,3 @@ jobs:
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker pull hqtruong27/spending.api:latest
-            docker pull hqtruong27/discord.bot:latest
-            docker compose -f docker/random/docker-compose.yml up -d

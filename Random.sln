@@ -14,7 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Publish", "Publish", "{DFAB
 		forward.ps1 = forward.ps1
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spending.Api", "Microservices\Spending\Spending.API\Spending.Api.csproj", "{CB226802-B9E8-439D-84A2-24A7718E4965}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spending.Api", "Microservices\Spending\Spending.Api\Spending.Api.csproj", "{CB226802-B9E8-439D-84A2-24A7718E4965}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Libraries\Models\Models.csproj", "{0DC65036-B773-4DBC-AF1D-C9F21FEFC23D}"
 EndProject
