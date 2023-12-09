@@ -8,6 +8,7 @@ on:
 jobs:
 
   build-discord-bot:
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -37,7 +38,7 @@ jobs:
           docker build -t hqtruong27/spending.api:latest -f Microservices/Spending/Spending.Api/Dockerfile .
           docker push hqtruong27/spending.api:latest
 
-  setup-ssh-env:
+  ssh:
     runs-on: ubuntu-latest
     steps:
       - name: Create env
@@ -49,7 +50,7 @@ jobs:
         run: echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
 
   deploy-discord-bot:
-    needs: [build-discord-bot]
+    needs: [build-discord-bot, ssh]
     runs-on: ubuntu-latest
     steps:
       - name: Deploy Discord Bot
@@ -63,7 +64,7 @@ jobs:
             docker pull hqtruong27/discord.bot:latest
 
   deploy-spending-api:
-    needs: [build-spending-api]
+    needs: [build-spending-api, ssh]
     runs-on: ubuntu-latest
     steps:
       - name: Deploy Spending Api
