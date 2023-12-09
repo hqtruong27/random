@@ -9,7 +9,7 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Microservices/Spending/Spending.API/Spending.Api.csproj", "Microservices/Spending/Spending.API/"]
+COPY ["Microservices/Spending/Spending.Api/Spending.Api.csproj", "Microservices/Spending/Spending.Api/"]
 COPY ["Microservices/Spending/Spending.Infrastructure/Spending.Infrastructure.csproj", "Microservices/Spending/Spending.Infrastructure/"]
 COPY ["Libraries/Common/Common.csproj", "Libraries/Common/"]
 COPY ["Libraries/Models/Models.csproj", "Libraries/Models/"]
