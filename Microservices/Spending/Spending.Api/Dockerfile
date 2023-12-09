@@ -15,7 +15,7 @@ COPY ["Libraries/Common/Common.csproj", "Libraries/Common/"]
 COPY ["Libraries/Models/Models.csproj", "Libraries/Models/"]
 RUN dotnet restore "./Microservices/Spending/Spending.API/./Spending.Api.csproj"
 COPY . .
-WORKDIR "/src/Microservices/Spending/Spending.API"
+WORKDIR "/src/Microservices/Spending/Spending.Api"
 RUN dotnet build "./Spending.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
