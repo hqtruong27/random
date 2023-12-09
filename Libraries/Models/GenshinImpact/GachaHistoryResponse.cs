@@ -1,4 +1,5 @@
-﻿using Common.Enum.Hoyoverse;
+﻿using Common.Converters;
+using Common.Enum.Hoyoverse;
 using System.Text.Json.Serialization;
 
 namespace Models.GenshinImpact;
@@ -6,57 +7,58 @@ namespace Models.GenshinImpact;
 public class GachaInfoResponse
 {
     [JsonPropertyName("retcode")]
-    public int RetCode { get; set; }
+    public int Code { get; set; }
     [JsonPropertyName("message")]
-    public string Message { get; set; }
+    public string Message { get; set; } = default!;
     [JsonPropertyName("data")]
-    public GachaInfoDataResponse Data { get; set; }
+    public GachaInfoDataResponse Data { get; set; } = default!;
 }
 
 public class GachaInfoDataResponse
 {
     [JsonPropertyName("page")]
-    public string Page { get; set; }
+    public string Page { get; set; } = default!;
     [JsonPropertyName("size")]
-    public string Size { get; set; }
-    [JsonPropertyName("total")]
-    public string Total { get; set; }
+    public string Size { get; set; } = default!;
+    [JsonPropertyName("total")] 
+    public string Total { get; set; } = default!;
     [JsonPropertyName("list")]
-    public List<GachaHistoryResponse> GachaHistorys { get; set; }
+    public List<GachaHistoryResponse> GachaHistories { get; set; } = default!;
 }
 
 public class GachaHistoryResponse
 {
-    private string _gachaType = string.Empty;
-    private string _rankType = string.Empty;
-
     [JsonPropertyName("uid")]
-    public string Uid { get; set; }
+    public string Uid { get; set; } = default!;
 
     [JsonPropertyName("gacha_type")]
-    public string GachaType { get; set; }
+    [JsonConverter(typeof(JsonTypeConverter<GachaType>))]
+    public GachaType GachaType { get; set; }
 
     [JsonPropertyName("item_id")]
-    public string ItemId { get; set; }
+    public string ItemId { get; set; } = default!;
 
     [JsonPropertyName("count")]
-    public string Count { get; set; }
+    [JsonConverter(typeof(JsonTypeConverter<int>))]
+    public int Count { get; set; }
 
     [JsonPropertyName("time")]
-    public string Time { get; set; }
+    public string Time { get; set; } = default!;
 
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public string Name { get; set; } = default!;
 
     [JsonPropertyName("lang")]
-    public string Lang { get; set; }
+    public string Lang { get; set; } = default!;
 
     [JsonPropertyName("item_type")]
-    public string ItemType { get; set; }
+    public string ItemType { get; set; } = default!;
 
     [JsonPropertyName("rank_type")]
-    public string RankType { get; set; }
+    [JsonConverter(typeof(JsonTypeConverter<RankType>))]
+    public RankType RankType { get; set; }
 
     [JsonPropertyName("id")]
-    public string Id { get; set; }
+    [JsonConverter(typeof(JsonTypeConverter<long>))]
+    public long Id { get; set; }
 }

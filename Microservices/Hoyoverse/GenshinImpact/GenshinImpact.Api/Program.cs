@@ -2,6 +2,7 @@ using GenshinImpact.Api.Services;
 using GenshinImpact.Api.Settings;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using GenshinImpact.Api.Mapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +23,7 @@ services.AddSingleton<MongoDbService>();
 
 //var collection = services.BuildServiceProvider().GetRequiredService<MongoDbService>();
 
-//await collection.CreateAsync(new Hoyoverse.Infrastructure.Entities.GachaHistory
+//await collection.InsertAsync(new Hoyoverse.Infrastructure.Entities.GachaHistory
 //{
 //    Count = 1,
 //    GachaType = Common.Enum.Hoyoverse.GachaType.CharLimited,
@@ -36,7 +37,7 @@ services.AddSingleton<MongoDbService>();
 //    Uid = ""
 //});
 
-
+services.AddAutoMapper(typeof(OrganizationProfile));
 services.AddControllers().AddJsonOptions(o =>
 {
     o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());

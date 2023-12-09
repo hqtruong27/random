@@ -10,13 +10,18 @@ public class MongoDbService
     private readonly IMongoCollection<GachaHistory> _gachaHistory;
     public MongoDbService(IOptions<MongoDbSettings> options)
     {
-        var client = new MongoClient(options.Value.ConnectionString);
+        var client = new MongoClient(MongoUrl.Create(options.Value.ConnectionString));
         var database = client.GetDatabase(options.Value.Database);
         _gachaHistory = database.GetCollection<GachaHistory>(options.Value.ConnectionName);
     }
 
-    public async Task CreateAsync(GachaHistory gachaHistory)
+    public async Task InsertAsync(GachaHistory item)
     {
-        await _gachaHistory.InsertOneAsync(gachaHistory);
+        await _gachaHistory.InsertOneAsync(item);
+    }
+
+    public async Task BulkInsertAsync(IEnumerable<GachaHistory> items)
+    {
+        await _gachaHistory.InsertManyAsync(items);
     }
 }

@@ -9,6 +9,8 @@ services:
       dockerfile: Microservices/Spending/Spending.Api/Dockerfile
     networks:
       - proxy-manager_default
+    depends_on:
+      - db
    
   discord:
     image: hqtruong27/discord.bot:latest
@@ -16,6 +18,8 @@ services:
     build:
       context: .
       dockerfile: Microservices/Discord/Discord.Bot/Dockerfile
+    depends_on:
+      - spending
 
   db:
     image: postgres
@@ -26,7 +30,7 @@ services:
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
         POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - ./data:/var/lib/postgresql/data
+      - ./postgresql:/var/lib/postgresql/data
     ports:
       - 5432:5432
     networks:
@@ -35,11 +39,12 @@ services:
   mongodb:
     image: mongo:latest
     restart: always
-    env_file: .env.${ENV_NAME}
     ports:
       - 27017:27017
+    env_file: .env.${ENV_NAME}
     volumes:
-      - mongodb_data:/data/db
+      - ./mongodb:/data/db
+      - ./mongo-entrypoint:/docker-entrypoint-initdb.d
     networks:
       - proxy-manager_default
 

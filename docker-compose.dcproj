@@ -8,14 +8,15 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include=".env" />
-	  <None Include=".env.*">
-		  <DependentUpon>.env</DependentUpon>
-	  </None>
+    <None Include=".env.*">
+      <DependentUpon>.env</DependentUpon>
+    </None>
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
+    <None Include="mongo-entrypoint\init-users.sh" />
     <None Include="nginx.conf" />
   </ItemGroup>
 </Project>
