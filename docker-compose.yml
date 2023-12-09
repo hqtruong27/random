@@ -31,6 +31,17 @@ services:
       - 5432:5432
     networks:
       - proxy-manager_default
+  
+  mongodb:
+    image: mongo:latest
+    restart: always
+    env_file: .env.${ENV_NAME}
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - proxy-manager_default
 
 networks:
   proxy-manager_default:
