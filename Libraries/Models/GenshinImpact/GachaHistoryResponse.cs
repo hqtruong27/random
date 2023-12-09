@@ -3,6 +3,28 @@ using System.Text.Json.Serialization;
 
 namespace Models.GenshinImpact;
 
+public class GachaInfoResponse
+{
+    [JsonPropertyName("retcode")]
+    public int RetCode { get; set; }
+    [JsonPropertyName("message")]
+    public string Message { get; set; }
+    [JsonPropertyName("data")]
+    public GachaInfoDataResponse Data { get; set; }
+}
+
+public class GachaInfoDataResponse
+{
+    [JsonPropertyName("page")]
+    public string Page { get; set; }
+    [JsonPropertyName("size")]
+    public string Size { get; set; }
+    [JsonPropertyName("total")]
+    public string Total { get; set; }
+    [JsonPropertyName("list")]
+    public List<GachaHistoryResponse> GachaHistorys { get; set; }
+}
+
 public class GachaHistoryResponse
 {
     private string _gachaType = string.Empty;
@@ -12,7 +34,7 @@ public class GachaHistoryResponse
     public string Uid { get; set; }
 
     [JsonPropertyName("gacha_type")]
-    public GachaType GachaType { get => (GachaType)int.Parse(_gachaType); set => _gachaType = ((int)value).ToString(); }
+    public string GachaType { get; set; }
 
     [JsonPropertyName("item_id")]
     public string ItemId { get; set; }
@@ -33,7 +55,7 @@ public class GachaHistoryResponse
     public string ItemType { get; set; }
 
     [JsonPropertyName("rank_type")]
-    public RankType RankType { get => (RankType)int.Parse(_rankType); set => _rankType = ((int)value).ToString(); }
+    public string RankType { get; set; }
 
     [JsonPropertyName("id")]
     public string Id { get; set; }

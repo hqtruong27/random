@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Models.GenshinImpact;
+using System.Text.Json;
 
 namespace GenshinImpact.Api.Controllers
 {
@@ -21,6 +23,7 @@ namespace GenshinImpact.Api.Controllers
 
             var data = await response.Content.ReadAsStringAsync();
 
+            var result = JsonSerializer.Deserialize<GachaInfoResponse>(data);
             return Ok(data);
         }
     }
