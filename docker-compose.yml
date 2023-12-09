@@ -1,22 +1,21 @@
 version: '3.4'
 
 services:
-   
-  webapi:
+  spending:
     env_file: .env.${ENV_NAME}
-    image: hqtruong27/webapi-service:latest
+    image: hqtruong27/spending.api:latest
     build:
       context: .
-      dockerfile: WebApi/Dockerfile
+      dockerfile: Microservices/Spending/Spending.Api/Dockerfile
     networks:
       - proxy-manager_default
    
   discord:
-    image: hqtruong27/discord-service:latest
+    image: hqtruong27/discord.bot:latest
     env_file: .env.${ENV_NAME}
     build:
       context: .
-      dockerfile: Discord/Dockerfile
+      dockerfile: Microservices/Discord/Discord.Bot/Dockerfile
 
   db:
     image: postgres
@@ -32,16 +31,6 @@ services:
       - 5432:5432
     networks:
       - proxy-manager_default
-
-  # reverse-proxy:
-  #   image: nginx:latest
-  #   volumes:
-  #     - ./nginx.conf:/etc/nginx/nginx.conf
-  #   ports:
-  #     - 80:80
-  #     - 443:443
-  #   networks:
-  #     - proxy-manager_default
 
 networks:
   proxy-manager_default:

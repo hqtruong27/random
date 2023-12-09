@@ -9,20 +9,20 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Microservices/Spending/Spending.API/Spending.API.csproj", "Microservices/Spending/Spending.API/"]
+COPY ["Microservices/Spending/Spending.API/Spending.Api.csproj", "Microservices/Spending/Spending.API/"]
 COPY ["Microservices/Spending/Spending.Infrastructure/Spending.Infrastructure.csproj", "Microservices/Spending/Spending.Infrastructure/"]
 COPY ["Libraries/Common/Common.csproj", "Libraries/Common/"]
 COPY ["Libraries/Models/Models.csproj", "Libraries/Models/"]
-RUN dotnet restore "./Microservices/Spending/Spending.API/./Spending.API.csproj"
+RUN dotnet restore "./Microservices/Spending/Spending.API/./Spending.Api.csproj"
 COPY . .
 WORKDIR "/src/Microservices/Spending/Spending.API"
-RUN dotnet build "./Spending.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./Spending.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Spending.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Spending.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Spending.API.dll"]
+ENTRYPOINT ["dotnet", "Spending.Api.dll"]
