@@ -1,4 +1,3 @@
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using Common.Enum.Hoyoverse;
 using GenshinImpact.Api.Mapper;
@@ -16,7 +15,6 @@ var configuration = builder.Configuration
    .AddEnvironmentVariables()
    .Build();
 
-//services.Configure<MongoDbSettings>(configuration.GetSection("MongoDb"));
 BsonClassMap.RegisterClassMap<GachaHistory>(map =>
 {
     map.AutoMap();
@@ -40,14 +38,11 @@ services.Configure<ForwardedHeadersOptions>(options =>
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 });
 
-var collection = services.BuildServiceProvider().GetRequiredService<IGachaHistoryService>();
-
-var result = await collection.FindByIdAsync(1702044360000269694);
-Console.WriteLine(JsonSerializer.Serialize(result));
-
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddSwaggerGen();
-//builder.Services.AddEndpointsApiExplorer();
+
+// comment for reverse proxy
+// builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
@@ -57,6 +52,7 @@ if (app.Environment.IsDevelopment())
     //app.UseSwagger();
     //app.UseSwaggerUI();
 }
+
 app.UseForwardedHeaders();
 app.UseHsts();
 
@@ -77,9 +73,9 @@ app.MapGet("/", () => "Genshin Impact Api");
 app.UseSwagger();
 app.UseSwaggerUI();
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
-//app.UseAuthorization();
+app.UseAuthorization();
 
 app.MapControllers();
 
