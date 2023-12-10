@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using Common.Enum.Hoyoverse;
 using GenshinImpact.Api.Mapper;
+using Microsoft.AspNetCore.HttpOverrides;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 var builder = WebApplication.CreateBuilder(args);
@@ -48,6 +49,11 @@ services.AddAutoMapper(typeof(OrganizationProfile)).AddControllers().AddJsonOpti
     o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
+services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -60,6 +66,22 @@ if (app.Environment.IsDevelopment())
     //app.UseSwagger();
     //app.UseSwaggerUI();
 }
+app.UseForwardedHeaders();
+app.UseHsts();
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path.Value == "/favicon.ico")
+    {
+        context.Response.StatusCode = StatusCodes.Status200OK;
+        return;
+    }
+
+    // No favicon, call next middleware
+    await next.Invoke();
+});
+
+app.MapGet("/", () => "Genshin Impact Api");
 
 app.UseSwagger();
 app.UseSwaggerUI();
