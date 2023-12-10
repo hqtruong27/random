@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Common.Enum.Hoyoverse;
 using GenshinImpact.Api.Mapper;
@@ -28,21 +29,10 @@ services.AddSingleton<IDbContextOptions>(builder.Configuration.GetSection("Mongo
 services.AddHoyoverseDbContext();
 services.AddScoped<IGachaHistoryService, GachaHistoryService>();
 
-//var collection = services.BuildServiceProvider().GetRequiredService<MongoDbService>();
+var collection = services.BuildServiceProvider().GetRequiredService<IGachaHistoryService>();
 
-//await collection.InsertAsync(new Hoyoverse.Infrastructure.Entities.GachaHistory
-//{
-//    Count = 1,
-//    GachaType = Common.Enum.Hoyoverse.GachaType.CharLimited,
-//    Id = 2,
-//    ItemId = "",
-//    ItemType = Common.Enum.Hoyoverse.ItemType.Character,
-//    Lang = "vi-VN",
-//    Name = "Test",
-//    RankType = Common.Enum.Hoyoverse.RankType.Five,
-//    Time = DateTime.Now,
-//    Uid = ""
-//});
+var result =  await collection.FindByIdAsync(1702044360000269694);
+Console.WriteLine(JsonSerializer.Serialize(result));
 
 services.AddAutoMapper(typeof(OrganizationProfile)).AddControllers().AddJsonOptions(o =>
 {
