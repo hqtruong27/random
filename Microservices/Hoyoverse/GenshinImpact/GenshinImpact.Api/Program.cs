@@ -47,7 +47,7 @@ Console.WriteLine(JsonSerializer.Serialize(result));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddSwaggerGen();
-builder.Services.AddEndpointsApiExplorer();
+//builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
