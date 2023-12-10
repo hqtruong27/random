@@ -32,19 +32,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spending.Api", "Microservic
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Hoyoverse", "Hoyoverse", "{463642D8-FC2D-4897-B084-B33640BFC5AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hoyoverse.Infrastructure", "Microservices\Hoyoverse\Hoyoverse.Infrastructure\Hoyoverse.Infrastructure.csproj", "{7699E45A-13E2-404A-AB97-ED1EA664793C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hoyoverse.Infrastructure", "Microservices\Hoyoverse\Hoyoverse.Infrastructure\Hoyoverse.Infrastructure.csproj", "{7699E45A-13E2-404A-AB97-ED1EA664793C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GenshinImpact", "GenshinImpact", "{577BF3E1-09B0-4A26-BB08-6A157C6E1806}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenshinImpact.Api", "Microservices\Hoyoverse\GenshinImpact\GenshinImpact.Api\GenshinImpact.Api.csproj", "{F495D41C-45E5-428E-9B21-B557A40D0CB7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenshinImpact.Api", "Microservices\Hoyoverse\GenshinImpact\GenshinImpact.Api\GenshinImpact.Api.csproj", "{F495D41C-45E5-428E-9B21-B557A40D0CB7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Hoyolab", "Hoyolab", "{42B4DCB8-1C91-44BC-B9F9-BF9EC90479F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hoyolab.Api", "Microservices\Hoyoverse\Hoyolab\Hoyolab.Api\Hoyolab.Api.csproj", "{83B324A0-D6F8-4D7D-BFDE-18885F3617E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hoyolab.Api", "Microservices\Hoyoverse\Hoyolab\Hoyolab.Api\Hoyolab.Api.csproj", "{83B324A0-D6F8-4D7D-BFDE-18885F3617E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenshinImpact.Services", "Microservices\Hoyoverse\GenshinImpact\GenshinImpact.Services\GenshinImpact.Services.csproj", "{03931428-656E-48DC-ADBD-00610A04C190}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenshinImpact.Services", "Microservices\Hoyoverse\GenshinImpact\GenshinImpact.Services\GenshinImpact.Services.csproj", "{03931428-656E-48DC-ADBD-00610A04C190}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hoyolab.Services", "Microservices\Hoyoverse\Hoyolab\Hoyolab.Services\Hoyolab.Services.csproj", "{354679A9-453D-4055-AFEA-BC67661F292F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hoyolab.Services", "Microservices\Hoyoverse\Hoyolab\Hoyolab.Services\Hoyolab.Services.csproj", "{354679A9-453D-4055-AFEA-BC67661F292F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

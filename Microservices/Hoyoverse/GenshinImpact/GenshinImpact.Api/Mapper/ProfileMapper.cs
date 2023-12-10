@@ -1,7 +1,4 @@
 ﻿using AutoMapper;
-using Common.Enum.Hoyoverse;
-using Hoyoverse.Infrastructure.Entities;
-using Models.GenshinImpact;
 using System.Globalization;
 using System.Linq.Expressions;
 
@@ -16,7 +13,8 @@ public class OrganizationProfile : Profile
                 , "yyyy-MM-dd HH:mm:ss"
                 , CultureInfo.InvariantCulture
                 , DateTimeStyles.None))
-            .Map(x => x.ItemType, r => r.ItemType == "Vũ Khí" ? ItemType.Weapons : ItemType.Character);
+            .Map(x => x.ItemType, r => Common.Converters.GI.ItemTypeTranslation(r.ItemType, r.Lang))
+            .ReverseMap();
     }
 }
 

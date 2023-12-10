@@ -1,13 +1,6 @@
-using GenshinImpact.Api.Services;
-using GenshinImpact.Api.Settings;
 using System.Text.Json.Serialization;
-using System.Text.Json;
 using GenshinImpact.Api.Mapper;
-
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
 
 var services = builder.Services;
 var environment = builder.Environment;
@@ -18,8 +11,10 @@ var configuration = builder.Configuration
    .AddEnvironmentVariables()
    .Build();
 
-services.Configure<MongoDbSettings>(configuration.GetSection("MongoDb"));
-services.AddSingleton<MongoDbService>();
+//services.Configure<MongoDbSettings>(configuration.GetSection("MongoDb"));
+services.AddSingleton<IDbContextOptions>(builder.Configuration.GetSection("MongoDb").Get<MongoDbContextOptions>()!);
+services.AddHoyoverseDbContext();
+services.AddScoped<IGachaHistoryService, GachaHistoryService>();
 
 //var collection = services.BuildServiceProvider().GetRequiredService<MongoDbService>();
 
@@ -37,8 +32,7 @@ services.AddSingleton<MongoDbService>();
 //    Uid = ""
 //});
 
-services.AddAutoMapper(typeof(OrganizationProfile));
-services.AddControllers().AddJsonOptions(o =>
+services.AddAutoMapper(typeof(OrganizationProfile)).AddControllers().AddJsonOptions(o =>
 {
     o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });

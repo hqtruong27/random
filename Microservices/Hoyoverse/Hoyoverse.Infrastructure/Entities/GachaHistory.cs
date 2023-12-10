@@ -1,12 +1,10 @@
 ﻿using Common.Enum.Hoyoverse;
-using MongoDB.Bson.Serialization.Attributes;
+using Hoyoverse.Infrastructure.Common;
 
 namespace Hoyoverse.Infrastructure.Entities;
 
-public class GachaHistory
+public class GachaHistory : AuditableEntity<long>
 {
-    [BsonId]
-    public long Id { get; set; } = default!;
     public string Uid { get; set; } = default!;
     public GachaType GachaType { get; set; } = default!;
     public string ItemId { get; set; } = default!;
