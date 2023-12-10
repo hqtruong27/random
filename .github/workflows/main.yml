@@ -8,12 +8,10 @@ on:
 jobs:
 
   build-discord-bot:
-
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Docker login
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
@@ -33,10 +31,25 @@ jobs:
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Docker build and push WebApi service
+      - name: Docker build and push spending api
         run: |
           docker build -t hqtruong27/spending.api:latest -f Microservices/Spending/Spending.Api/Dockerfile .
           docker push hqtruong27/spending.api:latest
+
+  build-genshinimpact-api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Docker login
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Docker build and push genshin impact api
+        run: |
+          docker build -t hqtruong27/genshinimpact.api:latest -f Microservices/Hoyoverse/GenshinImpact/GenshinImpact.Api/Dockerfile .
+          docker push hqtruong27/genshinimpact.api:latest
 
   ssh:
     runs-on: ubuntu-latest
@@ -62,7 +75,6 @@ jobs:
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker pull hqtruong27/discord.bot:latest
-            docker compose -f docker/random/docker-compose.yml up -d
 
   deploy-spending-api:
     needs: [build-spending-api, ssh]
@@ -77,5 +89,31 @@ jobs:
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker pull hqtruong27/spending.api:latest
+
+  deploy-genshinimpact-api:
+    needs: [build-genshinimpact-api, ssh]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Genshin Impact Api
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER_NAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            docker pull hqtruong27/genshinimpact.api:latest
+
+  up:
+    needs: [deploy-genshinimpact-api, deploy-discord-bot, deploy-spending-api]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Docker compose up
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER_NAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker compose -f docker/random/docker-compose.yml up -d
-      

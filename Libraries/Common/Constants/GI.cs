@@ -6,6 +6,7 @@ public static partial class GI
     {
         public const int AuthkeyError = 100;
         public const int VisitTooFrequently = -110;
+        public const int AuthKeyTimeOut = -101;
     }
 
     public class NameTranslation

@@ -36,6 +36,8 @@ public class GachaHistoryService(IRepository<GachaHistory, long> repository
                         await _repository.BulkInsertAsync(records);
                         records.Clear();
                     }
+
+                    hasMoreRecords = false;
                     break;
                 default:
                     hasMoreRecords = false;
@@ -95,6 +97,11 @@ public class GachaHistoryService(IRepository<GachaHistory, long> repository
 
         var stream = await response.Content.ReadAsStreamAsync();
         var result = await JsonSerializer.DeserializeAsync<GachaInfoResponse>(stream);
+        if (result?.Code == GI.Code.AuthKeyTimeOut)
+        {
+            throw new Exception("Authkey timeout");
+        }
+
         if (result?.Code == GI.Code.VisitTooFrequently)
         {
             await GetRecordsAsync(client, endId, authKey);

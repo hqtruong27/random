@@ -1,6 +1,18 @@
 version: '3.4'
 
 services:
+  
+  genshinimpact:
+    env_file: .env.${ENV_NAME}
+    image: hqtruong27/genshinimpact.api:latest
+    build:
+      context: .
+      dockerfile: Microservices/Hoyoverse/GenshinImpact/GenshinImpact.Api/Dockerfile
+    networks:
+      - proxy-manager_default
+    depends_on:
+      - mongodb
+
   spending:
     env_file: .env.${ENV_NAME}
     image: hqtruong27/spending.api:latest

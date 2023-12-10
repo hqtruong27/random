@@ -1,5 +1,8 @@
 using System.Text.Json.Serialization;
+using Common.Enum.Hoyoverse;
 using GenshinImpact.Api.Mapper;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 var builder = WebApplication.CreateBuilder(args);
 
 var services = builder.Services;
@@ -12,6 +15,14 @@ var configuration = builder.Configuration
    .Build();
 
 //services.Configure<MongoDbSettings>(configuration.GetSection("MongoDb"));
+BsonClassMap.RegisterClassMap<GachaHistory>(map =>
+{
+    map.AutoMap();
+    map.MapMember(x => x.RankType).SetSerializer(new EnumSerializer<RankType>(MongoDB.Bson.BsonType.String));
+    map.MapMember(x => x.GachaType).SetSerializer(new EnumSerializer<GachaType>(MongoDB.Bson.BsonType.String));
+    map.MapMember(x => x.ItemType).SetSerializer(new EnumSerializer<ItemType>(MongoDB.Bson.BsonType.String));
+});
+
 services.AddSingleton<IDbContextOptions>(builder.Configuration.GetSection("MongoDb").Get<MongoDbContextOptions>()!);
 services.AddHoyoverseDbContext();
 services.AddScoped<IGachaHistoryService, GachaHistoryService>();

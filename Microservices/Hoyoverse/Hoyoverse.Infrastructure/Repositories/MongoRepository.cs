@@ -2,11 +2,12 @@
 using Hoyoverse.Infrastructure.Common;
 using Hoyoverse.Infrastructure.Repositories;
 using MongoDB.Driver;
+using Common.Extensions;
 
 namespace GenshinImpact.Persistence.Repositories;
 
-public class MongoRepository<TEntity, TKey>(IHoyoverseDbContext context) 
-    : IRepository<TEntity, TKey> where TEntity 
+public class MongoRepository<TEntity, TKey>(IHoyoverseDbContext context)
+    : IRepository<TEntity, TKey> where TEntity
     : AuditableEntity<TKey>, new()
 {
     private readonly IMongoCollection<TEntity> _collection = context.Database.GetCollection<TEntity>(typeof(TEntity).Name);
@@ -29,6 +30,7 @@ public class MongoRepository<TEntity, TKey>(IHoyoverseDbContext context)
 
     public async Task<TEntity> InsertAsync(TEntity entity)
     {
+        entity.Created = DateTime.UtcNow;
         await _collection.InsertOneAsync(entity);
 
         return entity;
@@ -43,6 +45,7 @@ public class MongoRepository<TEntity, TKey>(IHoyoverseDbContext context)
 
     public async Task<TEntity> UpdateAsync(TEntity entity)
     {
+        entity.Updated = DateTime.UtcNow;
         await _collection.ReplaceOneAsync(FilterId(entity.Id), entity);
 
         return entity;
@@ -50,6 +53,8 @@ public class MongoRepository<TEntity, TKey>(IHoyoverseDbContext context)
 
     public Task BulkInsertAsync(IEnumerable<TEntity> items)
     {
+        items.ForEach(x => x.Created = DateTime.UtcNow);
+
         return _collection.InsertManyAsync(items);
     }
 
