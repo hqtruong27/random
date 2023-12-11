@@ -2,7 +2,9 @@
 
 public enum GachaType
 {
-    CharLimited = 301
+    Regular = 200,
+    CharLimited = 301,
+    Weapons = 302,
 }
 
 public enum RankType

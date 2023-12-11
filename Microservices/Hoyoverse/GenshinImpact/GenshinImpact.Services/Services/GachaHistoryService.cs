@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Common.Enum.Hoyoverse;
 using Microsoft.Extensions.Logging;
 
 namespace GenshinImpact.Services.Services;
@@ -75,15 +76,15 @@ public class GachaHistoryService(IRepository<GachaHistory, long> repository
             { "authkey_ver", "1" },
             { "sign_type", "2" },
             { "auth_appid", "webview_gacha" },
-            { "init_type", "301" },
+            { "init_type",$"{(int)GachaType.CharLimited}" },
             { "gacha_id", "85107f12e41dbe89924f52b0c0891544d6d32bd2" },
-            { "timestamp", "1699400296" },
+            { "timestamp", "1699400645" },
             { "lang", "vi" },
             { "device_type", "pc" },
             { "game_version", "OSRELWin4.2.0_R19421453_S19245959_D19561600" },
             { "region", "os_asia" },
             { "game_biz", "hk4e_global" },
-            { "gacha_type", "301" },
+            { "gacha_type", $"{(int)GachaType.CharLimited}" },
             { "page", "1" },
             { "size", "20" },
             { "end_id", $"{endId}" },
