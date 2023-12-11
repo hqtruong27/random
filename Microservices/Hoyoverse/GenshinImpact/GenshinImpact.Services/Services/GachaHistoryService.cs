@@ -37,7 +37,6 @@ public class GachaHistoryService(IRepository<GachaHistory, long> repository
                         records.Clear();
                     }
 
-                    hasMoreRecords = false;
                     break;
                 default:
                     hasMoreRecords = false;
