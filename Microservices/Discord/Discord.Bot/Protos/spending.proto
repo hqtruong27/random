@@ -13,6 +13,7 @@ service Spending {
 	rpc Get(GetRequest) returns (GetSpendingResponse);
 	rpc GetSpendingsByUserId(GetSpendingsByUserIdRequest) returns (GetSpendingsByUserIdResponse);
 	rpc Create(CreateSpendingRequest) returns (Response);
+	rpc HealthCheck(GetRequest) returns (Response);
 }
 
 message GetSpendingsByUserIdRequest {

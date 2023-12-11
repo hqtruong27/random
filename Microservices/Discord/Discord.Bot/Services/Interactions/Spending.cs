@@ -85,6 +85,18 @@ public class Spending(DiscordSettings discord, ILogger<Spending> logger) : Inter
         await RespondAsync("processing...");
     }
 
+    [SlashCommand("check", "check connect to server spending")]
+    public async Task HealthCheck()
+    {
+        _ = Task.Run(async () =>
+         {
+             var check = await _spendingClient.HealthCheckAsync(new());
+             await Context.Channel.SendMessageAsync("Live!!");
+         });
+
+        await RespondAsync("checking....");
+    }
+
     public override Task AfterExecuteAsync(ICommandInfo command)
     {
         return Task.CompletedTask;

@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using Spending.Infrastructure.Entities;
+using System.Text.Json;
 
 namespace Spending.Api.Services;
 
@@ -46,5 +47,14 @@ public class SpendingService(ILogger<SpendingService> logger
             Description = "create spending success"
         };
     }
-}
 
+    public override async Task<Response> HealthCheck(GetRequest request, ServerCallContext context)
+    {
+        var spending = await _context.Spendings.FirstOrDefaultAsync();
+        return new Response
+        {
+            Description = spending?.Name,
+            Code = StatusCodes.Status200OK,
+        };
+    }
+}
