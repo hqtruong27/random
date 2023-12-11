@@ -33,10 +33,10 @@ services.AddAutoMapper(typeof(OrganizationProfile)).AddControllers().AddJsonOpti
     o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
-services.Configure<ForwardedHeadersOptions>(options =>
-{
-    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
-});
+//services.Configure<ForwardedHeadersOptions>(options =>
+//{
+//    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+//});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddSwaggerGen();
@@ -46,6 +46,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+app.UseDeveloperExceptionPage();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -53,7 +54,7 @@ if (app.Environment.IsDevelopment())
     //app.UseSwaggerUI();
 }
 
-app.UseForwardedHeaders();
+//app.UseForwardedHeaders();
 app.UseHsts();
 
 app.Use(async (context, next) =>

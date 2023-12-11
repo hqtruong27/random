@@ -30,10 +30,10 @@ services.AddDbContextPool<StatisticsDbContext>(options =>
 
 //services.AddReverseProxy().LoadFromConfig(configuration.GetSection("ReverseProxy"));
 
-services.Configure<ForwardedHeadersOptions>(options =>
-{
-    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-});
+//services.Configure<ForwardedHeadersOptions>(options =>
+//{
+//    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+//});
 
 // Add services to the container.
 services.AddGrpc(options =>
@@ -50,12 +50,14 @@ var app = builder.Build();
 app.MapGrpcService<UserService>();
 app.MapGrpcService<SpendingService>();
 
+app.UseDeveloperExceptionPage();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapGrpcReflectionService();
 }
 
-app.UseForwardedHeaders();
+//app.UseForwardedHeaders();
 app.UseHsts();
 
 app.Use(async (context, next) =>
