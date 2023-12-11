@@ -3,7 +3,6 @@ using Spending.Api.Services;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Spending.Api.Mapper;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 var environmentName = builder.Environment.EnvironmentName;
@@ -19,21 +18,6 @@ var configuration = builder.Configuration
 
 var connectionString = configuration.GetConnectionString("StatisticsDbContext");
 
-// builder.WebHost.ConfigureKestrel(options =>
-// {
-//     options.Listen(IPAddress.Any, 5058, listenOptions =>
-//     {
-//         listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1;
-//     });
-//     options.Listen(IPAddress.Any, 7072, listenOptions =>
-//     {
-//         listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
-//     });
-//     options.Listen(IPAddress.Any, 8080, listenOptions =>
-//     {
-//         listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2;
-//     });
-// });
 services.AddDbContextPool<StatisticsDbContext>(options =>
 {
     options.ConfigureWarnings(builder =>
@@ -44,7 +28,7 @@ services.AddDbContextPool<StatisticsDbContext>(options =>
     options.UseNpgsql(connectionString);
 });
 
-services.AddReverseProxy().LoadFromConfig(configuration.GetSection("ReverseProxy"));
+//services.AddReverseProxy().LoadFromConfig(configuration.GetSection("ReverseProxy"));
 
 services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -61,7 +45,7 @@ services.AddAutoMapper(typeof(OrganizationProfile));
 
 var app = builder.Build();
 
-app.MapReverseProxy();
+//app.MapReverseProxy();
 // Configure the HTTP request pipeline.
 app.MapGrpcService<UserService>();
 app.MapGrpcService<SpendingService>();

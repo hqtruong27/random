@@ -75,6 +75,7 @@ jobs:
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker pull hqtruong27/discord.bot:latest
+            docker compose -f docker/random/docker-compose.yml up -d
 
   deploy-spending-api:
     needs: [build-spending-api, ssh]
@@ -89,6 +90,7 @@ jobs:
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker pull hqtruong27/spending.api:latest
+            docker compose -f docker/random/docker-compose.yml up -d
 
   deploy-genshinimpact-api:
     needs: [build-genshinimpact-api, ssh]
@@ -103,17 +105,4 @@ jobs:
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker pull hqtruong27/genshinimpact.api:latest
-
-  up:
-    needs: [deploy-genshinimpact-api, deploy-discord-bot, deploy-spending-api]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Docker compose up
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER_NAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker compose -f docker/random/docker-compose.yml up -d
