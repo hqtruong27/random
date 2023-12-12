@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Models.AggregateModels;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
-using System.Globalization;
 
 namespace GenshinImpact.Services.Services;
 
@@ -81,9 +80,9 @@ public class GachaHistoryService(IRepository<GachaHistory, long> gachaHistoryRep
     public async IAsyncEnumerable<WishCounterModel> WishCalculatorAsync()
     {
         var result = new List<WishCounterModel>();
-        var charLimited = await PityCaculator(BannerType.Character);
-        var weapon = await PityCaculator(BannerType.Weapon);
-        var regular = await PityCaculator(BannerType.Regular);
+        var charLimited = await PityCalculatorAsync(BannerType.Character);
+        var weapon = await PityCalculatorAsync(BannerType.Weapon);
+        var regular = await PityCalculatorAsync(BannerType.Regular);
 
         result.Add(charLimited);
         result.Add(weapon);
@@ -95,7 +94,7 @@ public class GachaHistoryService(IRepository<GachaHistory, long> gachaHistoryRep
         }
     }
 
-    private async Task<WishCounterModel> PityCaculator(BannerType bannerType)
+    private async Task<WishCounterModel> PityCalculatorAsync(BannerType bannerType)
     {
         var gachaType = GetGachaTypeCondition(bannerType);
         var stage1 = new BsonDocument
@@ -144,8 +143,8 @@ public class GachaHistoryService(IRepository<GachaHistory, long> gachaHistoryRep
             }
         };
 
-        var characterEvent = await _repository.AggregateAsync(stage1, stage2, stage3);
-        var count = (await _repository.AggregateAsync(stage1, countStage)).FirstOrDefault()?.GetValue("Total").AsInt32;
+        var characterEvent = await _gachaHistoryRepository.AggregateAsync(stage1, stage2, stage3);
+        var count = (await _gachaHistoryRepository.AggregateAsync(stage1, countStage)).FirstOrDefault()?.GetValue("Total").AsInt32;
         var aggregateModel = BsonSerializer.Deserialize<List<AggregateGachaHistoryModel>>(characterEvent.ToJson());
 
         AggregateGachaHistoryModel? first = null;
