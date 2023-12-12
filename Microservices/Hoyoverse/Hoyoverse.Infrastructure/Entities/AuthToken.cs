@@ -1,5 +1,4 @@
 ﻿using MongoDB.Bson;
-using Hoyoverse.Infrastructure.Common;
 
 namespace Hoyoverse.Infrastructure.Entities;
 

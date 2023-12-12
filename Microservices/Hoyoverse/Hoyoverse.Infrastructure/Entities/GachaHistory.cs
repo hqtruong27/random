@@ -1,5 +1,4 @@
 ﻿using Common.Enum.Hoyoverse;
-using Hoyoverse.Infrastructure.Common;
 
 namespace Hoyoverse.Infrastructure.Entities;
 

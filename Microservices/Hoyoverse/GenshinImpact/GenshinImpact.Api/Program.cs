@@ -1,7 +1,6 @@
 using System.Text.Json.Serialization;
 using Common.Enum.Hoyoverse;
 using GenshinImpact.Api.Mapper;
-using Microsoft.AspNetCore.HttpOverrides;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 var builder = WebApplication.CreateBuilder(args);

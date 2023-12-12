@@ -1,5 +1,4 @@
 ﻿using GenshinImpact.Persistence.Repositories;
-using Hoyoverse.Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Hoyoverse.Infrastructure.Core;
