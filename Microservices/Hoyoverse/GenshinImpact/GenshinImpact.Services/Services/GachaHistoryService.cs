@@ -1,6 +1,10 @@
 ﻿using AutoMapper;
 using Common.Enum.Hoyoverse;
 using Microsoft.Extensions.Logging;
+using Models.AggregateModels;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using System.Globalization;
 
 namespace GenshinImpact.Services.Services;
 
@@ -66,6 +70,143 @@ public class GachaHistoryService(IRepository<GachaHistory, long> repository
         var result = await _repository.FindByIdAsync(id);
         return _mapper.Map<GachaHistoryResponse>(result);
     }
+
+    public async IAsyncEnumerable<WishCounterModel> WishCalculatorAsync()
+    {
+        var result = new List<WishCounterModel>();
+        var charLimited = await PityCaculator(BannerType.Character);
+        var weapon = await PityCaculator(BannerType.Weapon);
+        var regular = await PityCaculator(BannerType.Regular);
+
+        result.Add(charLimited);
+        result.Add(weapon);
+        result.Add(regular);
+
+        foreach (var item in result)
+        {
+            yield return item;
+        }
+    }
+
+    private async Task<WishCounterModel> PityCaculator(BannerType bannerType)
+    {
+        var gachaType = GetGachaTypeCondition(bannerType);
+        var stage1 = new BsonDocument
+        {
+            {
+                "$match", new BsonDocument
+                {
+                    {
+                        "$or", gachaType
+                    }
+                }
+            }
+        };
+        var stage2 = new BsonDocument
+        {
+            {
+                "$setWindowFields", new BsonDocument
+                {
+                    { "partitionBy", "_id" },
+                    { "sortBy", new BsonDocument(new BsonElement( "_id", 1 ))},
+                    { "output", new BsonDocument
+                        {
+                            { "PullIndex", new BsonDocument
+                                {
+                                    {"$documentNumber",  new BsonDocument() }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        var stage3 = new BsonDocument
+        {
+            {
+                "$match", new BsonDocument
+                {
+                    { "RankType", RankType.Five.ToString() },
+                }
+            }
+        };
+        var countStage = new BsonDocument
+        {
+            {
+                "$count", "Total"
+            }
+        };
+
+        var characterEvent = await _repository.AggregateAsync(stage1, stage2, stage3);
+        var count = (await _repository.AggregateAsync(stage1, countStage)).FirstOrDefault()?.GetValue("Total").AsInt32;
+        var aggregateModel = BsonSerializer.Deserialize<List<AggregateGachaHistoryModel>>(characterEvent.ToJson());
+
+        AggregateGachaHistoryModel? first = null;
+        var listEvent = new List<Event>();
+
+        foreach (var item in aggregateModel)
+        {
+            if (first == null)
+            {
+                first = item;
+                listEvent.Add(new Event
+                {
+                    ItemName = item.Name,
+                    PullIndex = item.PullIndex
+                });
+                continue;
+            }
+            listEvent.Add(new Event
+            {
+                ItemName = item.Name,
+                PullIndex = item.PullIndex - first.PullIndex
+            });
+            first = item;
+        }
+
+        return new WishCounterModel
+        {
+            Banner = bannerType,
+            Detail = new WishBanner
+            {
+                Events = listEvent,
+                Pity = (count - first?.PullIndex ?? 0),
+                TotalPulls = count ?? 0
+            }
+        };
+    }
+
+
+    private BsonArray GetGachaTypeCondition(BannerType bannerType) => bannerType switch
+    {
+        BannerType.Character => new BsonArray
+        {
+            new BsonDocument
+            {
+                {"GachaType", GachaType.CharLimited.ToString() }
+            },
+            new BsonDocument
+            {
+                {"GachaType", "400" }
+            }
+        },
+        BannerType.Weapon => new BsonArray
+        {
+            new BsonDocument
+            {
+                {"GachaType", GachaType.Weapons.ToString() }
+            }
+        },
+        BannerType.Regular => new BsonArray
+        {
+            new BsonDocument
+            {
+                {"GachaType", GachaType.Regular.ToString() }
+            }
+        },
+        _ => new BsonArray { }
+    };
+
 
     private async Task<List<GachaHistory>> GetRecordsAsync(HttpClient client, long endId, string authKey)
     {
