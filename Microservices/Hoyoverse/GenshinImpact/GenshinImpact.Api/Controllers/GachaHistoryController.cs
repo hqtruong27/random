@@ -22,4 +22,14 @@ public class GachaHistoryController(IGachaHistoryService gachaHistoryService) : 
     {
         return Ok(await _gachaHistoryService.FindByIdAsync(id));
     }
+
+    [HttpGet("WishCalculator")]
+    public async IAsyncEnumerable<WishCounterModel> WishCalculatorAsync()
+    {
+        await foreach (var item in _gachaHistoryService.WishCalculatorAsync())
+        {
+            yield return item;
+        }
+
+    }
 }

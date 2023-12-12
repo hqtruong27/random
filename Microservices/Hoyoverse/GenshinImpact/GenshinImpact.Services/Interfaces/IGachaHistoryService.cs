@@ -4,4 +4,5 @@ public interface IGachaHistoryService
 {
     IAsyncEnumerable<long> CrawlAsync(string authKey);
     Task<GachaHistoryResponse> FindByIdAsync(long id);
+    IAsyncEnumerable<WishCounterModel> WishCalculatorAsync();
 }

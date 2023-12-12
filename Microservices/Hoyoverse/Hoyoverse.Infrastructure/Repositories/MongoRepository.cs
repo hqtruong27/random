@@ -3,6 +3,10 @@ using Hoyoverse.Infrastructure.Common;
 using Hoyoverse.Infrastructure.Repositories;
 using MongoDB.Driver;
 using Common.Extensions;
+using Hoyoverse.Infrastructure.Common.Interfaces;
+using System.Linq.Expressions;
+using MongoDB.Driver.Linq;
+using MongoDB.Bson;
 
 namespace GenshinImpact.Persistence.Repositories;
 
@@ -12,12 +16,31 @@ public class MongoRepository<TEntity, TKey>(IHoyoverseDbContext context)
 {
     private readonly IMongoCollection<TEntity> _collection = context.Database.GetCollection<TEntity>(typeof(TEntity).Name);
 
+    public async Task<IEnumerable<BsonDocument>> AggregateAsync(params BsonDocument[] pipeline)
+    {
+        var result = await _collection.AggregateAsync<BsonDocument>(pipeline);
+        return await result.ToListAsync();
+    }
+
+    public async Task<long> CountAsync(Expression<Func<TEntity, bool>> whereConditions)
+    {
+        var total = await _collection.CountDocumentsAsync(whereConditions);
+        return total;
+    }
+
     public async Task<TEntity> FindByIdAsync(TKey id)
     {
         var buildQuery = FilterId(id);
         var cursor = await _collection.FindAsync(buildQuery);
 
         return await cursor.SingleOrDefaultAsync();
+    }
+
+    public async Task<IEnumerable<TEntity>> FindByConditionsAsync(Expression<Func<TEntity, bool>> whereConditions)
+    {
+        var buildQuery = _collection.AsQueryable();
+        var result = await buildQuery.Where(whereConditions).ToListAsync();    
+        return result;
     }
 
     public async Task<IEnumerable<TEntity>> GetAll()
