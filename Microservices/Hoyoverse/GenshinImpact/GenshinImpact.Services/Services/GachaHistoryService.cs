@@ -1,20 +1,27 @@
 ﻿using AutoMapper;
 using Common.Enum.Hoyoverse;
+using Common.Helpers;
 using Microsoft.Extensions.Logging;
 
 namespace GenshinImpact.Services.Services;
 
-public class GachaHistoryService(IRepository<GachaHistory, long> repository
+public class GachaHistoryService(IRepository<GachaHistory, long> gachaHistoryRepository
+    , IRepository<Settings, string> settingsRepository
     , IMapper mapper
     , ILogger<GachaHistoryService> logger) : IGachaHistoryService
 {
-    private readonly IRepository<GachaHistory, long> _repository = repository;
+    private readonly IRepository<GachaHistory, long> _gachaHistoryRepository = gachaHistoryRepository;
+    private readonly IRepository<Settings, string> _settingsRepository = settingsRepository;
     private readonly ILogger _logger = logger;
     private readonly IMapper _mapper = mapper;
 
     public async IAsyncEnumerable<long> CrawlAsync(string authKey)
     {
         _logger.LogInformation("Start: crawl {authKey}", authKey);
+
+        var settings = _settingsRepository.FindByIdAsync(authKey);
+        var url = "https://hk4e-api-os.hoyoverse.com/gacha_info/api/getGachaLog";
+        var queryString = QueryStringHelper.Populate<GachaHistoryQueryString>(authKey);
 
         using var client = new HttpClient();
 
@@ -34,7 +41,7 @@ public class GachaHistoryService(IRepository<GachaHistory, long> repository
                     endId = items[items.Count - 1].Id;
                     if (records.Count > batchSize)
                     {
-                        await _repository.BulkInsertAsync(records);
+                        await _gachaHistoryRepository.BulkInsertAsync(records);
                         records.Clear();
                     }
 
@@ -53,7 +60,7 @@ public class GachaHistoryService(IRepository<GachaHistory, long> repository
 
         if (records.Count > 0)
         {
-            await _repository.BulkInsertAsync(records);
+            await _gachaHistoryRepository.BulkInsertAsync(records);
         }
 
         yield return total;
@@ -63,7 +70,7 @@ public class GachaHistoryService(IRepository<GachaHistory, long> repository
 
     public async Task<GachaHistoryResponse> FindByIdAsync(long id)
     {
-        var result = await _repository.FindByIdAsync(id);
+        var result = await _gachaHistoryRepository.FindByIdAsync(id);
         return _mapper.Map<GachaHistoryResponse>(result);
     }
 

@@ -1,23 +1,36 @@
 ﻿using System.Reflection;
+using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
+using System.Web;
 
 namespace Common.Helpers;
 
-public static class QueryStringHelper
+public static partial class QueryStringHelper
 {
-    public static T Populate<T>(string queryString, T model)
+    public static T Populate<T>(string queryString)
     {
         var queryParameters = ParseQueryString(queryString);
 
         var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
+     
+        var model = Activator.CreateInstance<T>();
         foreach (var (key, values) in queryParameters)
         {
-            var normalizedKey = key.ToLower();
-            var property = properties.FirstOrDefault(p => p.Name.Equals(normalizedKey, StringComparison.CurrentCultureIgnoreCase));
+            var property = properties.FirstOrDefault(p =>
+            {
+                var attr = p.GetCustomAttribute<JsonPropertyNameAttribute>();
+                if (attr != null)
+                {
+                    return attr.Name.Equals(key, StringComparison.CurrentCultureIgnoreCase);
+                }
+
+                var snakeCase = ToSnakeCase(p.Name);
+                return snakeCase.Equals(key, StringComparison.CurrentCultureIgnoreCase);
+            });
 
             if (property != null)
             {
-                var convertedValue = ConvertValue(values.FirstOrDefault(), property.PropertyType);
+                var convertedValue = ConvertValue(values, property.PropertyType);
                 property.SetValue(model, convertedValue);
             }
         }
@@ -25,29 +38,18 @@ public static class QueryStringHelper
         return model;
     }
 
-    private static Dictionary<string, List<string>> ParseQueryString(string queryString)
+    private static Dictionary<string, string> ParseQueryString(string queryString)
     {
-        var pairs = queryString.TrimStart('?').Split('&');
-        var queryParameters = new Dictionary<string, List<string>>();
+        var queryParameters = HttpUtility.ParseQueryString(new Uri(queryString).Query);
 
-        foreach (var pair in pairs)
+        var dictionary = new Dictionary<string, string>();
+
+        foreach (string key in queryParameters)
         {
-            var parts = pair.Split('=');
-            if (parts.Length == 2)
-            {
-                var key = parts[0];
-                var value = Uri.UnescapeDataString(parts[1]);
-
-                if (!queryParameters.TryGetValue(key, out var _))
-                {
-                    queryParameters[key] = [];
-                }
-
-                queryParameters[key].Add(value);
-            }
+            dictionary.Add(key, value: queryParameters[key] ?? string.Empty);
         }
 
-        return queryParameters;
+        return dictionary;
     }
 
     private static object ConvertValue(string? value, Type targetType)
@@ -61,5 +63,10 @@ public static class QueryStringHelper
             // Add more type conversions as needed
             _ => value,
         };
+    }
+
+    private static string ToSnakeCase(string input)
+    {
+        return Regex.Replace(input, "(?<!^)([A-Z][a-z]|(?<=[a-z])[A-Z])", "_$1").ToLower();
     }
 }
