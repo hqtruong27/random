@@ -111,8 +111,8 @@ async Task StartAsync()
             else
             {
                 // this method will add commands globally, but can take around an hour
+                //await interactions.RegisterCommandsGloballyAsync();
                 await interactions.RegisterCommandsToGuildAsync(discordSettings.GuildId);
-                await interactions.RegisterCommandsGloballyAsync();
             }
         }
         catch (HttpException exception)
