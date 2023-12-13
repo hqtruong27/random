@@ -2,7 +2,7 @@
 
 public interface IGachaHistoryService
 {
-    IAsyncEnumerable<long> CrawlAsync(string authKey);
+    IAsyncEnumerable<long> CrawlAsync(string url);
     Task<GachaHistoryResponse> FindByIdAsync(long id);
     IAsyncEnumerable<WishCounterModel> WishCalculatorAsync();
 }

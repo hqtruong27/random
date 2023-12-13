@@ -19,16 +19,13 @@ public class GachaHistoryService(IRepository<GachaHistory, long> gachaHistoryRep
     private readonly ILogger _logger = logger;
     private readonly IMapper _mapper = mapper;
 
-    public async IAsyncEnumerable<long> CrawlAsync(string authKey)
+    public async IAsyncEnumerable<long> CrawlAsync(string url)
     {
-        _logger.LogInformation("Start: crawl {authKey}", authKey);
+        _logger.LogInformation("Start: crawl {url}", url);
 
+        var queryString = QueryStringHelper.Populate<GachaHistoryQueryString>(url);
         var config = await _settingsRepository.GetSettingsAsync<WishListConfig>("WISH_LIST_CONFIG");
-        var queryString = QueryStringHelper.Populate<GachaHistoryQueryString>(authKey);
-        //var url = "https://hk4e-api-os.hoyoverse.com/gacha_info/api/getGachaLog";
-
         using var client = new HttpClient();
-
         long endId = 0;
         var total = 0;
         var batchSize = 5000;

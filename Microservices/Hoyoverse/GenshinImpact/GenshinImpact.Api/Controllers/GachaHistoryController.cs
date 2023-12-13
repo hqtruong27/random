@@ -9,9 +9,9 @@ public class GachaHistoryController(IGachaHistoryService gachaHistoryService) : 
     private readonly IGachaHistoryService _gachaHistoryService = gachaHistoryService;
 
     [HttpPost(Name = "create")]
-    public async IAsyncEnumerable<long> Create([FromBody] string authKey)
+    public async IAsyncEnumerable<long> Create([FromBody] string url)
     {
-        await foreach (var item in _gachaHistoryService.CrawlAsync(authKey))
+        await foreach (var item in _gachaHistoryService.CrawlAsync(url))
         {
             yield return item;
         }
