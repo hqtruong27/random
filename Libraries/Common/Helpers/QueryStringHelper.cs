@@ -35,6 +35,8 @@ public static partial class QueryStringHelper
             }
         }
 
+        properties.Where(x => x.Name == "QueryString").FirstOrDefault()?.SetValue(model, queryString);
+
         return model;
     }
 

@@ -35,8 +35,20 @@ public class MongoRepository<TEntity, TKey>(IHoyoverseDbContext context)
     public async Task<IEnumerable<TEntity>> FindByConditionsAsync(Expression<Func<TEntity, bool>> whereConditions)
     {
         var buildQuery = _collection.AsQueryable();
-        var result = await buildQuery.Where(whereConditions).ToListAsync();    
+        var result = await buildQuery.Where(whereConditions).ToListAsync();
         return result;
+    }
+
+    public async Task<IAsyncCursor<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        return await _collection.FindAsync(predicate);
+    }
+
+    public async Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        var items = await FindAsync(predicate);
+
+        return await items.FirstOrDefaultAsync();
     }
 
     public async Task<IEnumerable<TEntity>> GetAll()

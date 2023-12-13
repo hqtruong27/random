@@ -1,9 +1,7 @@
-﻿using Common.Enum.Hoyoverse;
+﻿namespace Models.GenshinImpact;
 
-namespace Models.GenshinImpact;
-
-public class GachaHistoryConfig
+public class WishListConfig
 {
-    public GachaType Type { get; set; }
-    public string Url { get; set; } = default!;
+    public string GachaUrl { get; set; } = default!;
+    public string GachaDetailUrl { get; set; } = default!;
 }

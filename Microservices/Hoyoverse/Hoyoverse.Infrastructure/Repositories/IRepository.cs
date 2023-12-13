@@ -1,5 +1,6 @@
 ﻿using Hoyoverse.Infrastructure.Common;
 using MongoDB.Bson;
+using MongoDB.Driver;
 using System.Linq.Expressions;
 
 namespace Hoyoverse.Infrastructure.Repositories;
@@ -10,6 +11,8 @@ public interface IRepository<TEntity, TKey> : IBulkRepository<TEntity>, IDisposa
     Task<long> CountAsync(Expression<Func<TEntity, bool>> whereConditions);
     Task<TEntity> InsertAsync(TEntity value);
     Task<TEntity> FindByIdAsync(TKey id);
+    Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
+    Task<IAsyncCursor<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
     Task<IEnumerable<TEntity>> FindByConditionsAsync(Expression<Func<TEntity, bool>> whereConditions);
     Task<IEnumerable<TEntity>> GetAll();
     Task<TEntity> UpdateAsync(TEntity value);
