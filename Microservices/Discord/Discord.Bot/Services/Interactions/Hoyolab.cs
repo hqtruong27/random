@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace Discord.Bot.Services.Interactions;
 
-public class Hoyolab(ILogger logger) : InteractionModuleBase<SocketInteractionContext>
+public class Hoyolab(ILogger<Hoyolab> logger) : InteractionModuleBase<SocketInteractionContext>
 {
     private readonly ILogger _logger = logger;
 
