@@ -229,12 +229,12 @@ public class GachaHistoryService(IRepository<GachaHistory, long> gachaHistoryRep
 
         var stream = await response.Content.ReadAsStreamAsync();
         var result = await JsonSerializer.DeserializeAsync<GachaInfoResponse>(stream);
-        if (result?.Code == GI.Code.AuthKeyTimeOut)
+        if (result?.Code == Genshin.Code.AuthKeyTimeOut)
         {
             throw new Exception("Authkey timeout");
         }
 
-        if (result?.Code == GI.Code.VisitTooFrequently)
+        if (result?.Code == Genshin.Code.VisitTooFrequently)
         {
             await GetRecordsAsync(client, endId, gachaUrl, qs);
         }

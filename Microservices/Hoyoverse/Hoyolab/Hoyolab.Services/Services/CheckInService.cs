@@ -25,7 +25,7 @@ public class CheckInService(IRepository<User, ObjectId> repository) : ICheckInSe
         }
 
         using HttpClient client = new();
-        var payload = JsonSerializer.Serialize(new { act_id = user.Hoyolab.Act.Id });
+        var payload = JsonSerializer.Serialize(new { act_id = Common.Constants.Hoyolab.Act.Genshin });
 
         client.DefaultRequestHeaders.Add("Cookie", user.Hoyolab.Cookie);
         var content = new StringContent(payload, Encoding.UTF8, "application/json");

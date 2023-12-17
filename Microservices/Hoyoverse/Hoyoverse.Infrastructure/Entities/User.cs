@@ -14,14 +14,8 @@ public class Hoyolab
     public string Id { get; set; } = default!;
     public string Cookie { get; set; } = default!;
     public string UserName { get; set; } = default!;
-    public Activity Act { get; set; } = default!;
-    
-    public class Activity
-    {
-        public string Id { get; set; } = default!;
-        public string Type { get; set; } = default!;
-    }
 }
+
 public class Discord
 {
     public string Id { get; set; } = default!;

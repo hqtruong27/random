@@ -7,7 +7,7 @@ public static partial class GI
     {
         return lang switch
         {
-            "vi-vn" => itemType == Constants.GI.NameTranslation.Weapons ? ItemType.Weapons : ItemType.Character,
+            "vi-vn" => itemType == Constants.Genshin.NameTranslation.Weapons ? ItemType.Weapons : ItemType.Character,
             _ => ItemType.Character,
         };
     }
