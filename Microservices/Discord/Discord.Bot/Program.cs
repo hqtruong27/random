@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Discord.Commands;
 using Discord.Interactions;
 using Microsoft.Extensions.Logging;
+using Discord.Rest;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -78,6 +79,7 @@ async Task StartAsync()
 
     await client.LoginAsync(TokenType.Bot, discordSettings.Token);
 
+
     await client.StartAsync();
 
     await services.GetRequiredService<CommandHandler>().InitializeAsync();
@@ -89,6 +91,7 @@ async Task StartAsync()
         , ActivityProperties.Play
         , "no comments"));
 
+    await ReadyAsync();
     async Task ReadyAsync()
     {
         try
@@ -113,6 +116,7 @@ async Task StartAsync()
                 // this method will add commands globally, but can take around an hour
                 //await interactions.RegisterCommandsGloballyAsync();
                 await interactions.RegisterCommandsToGuildAsync(discordSettings.GuildId);
+
             }
         }
         catch (HttpException exception)
