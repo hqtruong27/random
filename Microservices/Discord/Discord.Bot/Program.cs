@@ -97,7 +97,7 @@ async Task StartAsync()
         var playing = environment.EnvironmentName;
         if (environment.IsProduction())
         {
-            playing = $"on server{Random.Shared.Next(1, 10)}...";
+            playing = $"on node {Random.Shared.Next(1, 20)}...";
         }
 
         return playing;
