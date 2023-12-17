@@ -3,11 +3,11 @@ using MongoDB.Bson.Serialization;
 
 namespace Hoyoverse.Infrastructure.Repositories;
 
-public class SettingsRepository(IRepository<Settings, string> repository) : ISettingsRepository
+public class SettingRepository(IRepository<Setting, string> repository) : ISettingRepository
 {
-    private readonly IRepository<Settings, string> _repository = repository;
+    private readonly IRepository<Setting, string> _repository = repository;
 
-    public async Task<T> GetSettingsAsync<T>(string key)
+    public async Task<T> Read<T>(string key)
     {
         var setting = await _repository.FirstOrDefaultAsync(x => x.Key == key);
 

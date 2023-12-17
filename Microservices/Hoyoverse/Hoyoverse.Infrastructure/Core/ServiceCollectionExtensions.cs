@@ -9,7 +9,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<IHoyoverseDbContext, HoyoverseDbContext>();
         services.AddScoped(typeof(IRepository<,>), typeof(MongoRepository<,>));
-        services.AddScoped(typeof(ISettingsRepository), typeof(SettingsRepository));
+        services.AddScoped(typeof(ISettingRepository), typeof(SettingRepository));
     }
 }
 

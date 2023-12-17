@@ -1,6 +1,6 @@
 ﻿namespace Hoyoverse.Infrastructure.Repositories;
 
-public interface ISettingsRepository
+public interface ISettingRepository
 {
-    Task<T> GetSettingsAsync<T>(string key);
+    Task<T> Read<T>(string key);
 }

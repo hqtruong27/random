@@ -2,7 +2,7 @@
 
 namespace Hoyolab.Services.Interfaces;
 
-public interface ICheckInService
+public interface IActivityService
 {
     Task<CheckInResponse> CheckInAsync(CheckInRequest request);
 }

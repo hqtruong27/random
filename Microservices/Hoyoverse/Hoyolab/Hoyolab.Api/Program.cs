@@ -17,7 +17,7 @@ var configuration = builder.Configuration
 
 services.AddSingleton<IDbContextOptions>(builder.Configuration.GetSection("MongoDb").Get<MongoDbContextOptions>()!);
 services.AddHoyoverseDbContext();
-services.AddScoped<ICheckInService, CheckInService>();
+services.AddScoped<IActivityService, ActivityService>();
 
 services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

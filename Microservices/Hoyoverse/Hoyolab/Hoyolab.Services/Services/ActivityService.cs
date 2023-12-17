@@ -8,12 +8,15 @@ using System.Text.Json;
 
 namespace Hoyolab.Services.Services;
 
-public class CheckInService(IRepository<User, ObjectId> repository) : ICheckInService
+public class ActivityService(IRepository<User, ObjectId> repository, ISettingRepository setting) : IActivityService
 {
+    private readonly ISettingRepository _setting = setting;
     private readonly IRepository<User, ObjectId> _repository = repository;
 
     public async Task<CheckInResponse> CheckInAsync(CheckInRequest request)
     {
+        var setting = await _setting.Read<ActivityConfig>("ACTIVITY_CONFIG");
+
         var user = await _repository.FirstOrDefaultAsync(x => x.Discord.Id == request.DiscordId);
         if (user == null)
         {
@@ -25,11 +28,12 @@ public class CheckInService(IRepository<User, ObjectId> repository) : ICheckInSe
         }
 
         using HttpClient client = new();
-        var payload = JsonSerializer.Serialize(new { act_id = Common.Constants.Hoyolab.Act.Genshin });
+        var payload = JsonSerializer.Serialize(new CheckInRequest { ActId = setting.Act.Genshin });
 
         client.DefaultRequestHeaders.Add("Cookie", user.Hoyolab.Cookie);
         var content = new StringContent(payload, Encoding.UTF8, "application/json");
-        var response = await client.PostAsync("https://sg-hk4e-api.hoyolab.com/event/sol/sign?lang=vi-vn", content);
+
+        var response = await client.PostAsync(setting.CheckInUrl, content);
 
         var responseJson = await response.Content.ReadAsStreamAsync();
         var result = await JsonSerializer.DeserializeAsync<CheckInResponse>(responseJson);

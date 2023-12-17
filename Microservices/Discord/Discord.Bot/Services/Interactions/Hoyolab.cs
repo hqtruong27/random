@@ -1,4 +1,5 @@
-﻿using Discord.Interactions;
+﻿using Discord.Bot.Models;
+using Discord.Interactions;
 using Microsoft.Extensions.Logging;
 using Models.Hoyolab;
 using System.Text;
@@ -6,11 +7,12 @@ using System.Text.Json;
 
 namespace Discord.Bot.Services.Interactions;
 
-public class Hoyolab(ILogger<Hoyolab> logger) : InteractionModuleBase<SocketInteractionContext>
+public class Hoyolab(ILogger<Hoyolab> logger, HoyolabSettings settings) : InteractionModuleBase<SocketInteractionContext>
 {
+    private readonly HoyolabSettings _settings = settings;
     private readonly ILogger _logger = logger;
 
-    [SlashCommand("checkin", "check connect to server spending")]
+    [SlashCommand("check-in", "daily check in")]
     public async Task CheckIn()
     {
         var user = Context.User.ToSocketGuild();
@@ -24,7 +26,7 @@ public class Hoyolab(ILogger<Hoyolab> logger) : InteractionModuleBase<SocketInte
 
             var payload = JsonSerializer.Serialize(checkIn);
             var content = new StringContent(payload, Encoding.UTF8, "application/json");
-            var response = await client.PostAsync("https://hoyolab.kaname-madoka.com/CheckIn", content);
+            var response = await client.PostAsync($"{_settings.Gateway}/activity/check-in", content);
 
             var responseJson = await response.Content.ReadAsStringAsync();
             _logger.LogInformation("response {response}", responseJson);
@@ -35,6 +37,6 @@ public class Hoyolab(ILogger<Hoyolab> logger) : InteractionModuleBase<SocketInte
             await Context.Channel.SendMessageAsync($"{user.Mention} {message}");
         });
 
-        await RespondAsync("check in processing....");
+        await RespondAsync("check in ....");
     }
 }

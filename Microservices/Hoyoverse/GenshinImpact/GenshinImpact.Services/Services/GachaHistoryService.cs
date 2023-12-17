@@ -9,13 +9,13 @@ using MongoDB.Driver;
 
 namespace GenshinImpact.Services.Services;
 
-public class GachaHistoryService(IRepository<GachaHistory, long> gachaHistoryRepository
-    , ISettingsRepository settingsRepository
+public class GachaHistoryService(IRepository<GachaHistory, long> repository
+    , ISettingRepository setting
     , IMapper mapper
     , ILogger<GachaHistoryService> logger) : IGachaHistoryService
 {
-    private readonly IRepository<GachaHistory, long> _gachaHistoryRepository = gachaHistoryRepository;
-    private readonly ISettingsRepository _settingsRepository = settingsRepository;
+    private readonly ISettingRepository _setting = setting;
+    private readonly IRepository<GachaHistory, long> _repository = repository;
     private readonly ILogger _logger = logger;
     private readonly IMapper _mapper = mapper;
 
@@ -23,8 +23,8 @@ public class GachaHistoryService(IRepository<GachaHistory, long> gachaHistoryRep
     {
         _logger.LogInformation("Start: crawl {url}", url);
 
+        var setting = await _setting.Read<WishListConfig>("WISH_LIST_CONFIG");
         var queryString = UrlQueryHelper.Populate<UrlQuery>(url);
-        var config = await _settingsRepository.GetSettingsAsync<WishListConfig>("WISH_LIST_CONFIG");
         using var client = new HttpClient();
         long endId = 0;
         var total = 0;
@@ -33,7 +33,7 @@ public class GachaHistoryService(IRepository<GachaHistory, long> gachaHistoryRep
         var records = new List<GachaHistory>();
         while (hasMoreRecords)
         {
-            var items = await GetRecordsAsync(client, endId, config.GachaUrl, queryString);
+            var items = await GetRecordsAsync(client, endId, setting.GachaUrl, queryString);
 
             switch (items.Count)
             {
@@ -42,7 +42,7 @@ public class GachaHistoryService(IRepository<GachaHistory, long> gachaHistoryRep
                     endId = items[items.Count - 1].Id;
                     if (records.Count > batchSize)
                     {
-                        await _gachaHistoryRepository.BulkInsertAsync(records);
+                        await _repository.BulkInsertAsync(records);
                         records.Clear();
                     }
 
@@ -61,7 +61,7 @@ public class GachaHistoryService(IRepository<GachaHistory, long> gachaHistoryRep
 
         if (records.Count > 0)
         {
-            await _gachaHistoryRepository.BulkInsertAsync(records);
+            await _repository.BulkInsertAsync(records);
         }
 
         yield return total;
@@ -71,7 +71,7 @@ public class GachaHistoryService(IRepository<GachaHistory, long> gachaHistoryRep
 
     public async Task<GachaHistoryResponse> FindByIdAsync(long id)
     {
-        var result = await _gachaHistoryRepository.FindByIdAsync(id);
+        var result = await _repository.FindByIdAsync(id);
         return _mapper.Map<GachaHistoryResponse>(result);
     }
 
@@ -141,8 +141,8 @@ public class GachaHistoryService(IRepository<GachaHistory, long> gachaHistoryRep
             }
         };
 
-        var characterEvent = await _gachaHistoryRepository.AggregateAsync(stage1, stage2, stage3);
-        var count = (await _gachaHistoryRepository.AggregateAsync(stage1, countStage)).FirstOrDefault()?.GetValue("Total").AsInt32;
+        var characterEvent = await _repository.AggregateAsync(stage1, stage2, stage3);
+        var count = (await _repository.AggregateAsync(stage1, countStage)).FirstOrDefault()?.GetValue("Total").AsInt32;
         var aggregateModel = BsonSerializer.Deserialize<List<AggregateGachaHistoryModel>>(characterEvent.ToJson());
 
         AggregateGachaHistoryModel? first = null;

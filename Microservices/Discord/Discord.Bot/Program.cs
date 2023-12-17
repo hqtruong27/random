@@ -1,12 +1,12 @@
-﻿using Discord.Net;
-using Grpc.Net.Client;
-using System.Text.Json;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
+﻿using Discord.Bot.Models;
 using Discord.Commands;
 using Discord.Interactions;
+using Discord.Net;
+using Grpc.Net.Client;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Discord.Rest;
+using System.Text.Json;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -53,6 +53,7 @@ async Task StartAsync()
 
     var discordSettings = configuration.GetSection(nameof(DiscordSettings)).Get<DiscordSettings>()!;
     var statisticSettings = configuration.GetSection(nameof(StatisticSettings)).Get<StatisticSettings>()!;
+    var hoyolabSettings = configuration.GetSection(nameof(HoyolabSettings)).Get<HoyolabSettings>()!;
     var services = new ServiceCollection()
            .AddLogging(builder =>
            {
@@ -62,6 +63,7 @@ async Task StartAsync()
            .AddSingleton(commands)
            .AddSingleton(interactions)
            .AddSingleton(statisticSettings)
+           .AddSingleton(hoyolabSettings)
            .AddSingleton<CommandHandler>()
            .AddSingleton(new DiscordSettings()
            {
@@ -79,17 +81,27 @@ async Task StartAsync()
 
     await client.LoginAsync(TokenType.Bot, discordSettings.Token);
 
-
     await client.StartAsync();
 
     await services.GetRequiredService<CommandHandler>().InitializeAsync();
 
     while (client.ConnectionState != Discord.ConnectionState.Connected) { }
 
-    await client.SetActivityAsync(new Game($"{environment.EnvironmentName}..."
+    await client.SetActivityAsync(new Game($"{Playing()}..."
         , ActivityType.Playing
         , ActivityProperties.Play
         , "no comments"));
+
+    string Playing()
+    {
+        var playing = environment.EnvironmentName;
+        if (environment.IsProduction())
+        {
+            playing = $"on server{Random.Shared.Next(1, 10)}...";
+        }
+
+        return playing;
+    }
 
     await ReadyAsync();
     async Task ReadyAsync()
@@ -108,15 +120,12 @@ async Task StartAsync()
             if (!environment.IsProduction())
             {
                 await client.SetStatusAsync(UserStatus.Idle);
-
                 await interactions.RegisterCommandsToGuildAsync(discordSettings.GuildId);
             }
             else
             {
                 // this method will add commands globally, but can take around an hour
-                //await interactions.RegisterCommandsGloballyAsync();
-                await interactions.RegisterCommandsToGuildAsync(discordSettings.GuildId);
-
+                await interactions.RegisterCommandsGloballyAsync();
             }
         }
         catch (HttpException exception)
