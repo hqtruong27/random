@@ -5,7 +5,5 @@ namespace Hoyoverse.Infrastructure.Common.Interfaces;
 
 public interface IEntity<T>
 {
-    [BsonId]
-    [BsonRepresentation(BsonType.ObjectId)]
     T Id { get; }
 }

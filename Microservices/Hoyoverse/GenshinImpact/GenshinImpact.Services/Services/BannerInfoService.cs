@@ -12,9 +12,9 @@ public class BannerInfoService(IRepository<BannerInfo, string> repository) : IBa
 
         return _repository.InsertAsync(new BannerInfo
         {
-            GameVersion = query.GameVersion,
+            Id = query.GachaId,
             Region = query.Region,
-            GachaId = query.GachaId,
+            GameVersion = query.GameVersion,
         });
     }
 }
