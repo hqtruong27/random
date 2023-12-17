@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Libraries\Models\Models.csproj" />
+    <ProjectReference Include="..\..\Hoyoverse.Infrastructure\Hoyoverse.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

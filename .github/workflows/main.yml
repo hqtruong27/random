@@ -51,6 +51,21 @@ jobs:
           docker build -t hqtruong27/genshinimpact.api:latest -f Microservices/Hoyoverse/GenshinImpact/GenshinImpact.Api/Dockerfile .
           docker push hqtruong27/genshinimpact.api:latest
 
+  build-hoyolab-api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Docker login
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Docker build and push hoyolab api
+        run: |
+          docker build -t hqtruong27/hoyolab.api:latest -f Microservices/Hoyoverse/Hoyolab/Hoyolab.Api/Dockerfile .
+          docker push hqtruong27/hoyolab.api:latest
+
   ssh:
     runs-on: ubuntu-latest
     steps:
@@ -75,6 +90,7 @@ jobs:
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker pull hqtruong27/discord.bot:latest
+            docker compose -f docker/random/docker-compose.yml down -v
             docker compose -f docker/random/docker-compose.yml up -d
 
   deploy-spending-api:
@@ -105,4 +121,19 @@ jobs:
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker pull hqtruong27/genshinimpact.api:latest
+            docker compose -f docker/random/docker-compose.yml up -d
+
+  deploy-hoyolab-api:
+    needs: [build-hoyolab-api, ssh]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Hoyolab Api
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER_NAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            docker pull hqtruong27/hoyolab.api:latest
             docker compose -f docker/random/docker-compose.yml up -d

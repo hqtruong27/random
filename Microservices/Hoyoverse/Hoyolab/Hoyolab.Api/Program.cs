@@ -1,13 +1,45 @@
+using Hoyolab.Services.Interfaces;
+using Hoyolab.Services.Services;
+using Hoyoverse.Infrastructure.Common.Settings;
+using Hoyoverse.Infrastructure.Core;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+var services = builder.Services;
+var environment = builder.Environment;
+var configuration = builder.Configuration
+   .SetBasePath(builder.Environment.ContentRootPath)
+   .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+   .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true)
+   .AddEnvironmentVariables()
+   .Build();
 
-builder.Services.AddControllers();
+
+services.AddSingleton<IDbContextOptions>(builder.Configuration.GetSection("MongoDb").Get<MongoDbContextOptions>()!);
+services.AddHoyoverseDbContext();
+services.AddScoped<ICheckInService, CheckInService>();
+
+services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// services.AddEndpointsApiExplorer();
+services.AddSwaggerGen();
 
 var app = builder.Build();
+
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path.Value == "/favicon.ico")
+    {
+        context.Response.StatusCode = StatusCodes.Status200OK;
+        return;
+    }
+
+    // No favicon, call next middleware
+    await next.Invoke();
+});
+
+app.MapGet("/", () => "Genshin Impact Api");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -16,10 +48,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
+//app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();

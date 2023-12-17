@@ -15,4 +15,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Libraries\Models\Models.csproj" />
+    <ProjectReference Include="..\..\Hoyoverse.Infrastructure\Hoyoverse.Infrastructure.csproj" />
+    <ProjectReference Include="..\Hoyolab.Services\Hoyolab.Services.csproj" />
+  </ItemGroup>
+
 </Project>
