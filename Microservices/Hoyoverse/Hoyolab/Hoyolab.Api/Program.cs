@@ -17,6 +17,8 @@ var configuration = builder.Configuration
    .AddEnvironmentVariables()
    .Build();
 
+Console.WriteLine($"Current: {DateTimeOffset.Now}");
+
 services.Configure<QuartzOptions>(options =>
 {
     options.Scheduling.IgnoreDuplicates = true;
