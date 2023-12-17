@@ -1,5 +1,6 @@
 using Hoyolab.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Models.Hoyolab;
 
 namespace Hoyolab.Api.Controllers
 {
@@ -11,9 +12,9 @@ namespace Hoyolab.Api.Controllers
         private readonly ICheckInService _checkInService = checkInService;
 
         [HttpPost]
-        public async Task<IActionResult> CheckIn()
+        public async Task<IActionResult> CheckIn([FromBody] CheckInRequest request)
         {
-            return Ok(await _checkInService.CheckInAsync(new()));
+            return Ok(await _checkInService.CheckInAsync(request));
         }
     }
 }
