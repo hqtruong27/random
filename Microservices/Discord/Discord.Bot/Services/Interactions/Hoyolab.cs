@@ -24,7 +24,7 @@ public class Hoyolab(ILogger<Hoyolab> logger) : InteractionModuleBase<SocketInte
 
             var payload = JsonSerializer.Serialize(checkIn);
             var content = new StringContent(payload, Encoding.UTF8, "application/json");
-            var response = await client.PostAsync("hoyolab.kaname-madoka.com/CheckIn", content);
+            var response = await client.PostAsync("https://hoyolab.kaname-madoka.com/CheckIn", content);
 
             var responseJson = await response.Content.ReadAsStringAsync();
             _logger.LogInformation("response {response}", responseJson);
