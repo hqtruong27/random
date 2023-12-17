@@ -9,7 +9,7 @@ namespace GenshinImpact.Api.Controllers
         private readonly IBannerInfoService _bannerInfoService = bannerInfoService;
 
         [HttpPost]
-        public async Task<IActionResult> Create(BannerInfoRequest request)
+        public async Task<IActionResult> Create(IBannerInfoService request)
         {
             await _bannerInfoService.CreateAsync(request);
             return Ok();
