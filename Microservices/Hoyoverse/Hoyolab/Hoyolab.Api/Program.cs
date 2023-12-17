@@ -1,7 +1,10 @@
+using Hoyolab.Api.Job;
 using Hoyolab.Services.Interfaces;
 using Hoyolab.Services.Services;
 using Hoyoverse.Infrastructure.Common.Settings;
 using Hoyoverse.Infrastructure.Core;
+using Quartz;
+using Quartz.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +17,38 @@ var configuration = builder.Configuration
    .AddEnvironmentVariables()
    .Build();
 
+services.Configure<QuartzOptions>(options =>
+{
+    options.Scheduling.IgnoreDuplicates = true;
+});
+
+services.AddQuartz(q =>
+{
+    q.SchedulerId = "Scheduler-Core";
+    q.UseDefaultThreadPool(tp =>
+    {
+        tp.MaxConcurrency = 10;
+    });
+
+    var jobKey = new JobKey("job", "hoyolab");
+    q.AddJob<CheckInJob>(jobKey, j => j
+        .WithDescription("job")
+    );
+
+    q.AddTrigger(t => t
+        .WithIdentity("trigger-job", "hoyolab")
+        .ForJob(jobKey)
+        .WithCronSchedule("0/10 * * ? * *")
+        .WithDescription("cron trigger")
+    );
+});
+
+services.AddQuartzHostedService(opt =>
+{
+    opt.WaitForJobsToComplete = true;
+});
+
+LogProvider.SetCurrentLogProvider(new ConsoleLogProvider());
 
 services.AddSingleton<IDbContextOptions>(builder.Configuration.GetSection("MongoDb").Get<MongoDbContextOptions>()!);
 services.AddHoyoverseDbContext();
@@ -25,7 +60,6 @@ services.AddControllers();
 services.AddSwaggerGen();
 
 var app = builder.Build();
-
 
 app.Use(async (context, next) =>
 {
@@ -53,3 +87,28 @@ if (app.Environment.IsDevelopment())
 app.MapControllers();
 
 await app.RunAsync();
+
+class ConsoleLogProvider : ILogProvider
+{
+    public Logger GetLogger(string name)
+    {
+        return (level, func, exception, parameters) =>
+        {
+            if (level >= Quartz.Logging.LogLevel.Info && func != null)
+            {
+                Console.WriteLine("[" + DateTime.Now.ToLongTimeString() + "] [" + level + "] " + func(), parameters);
+            }
+            return true;
+        };
+    }
+
+    public IDisposable OpenNestedContext(string message)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IDisposable OpenMappedContext(string key, object value, bool destructure = false)
+    {
+        throw new NotImplementedException();
+    }
+}

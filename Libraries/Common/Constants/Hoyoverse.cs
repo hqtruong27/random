@@ -22,5 +22,4 @@ public static partial class Genshin
     {
         public const string Weapons = "Vũ khí";
     }
-
 }

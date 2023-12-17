@@ -14,6 +14,7 @@ public class Hoyolab
     public string Id { get; set; } = default!;
     public string Cookie { get; set; } = default!;
     public string UserName { get; set; } = default!;
+    public bool IsAutoCheckIn { get; set; } = default!;
 }
 
 public class Discord
