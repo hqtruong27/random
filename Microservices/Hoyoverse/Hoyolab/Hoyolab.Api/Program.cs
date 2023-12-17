@@ -39,7 +39,7 @@ app.Use(async (context, next) =>
     await next.Invoke();
 });
 
-app.MapGet("/", () => "Genshin Impact Api");
+app.MapGet("/", () => "Hoyolab Api");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
