@@ -26,6 +26,7 @@ services.AddSingleton<IDbContextOptions>(builder.Configuration.GetSection("Mongo
 services.AddHoyoverseDbContext();
 services.AddAutoMapper(typeof(OrganizationProfile));
 services.AddScoped<IGachaHistoryService, GachaHistoryService>();
+services.AddScoped<IBannerInfoService, BannerInfoService>();
 
 services.AddAutoMapper(typeof(OrganizationProfile)).AddControllers().AddJsonOptions(o =>
 {

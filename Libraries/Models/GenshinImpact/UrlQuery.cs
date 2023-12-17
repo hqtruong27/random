@@ -2,7 +2,7 @@
 
 namespace Models.GenshinImpact
 {
-    public class GachaHistoryQueryString
+    public class UrlQuery
     {
         [JsonPropertyName("win_mode")]
         public string WinMode { get; set; } = default!;
@@ -55,6 +55,11 @@ namespace Models.GenshinImpact
         [JsonPropertyName("authkey")]
         public string AuthKey { get; set; } = default!;
 
-        public string QueryString { get; set; } = default!;
+        private string QueryString { get; set; } = default!;
+
+        public string ToQueryString()
+        {
+            return QueryString;
+        }
     }
 }

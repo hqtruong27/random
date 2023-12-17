@@ -23,7 +23,7 @@ public class GachaHistoryService(IRepository<GachaHistory, long> gachaHistoryRep
     {
         _logger.LogInformation("Start: crawl {url}", url);
 
-        var queryString = QueryStringHelper.Populate<GachaHistoryQueryString>(url);
+        var queryString = UrlQueryHelper.Populate<UrlQuery>(url);
         var config = await _settingsRepository.GetSettingsAsync<WishListConfig>("WISH_LIST_CONFIG");
         using var client = new HttpClient();
         long endId = 0;
@@ -221,9 +221,9 @@ public class GachaHistoryService(IRepository<GachaHistory, long> gachaHistoryRep
         HttpClient client,
         long endId,
         string gachaUrl,
-        GachaHistoryQueryString gachaHistoryQueryString)
+        UrlQuery qs)
     {
-        var requestUri = $"{gachaUrl}?{gachaHistoryQueryString.QueryString}";
+        var requestUri = $"{gachaUrl}?{qs.ToQueryString()}";
 
         var response = await client.GetAsync(requestUri).ConfigureAwait(false);
 
@@ -236,7 +236,7 @@ public class GachaHistoryService(IRepository<GachaHistory, long> gachaHistoryRep
 
         if (result?.Code == GI.Code.VisitTooFrequently)
         {
-            await GetRecordsAsync(client, endId, gachaUrl, gachaHistoryQueryString);
+            await GetRecordsAsync(client, endId, gachaUrl, qs);
         }
 
         return result?.Data.GachaHistories.Select(_mapper.Map<GachaHistory>).ToList() ?? [];

@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Common.Helpers;
 
-public static partial class QueryStringHelper
+public static partial class UrlQueryHelper
 {
     public static T Populate<T>(string queryString)
     {
