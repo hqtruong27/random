@@ -40,7 +40,7 @@ services.AddQuartz(q =>
     q.AddTrigger(t => t
         .WithIdentity("trigger-job", "hoyolab")
         .ForJob(jobKey)
-        .WithCronSchedule("0/10 * * ? * *")
+        .WithCronSchedule("0 0 1 ? * * * ")
         .WithDescription("cron trigger")
     );
 });
