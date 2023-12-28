@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace Hoyoverse.Infrastructure.Repositories;
 
-public interface IRepository<TEntity, TKey> : IBulkRepository<TEntity>, IDisposable where TEntity : AuditableEntity<TKey>, new()
+public interface IRepository<TEntity, TKey> : IBulkRepository<TEntity>, IDisposable where TEntity : AuditableEntity<TKey>
 {
     Task<IEnumerable<BsonDocument>> AggregateAsync(params BsonDocument[] pipeline);
     Task<long> CountAsync(Expression<Func<TEntity, bool>> whereConditions);

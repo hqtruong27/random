@@ -8,35 +8,96 @@ using System.Text.Json;
 
 namespace Hoyolab.Services.Services;
 
-public class ActivityService(IRepository<User, ObjectId> repository, ISettingRepository setting) : IActivityService
+public class ActivityService(IRepository<User, ObjectId> repository
+    , ISettingRepository setting) : IActivityService
 {
     private readonly ISettingRepository _setting = setting;
-    private readonly IRepository<User, ObjectId> _repository = repository;
 
-    public async Task<CheckInResponse> CheckInAsync(CheckInRequest request)
+    public async Task AutoCheckInAsync(User user)
     {
         var setting = await _setting.Read<ActivityConfig>("ACTIVITY_CONFIG");
 
-        var user = await _repository.FirstOrDefaultAsync(x => x.Discord.Id == request.DiscordId);
+        using HttpClient client = new();
+
+        foreach (var hoyolab in user.Hoyolabs)
+        {
+            if (!hoyolab.IsAutoCheckIn) continue;
+            for (int i = 1; i <= 3; i++)
+            {
+                switch (i)
+                {
+                    case 1:
+                        await PostAsync(setting.CheckInUrl, hoyolab, setting.Act.Genshin);
+                        break;
+                    case 2:
+                        await PostAsync(setting.CheckInUrl, hoyolab, setting.Act.Hsr);
+                        break;
+                    case 3:
+                        await PostAsync(setting.CheckInUrl, hoyolab, setting.Act.Hi3);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    public async Task<List<CheckInResponse>> CheckInAsync(CheckInRequest request)
+    {
+        var setting = await _setting.Read<ActivityConfig>("ACTIVITY_CONFIG");
+
+        var user = await repository.FirstOrDefaultAsync(x => x.Discord.Id == request.DiscordId);
         if (user == null)
         {
-            return new CheckInResponse
-            {
-                Code = -1,
-                Message = "Login Discord first"
-            };
+            return
+            [
+                new CheckInResponse
+                {
+                    Code = -1,
+                    Message = "Login Discord first"
+                }
+            ];
         }
 
         using HttpClient client = new();
         var payload = JsonSerializer.Serialize(new CheckInRequest { ActId = setting.Act.Genshin });
 
-        client.DefaultRequestHeaders.Add("Cookie", user.Hoyolab.Cookie);
+        List<CheckInResponse> result = [];
+        foreach (var hoyolab in user.Hoyolabs)
+        {
+            for (int i = 1; i <= 3; i++)
+            {
+                switch (i)
+                {
+                    case 1:
+                        result.Add(await PostAsync(setting.CheckInUrl, hoyolab, setting.Act.Genshin));
+                        break;
+                    case 2:
+                        result.Add(await PostAsync(setting.CheckInUrl, hoyolab, setting.Act.Hsr));
+                        break;
+                    case 3:
+                        result.Add(await PostAsync(setting.CheckInUrl, hoyolab, setting.Act.Hi3));
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        return result!;
+    }
+
+    private static async Task<CheckInResponse> PostAsync(string url, HoyolabAccount hoyolab, string actId)
+    {
+        using HttpClient client = new();
+
+        var payload = JsonSerializer.Serialize(new { act_id = actId });
+        client.DefaultRequestHeaders.Add("Cookie", hoyolab.Cookie);
         var content = new StringContent(payload, Encoding.UTF8, "application/json");
+        var response = await client.PostAsync(url, content);
 
-        var response = await client.PostAsync(setting.CheckInUrl, content);
-
-        var responseJson = await response.Content.ReadAsStreamAsync();
-        var result = await JsonSerializer.DeserializeAsync<CheckInResponse>(responseJson);
+        var stream = await response.Content.ReadAsStreamAsync();
+        var result = await JsonSerializer.DeserializeAsync<CheckInResponse>(stream);
 
         return result!;
     }

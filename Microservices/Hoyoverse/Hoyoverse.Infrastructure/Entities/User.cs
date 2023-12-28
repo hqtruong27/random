@@ -4,21 +4,22 @@ namespace Hoyoverse.Infrastructure.Entities;
 
 public class User : AuditableEntity<ObjectId>
 {
-    public Discord Discord { get; set; } = new();
-    public Hoyolab Hoyolab { get; set; } = new();
+    public required DiscordAccount Discord { get; set; }
+    public required ICollection<HoyolabAccount> Hoyolabs { get; set; }
+
 }
 
-
-public class Hoyolab
+public class HoyolabAccount
 {
-    public string Id { get; set; } = default!;
-    public string Cookie { get; set; } = default!;
+    public required string Id { get; set; }
+    public required string Cookie { get; set; }
     public string UserName { get; set; } = default!;
+    public string Gender { get; set; } = default!;
     public bool IsAutoCheckIn { get; set; } = default!;
 }
 
-public class Discord
+public class DiscordAccount
 {
-    public string Id { get; set; } = default!;
-    public string UserName { get; set; } = default!;
+    public required string Id { get; set; } = default!;
+    public required string UserName { get; set; } = default!;
 }

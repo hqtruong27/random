@@ -19,6 +19,7 @@ jobs:
       - name: Docker build and push Discord bot
         run: |
           docker build -t hqtruong27/discord.bot:latest -f Microservices/Discord/Discord.Bot/Dockerfile .
+          docker tag hqtruong27/discord.bot:latest hqtruong27/discord.bot:latest
           docker push hqtruong27/discord.bot:latest
 
   build-spending-api:
@@ -34,6 +35,7 @@ jobs:
       - name: Docker build and push spending api
         run: |
           docker build -t hqtruong27/spending.api:latest -f Microservices/Spending/Spending.Api/Dockerfile .
+          docker tag hqtruong27/spending.api:latest hqtruong27/spending.api:latest
           docker push hqtruong27/spending.api:latest
 
   build-genshinimpact-api:
@@ -49,6 +51,7 @@ jobs:
       - name: Docker build and push genshin impact api
         run: |
           docker build -t hqtruong27/genshinimpact.api:latest -f Microservices/Hoyoverse/GenshinImpact/GenshinImpact.Api/Dockerfile .
+          docker tag -t hqtruong27/genshinimpact.api:latest hqtruong27/genshinimpact.api:latest
           docker push hqtruong27/genshinimpact.api:latest
 
   build-hoyolab-api:
@@ -64,6 +67,7 @@ jobs:
       - name: Docker build and push hoyolab api
         run: |
           docker build -t hqtruong27/hoyolab.api:latest -f Microservices/Hoyoverse/Hoyolab/Hoyolab.Api/Dockerfile .
+          docker tag -t hqtruong27/hoyolab.api:latest hqtruong27/hoyolab.api:latest
           docker push hqtruong27/hoyolab.api:latest
 
   ssh:

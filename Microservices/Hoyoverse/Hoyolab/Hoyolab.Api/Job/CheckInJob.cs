@@ -11,12 +11,12 @@ public class CheckInJob(IActivityService activityService, IRepository<User, Obje
 {
     public async Task Execute(IJobExecutionContext context)
     {
-        var users = await (await repository.FindAsync(x => x.Hoyolab.IsAutoCheckIn)).ToListAsync();
+        var users = await repository.FindAsync(x => x.Hoyolabs.Any(i => i.IsAutoCheckIn));
 
         //TODO: use parallel processor
-        foreach (var user in users)
+        foreach (var user in await users.ToListAsync())
         {
-            await activityService.CheckInAsync(new() { DiscordId = user.Discord.Id });
+            await activityService.AutoCheckInAsync(user);
         }
     }
 }
