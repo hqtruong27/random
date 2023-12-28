@@ -31,10 +31,13 @@ public class Hoyolab(ILogger<Hoyolab> logger, HoyolabSettings settings) : Intera
             var responseJson = await response.Content.ReadAsStringAsync();
             _logger.LogInformation("response {response}", responseJson);
 
-            var result = JsonSerializer.Deserialize<CheckInResponse>(responseJson);
+            var result = JsonSerializer.Deserialize<List<CheckInResponse>>(responseJson)!;
 
-            var message = result?.Code == 0 ? "Check in success" : result?.Message;
-            await Context.Channel.SendMessageAsync($"{user.Mention} {message}");
+            foreach (var item in result)
+            {
+                var message = item.Code == 0 ? "Check in success" : item.Message;
+                await Context.Channel.SendMessageAsync($"{user.Mention} {message}");
+            }
         });
 
         await RespondAsync("check in ....");

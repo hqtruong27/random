@@ -51,7 +51,7 @@ jobs:
       - name: Docker build and push genshin impact api
         run: |
           docker build -t hqtruong27/genshinimpact.api:latest -f Microservices/Hoyoverse/GenshinImpact/GenshinImpact.Api/Dockerfile .
-          docker tag -t hqtruong27/genshinimpact.api:latest hqtruong27/genshinimpact.api:latest
+          docker tag hqtruong27/genshinimpact.api:latest hqtruong27/genshinimpact.api:latest
           docker push hqtruong27/genshinimpact.api:latest
 
   build-hoyolab-api:
@@ -67,7 +67,7 @@ jobs:
       - name: Docker build and push hoyolab api
         run: |
           docker build -t hqtruong27/hoyolab.api:latest -f Microservices/Hoyoverse/Hoyolab/Hoyolab.Api/Dockerfile .
-          docker tag -t hqtruong27/hoyolab.api:latest hqtruong27/hoyolab.api:latest
+          docker tag hqtruong27/hoyolab.api:latest hqtruong27/hoyolab.api:latest
           docker push hqtruong27/hoyolab.api:latest
 
   ssh:
