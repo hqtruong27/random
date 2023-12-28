@@ -18,6 +18,7 @@ public class Hoyolab(ILogger<Hoyolab> logger, HoyolabSettings settings) : Intera
         var user = Context.User.ToSocketGuild();
         _ = Task.Run(async () =>
         {
+            _logger.LogInformation("Start check in");
             using var client = new HttpClient();
             var checkIn = new CheckInRequest
             {

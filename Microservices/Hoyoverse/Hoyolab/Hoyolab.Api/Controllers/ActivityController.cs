@@ -8,12 +8,10 @@ namespace Hoyolab.Api.Controllers
     [Route("[controller]")]
     public class ActivityController(IActivityService activityService) : ControllerBase
     {
-        private readonly IActivityService _activityService = activityService;
-
         [HttpPost("check-in")]
         public async Task<IActionResult> CheckIn([FromBody] CheckInRequest request)
         {
-            return Ok(await _activityService.CheckInAsync(request));
+            return Ok(await activityService.CheckInAsync(request));
         }
     }
 }

@@ -59,9 +59,6 @@ public class ActivityService(IRepository<User, ObjectId> repository
             ];
         }
 
-        using HttpClient client = new();
-        var payload = JsonSerializer.Serialize(new CheckInRequest { ActId = setting.Act.Genshin });
-
         List<CheckInResponse> result = [];
         foreach (var hoyolab in user.Hoyolabs)
         {
