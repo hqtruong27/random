@@ -1,6 +1,6 @@
-﻿using System.Collections.Concurrent;
-using Dispatcher.Extensions;
+﻿using Dispatcher.Extensions;
 using Dispatcher.Wrappers;
+using System.Collections.Concurrent;
 
 namespace Dispatcher;
 

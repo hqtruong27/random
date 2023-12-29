@@ -1,24 +1,48 @@
-﻿using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Reflection;
 
 namespace Dispatcher.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection Register(this IServiceCollection services, Assembly assembly)
+    public class DispatcherConfigure
     {
-        return services
-            .Add(typeof(IRequestHandler<>), assembly)
-            .Add(typeof(IRequestHandler<,>), assembly)
-            .AddRequiredServices();
+        public bool AutoScanReferencedAssemblies { get; set; }
     }
 
-    private static IServiceCollection Add(this IServiceCollection services, Type requestInterface, Assembly assembly)
+    public static IServiceCollection AddDispatcher(this IServiceCollection services, Assembly assembly, Action<DispatcherConfigure> configure = default!)
+    {
+        services.ScanInterface(typeof(IRequestHandler<>), assembly)
+                .ScanInterface(typeof(IRequestHandler<,>), assembly)
+                .AddRequiredServices();
+
+        DispatcherConfigure _configure = new();
+        configure?.Invoke(_configure);
+
+        if (_configure.AutoScanReferencedAssemblies)
+        {
+            services.AutoScanReferencedAssemblies(assembly);
+        }
+
+        return services;
+    }
+
+    private static IServiceCollection AutoScanReferencedAssemblies(this IServiceCollection services, Assembly assembly)
+    {
+        foreach (var assemblyName in assembly.GetReferencedAssemblies())
+        {
+            services.AddDispatcher(Assembly.Load(assemblyName));
+        }
+
+        return services;
+    }
+
+    private static IServiceCollection ScanInterface(this IServiceCollection services, Type requestInterface, Assembly assembly)
     {
         List<Type> interfaces = [];
         List<Type> concretions = [];
-        foreach (var type in assembly.DefinedTypes.Where(t => !t.IsOpenGeneric()).Where(t => true))
+        foreach (var type in assembly.DefinedTypes.Where(t => !t.IsOpenGeneric()))
         {
             var interfaceTypes = type.FindInterfacesThatClose(requestInterface).ToArray();
             if (interfaceTypes.Length == 0) continue;
@@ -49,7 +73,7 @@ public static class ServiceCollectionExtensions
 
             if (!@interface.IsOpenGeneric())
             {
-                AddConcretionsThatCouldBeClosed(@interface, concretions, services);
+                AddConcretions(@interface, concretions, services);
             }
         }
 
@@ -78,7 +102,7 @@ public static class ServiceCollectionExtensions
         return false;
     }
 
-    private static void AddConcretionsThatCouldBeClosed(Type @interface, List<Type> concretions, IServiceCollection services)
+    private static void AddConcretions(Type @interface, List<Type> concretions, IServiceCollection services)
     {
         foreach (var type in concretions.Where(x => x.IsOpenGeneric() && x.CouldCloseTo(@interface)))
         {
@@ -105,19 +129,21 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddRequestHandlers(this IServiceCollection services, Assembly assembly)
     {
         var requestHandlerTypes = assembly.GetTypes()
-            .Where(t => t.IsClass && !t.IsAbstract && !t.IsGenericType)
-            .Where(t => t.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>)))
-            .ToList();
+     .Where(t => t.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>)));
 
         foreach (var handlerType in requestHandlerTypes)
         {
-            var interfaces = handlerType.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>));
+            // Retrieve the IRequest<TRequest> and IHandler<TRequest, TResult> generic type arguments
+            var requestType = handlerType.GetInterfaces().FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>))?.GetGenericArguments()[0];
+            var resultType = handlerType.GetInterfaces().FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>))?.GetGenericArguments()[1];
 
-            foreach (var @interface in interfaces)
-            {
-                services.AddTransient(@interface, handlerType);
-            }
+            // Construct the closed generic type for the registration
+            var closedHandlerType = typeof(IRequestHandler<,>).MakeGenericType(requestType, resultType);
+
+            // Register the handler type with the DI container
+            services.AddTransient(closedHandlerType, handlerType);
         }
+
 
         return services;
     }
@@ -128,7 +154,7 @@ public static class ServiceCollectionExtensions
         //services.TryAddScoped(typeof(IRequestHandler<,>), typeof(RequestHandlerWrapperImplement<,>));
         services.TryAddTransient<IDispatcher, Dispatcher>();
         services.TryAddTransient(typeof(ISender), x => x.GetRequiredService<IDispatcher>());
-        
+
         return services;
     }
 
@@ -141,12 +167,12 @@ public static class ServiceCollectionExtensions
         return pluginType.IsAssignableFrom(pluggedType);
     }
 
-    public static IEnumerable<Type> FindInterfacesThatClose(this Type pluggedType, Type templateType)
+    private static IEnumerable<Type> FindInterfacesThatClose(this Type pluggedType, Type templateType)
     {
         return FindInterfacesThatClosesCore(pluggedType, templateType).Distinct();
     }
 
-    public static IEnumerable<Type> FindInterfacesThatClosesCore(Type pluggedType, Type templateType)
+    private static IEnumerable<Type> FindInterfacesThatClosesCore(Type pluggedType, Type templateType)
     {
         if (pluggedType == null) yield break;
 
@@ -156,14 +182,12 @@ public static class ServiceCollectionExtensions
         {
             foreach (
                 var interfaceType in
-                pluggedType.GetInterfaces()
-                    .Where(type => type.IsGenericType && type.GetGenericTypeDefinition() == templateType))
+                    pluggedType.GetInterfaces().Where(type => type.IsGenericType && type.GetGenericTypeDefinition() == templateType))
             {
                 yield return interfaceType;
             }
         }
-        else if (pluggedType.BaseType!.IsGenericType &&
-                 pluggedType.BaseType!.GetGenericTypeDefinition() == templateType)
+        else if (pluggedType.BaseType!.IsGenericType && pluggedType.BaseType!.GetGenericTypeDefinition() == templateType)
         {
             yield return pluggedType.BaseType!;
         }
@@ -176,18 +200,18 @@ public static class ServiceCollectionExtensions
         }
     }
 
-    public static bool IsConcrete(this Type type)
+    private static bool IsConcrete(this Type type)
     {
         return !type.IsAbstract && !type.IsInterface;
     }
 
-    public static void Fill<T>(this IList<T> list, T value)
+    private static void Fill<T>(this IList<T> list, T value)
     {
         if (list.Contains(value)) return;
         list.Add(value);
     }
 
-    public static bool IsOpenGeneric(this Type type)
+    private static bool IsOpenGeneric(this Type type)
     {
         return type.IsGenericTypeDefinition || type.ContainsGenericParameters;
     }

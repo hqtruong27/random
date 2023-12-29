@@ -1,55 +1,42 @@
 ﻿using Models.Hoyolab;
-using MongoDB.Bson;
 using System.Text;
 using System.Text.Json;
 
 namespace Hoyolab.Api.Features.Activity;
 
-public class CheckInCommand : IRequest<List<CheckInResponse>>
+public class AutoCheckInCommand : IRequest
 {
-    public required string DiscordId { get; set; }
+    public required User User { get; set; }
 
-    public class CheckInCommandHandler(ISettingRepository _setting, IRepository<User, ObjectId> repository) : IRequestHandler<CheckInCommand, List<CheckInResponse>>
+    public class AutoCheckInCommandHandler(ISettingRepository _setting) : IRequestHandler<AutoCheckInCommand>
     {
-        public async Task<List<CheckInResponse>> Handle(CheckInCommand request, CancellationToken cancellationToken)
+        public async Task Handle(AutoCheckInCommand request, CancellationToken cancellationToken)
         {
             var setting = await _setting.Read<ActivityConfig>("ACTIVITY_CONFIG");
-            var user = await repository.FirstOrDefaultAsync(x => x.Discord.Id == request.DiscordId);
-            if (user == null)
-            {
-                return
-                [
-                    new CheckInResponse
-                    {
-                        Code = -1,
-                        Message = "Login Discord first"
-                    }
-                ];
-            }
 
-            List<CheckInResponse> result = [];
-            foreach (var hoyolab in user.Hoyolabs)
+            using HttpClient client = new();
+
+            foreach (var hoyolab in request.User.Hoyolabs)
             {
+                if (!hoyolab.IsAutoCheckIn) continue;
                 for (int i = 1; i <= 3; i++)
                 {
                     switch (i)
                     {
                         case 1:
-                            result.Add(await PostAsync(setting.CheckInUrl, hoyolab, setting.Act.Genshin));
+                            await PostAsync(setting.CheckInUrl, hoyolab, setting.Act.Genshin);
                             break;
                         case 2:
-                            result.Add(await PostAsync(setting.CheckInUrl, hoyolab, setting.Act.Hsr));
+                            await PostAsync(setting.CheckInUrl, hoyolab, setting.Act.Hsr);
                             break;
                         case 3:
-                            result.Add(await PostAsync(setting.CheckInUrl, hoyolab, setting.Act.Hi3));
+                            await PostAsync(setting.CheckInUrl, hoyolab, setting.Act.Hi3);
                             break;
                         default:
                             break;
                     }
                 }
             }
-
-            return result!;
         }
 
         private static async Task<CheckInResponse> PostAsync(string url, HoyolabAccount hoyolab, string actId)

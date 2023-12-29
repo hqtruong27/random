@@ -1,4 +1,3 @@
-using Dispatcher;
 using Hoyolab.Api.Features.Activity;
 using Microsoft.AspNetCore.Mvc;
 

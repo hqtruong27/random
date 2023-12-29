@@ -1,13 +1,11 @@
-﻿using Hoyolab.Services.Interfaces;
-using Hoyoverse.Infrastructure.Entities;
-using Hoyoverse.Infrastructure.Repositories;
+﻿using Hoyolab.Api.Features.Activity;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Quartz;
 
 namespace Hoyolab.Api.Job;
 
-public class CheckInJob(IActivityService activityService, IRepository<User, ObjectId> repository) : IJob
+public class CheckInJob(IDispatcher dispatcher, IRepository<User, ObjectId> repository) : IJob
 {
     public async Task Execute(IJobExecutionContext context)
     {
@@ -16,7 +14,10 @@ public class CheckInJob(IActivityService activityService, IRepository<User, Obje
         //TODO: use parallel processor
         foreach (var user in await users.ToListAsync())
         {
-            await activityService.AutoCheckInAsync(user);
+            await dispatcher.Send(new AutoCheckInCommand
+            {
+                User = user
+            });
         }
     }
 }
