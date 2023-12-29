@@ -1,24 +1,17 @@
 using Dispatcher;
-using Hoyolab.Services.Interfaces;
+using Hoyolab.Api.Features.Activity;
 using Microsoft.AspNetCore.Mvc;
-using Models.Hoyolab;
 
 namespace Hoyolab.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ActivityController(IActivityService activityService, IDispatcher dispatcher) : ControllerBase
+    public class ActivityController(IDispatcher dispatcher) : ControllerBase
     {
         [HttpPost("check-in")]
-        public async Task<IActionResult> CheckIn([FromBody] CheckInRequest request)
+        public async Task<IActionResult> CheckIn([FromBody] CheckInCommand command)
         {
-            return Ok(await activityService.CheckInAsync(request));
-        }
-
-        [HttpPost("test")]
-        public async Task<IActionResult> Test([FromBody] CheckInRequest request)
-        {
-            return Ok(await dispatcher.Send(request));
+            return Ok(await dispatcher.Send(command));
         }
     }
 }

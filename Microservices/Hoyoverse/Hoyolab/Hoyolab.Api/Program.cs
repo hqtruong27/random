@@ -4,6 +4,7 @@ using Hoyolab.Services.Interfaces;
 using Hoyolab.Services.Services;
 using Hoyoverse.Infrastructure.Common.Settings;
 using Hoyoverse.Infrastructure.Core;
+using Hoyoverse.Infrastructure.Repositories;
 using Quartz;
 using Quartz.Logging;
 using System.Reflection;
@@ -25,8 +26,6 @@ services.Configure<QuartzOptions>(options =>
 {
     options.Scheduling.IgnoreDuplicates = true;
 });
-
-services.Register(Assembly.GetExecutingAssembly());
 
 services.AddQuartz(q =>
 {
@@ -59,6 +58,9 @@ LogProvider.SetCurrentLogProvider(new ConsoleLogProvider());
 services.AddSingleton<IDbContextOptions>(builder.Configuration.GetSection("MongoDb").Get<MongoDbContextOptions>()!);
 services.AddHoyoverseDbContext();
 services.AddScoped<IActivityService, ActivityService>();
+services.AddTransient<ITestService, TestService>();
+
+services.Register(Assembly.GetExecutingAssembly());
 
 services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
