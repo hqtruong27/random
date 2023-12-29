@@ -1,4 +1,4 @@
-﻿namespace Core;
+﻿namespace Dispatcher;
 
 public interface IRequestHandler<in TRequest> where TRequest : IRequest
 {

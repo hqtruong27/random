@@ -1,4 +1,4 @@
-using Core;
+using Dispatcher;
 using Hoyolab.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Models.Hoyolab;

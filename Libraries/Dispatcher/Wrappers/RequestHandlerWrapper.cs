@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Core.Wrappers;
+namespace Dispatcher.Wrappers;
 
 public abstract class RequestHandler
 {

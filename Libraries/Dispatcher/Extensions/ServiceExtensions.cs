@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Core.Extensions;
+namespace Dispatcher.Extensions;
 
 public static class ServiceCollectionExtensions
 {

@@ -1,11 +1,9 @@
-using Core;
-using Core.Extensions;
+using Dispatcher.Extensions;
 using Hoyolab.Api.Job;
 using Hoyolab.Services.Interfaces;
 using Hoyolab.Services.Services;
 using Hoyoverse.Infrastructure.Common.Settings;
 using Hoyoverse.Infrastructure.Core;
-using Models.Hoyolab;
 using Quartz;
 using Quartz.Logging;
 using System.Reflection;

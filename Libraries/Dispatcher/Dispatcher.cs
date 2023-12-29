@@ -1,8 +1,8 @@
 ﻿using System.Collections.Concurrent;
-using Core.Extensions;
-using Core.Wrappers;
+using Dispatcher.Extensions;
+using Dispatcher.Wrappers;
 
-namespace Core;
+namespace Dispatcher;
 
 public interface IDispatcher : ISender { }
 

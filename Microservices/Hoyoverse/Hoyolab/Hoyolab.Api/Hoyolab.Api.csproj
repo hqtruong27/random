@@ -20,7 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Libraries\Core\Core.csproj" />
     <ProjectReference Include="..\..\..\..\Libraries\Models\Models.csproj" />
     <ProjectReference Include="..\..\Hoyoverse.Infrastructure\Hoyoverse.Infrastructure.csproj" />
     <ProjectReference Include="..\Hoyolab.Services\Hoyolab.Services.csproj" />

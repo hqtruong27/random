@@ -1,4 +1,4 @@
-﻿using Core;
+﻿using Dispatcher;
 using Models.Hoyolab;
 
 namespace Hoyolab.Api.Features;

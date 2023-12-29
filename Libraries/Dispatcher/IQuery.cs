@@ -1,4 +1,5 @@
-﻿namespace Core;
+﻿namespace Dispatcher;
+
 public interface IQuery<TResult>
 {
 }

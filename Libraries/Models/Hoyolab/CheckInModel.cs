@@ -1,4 +1,4 @@
-﻿using Core;
+﻿using Dispatcher;
 using System.Text.Json.Serialization;
 
 namespace Models.Hoyolab;

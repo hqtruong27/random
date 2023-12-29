@@ -1,7 +1,7 @@
-﻿using Core.Wrappers;
+﻿using Dispatcher.Wrappers;
 using System.Collections.Concurrent;
 
-namespace Core.Extensions;
+namespace Dispatcher.Extensions;
 public static class RequestHandlerExtensions
 {
     public static THandler Get<THandler>(this ConcurrentDictionary<Type, RequestHandler> handlers, object request, Type responseType = default!)

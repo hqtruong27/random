@@ -1,4 +1,4 @@
-﻿namespace Core;
+﻿namespace Dispatcher;
 
 public interface ICommandHandler<TCommand>
 {
