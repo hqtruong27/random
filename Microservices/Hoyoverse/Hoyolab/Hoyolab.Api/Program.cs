@@ -1,10 +1,14 @@
+using Core;
+using Core.Extensions;
 using Hoyolab.Api.Job;
 using Hoyolab.Services.Interfaces;
 using Hoyolab.Services.Services;
 using Hoyoverse.Infrastructure.Common.Settings;
 using Hoyoverse.Infrastructure.Core;
+using Models.Hoyolab;
 using Quartz;
 using Quartz.Logging;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +27,8 @@ services.Configure<QuartzOptions>(options =>
 {
     options.Scheduling.IgnoreDuplicates = true;
 });
+
+services.Register(Assembly.GetExecutingAssembly());
 
 services.AddQuartz(q =>
 {
@@ -114,3 +120,4 @@ class ConsoleLogProvider : ILogProvider
         throw new NotImplementedException();
     }
 }
+

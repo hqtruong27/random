@@ -1,8 +1,9 @@
-﻿using System.Text.Json.Serialization;
+﻿using Core;
+using System.Text.Json.Serialization;
 
 namespace Models.Hoyolab;
 
-public class CheckInRequest
+public class CheckInRequest : IRequest<string>
 {
     public required string DiscordId { get; set; }
 }
