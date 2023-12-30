@@ -5,10 +5,8 @@ using System.Text.Json;
 
 namespace Hoyolab.Api.Features.Activity;
 
-public class CheckInCommand : IRequest<List<CheckInResponse>>
+public record CheckInCommand(string DiscordId) : IRequest<List<CheckInResponse>>
 {
-    public required string DiscordId { get; set; }
-
     public class CheckInCommandHandler(ISettingRepository _setting, IRepository<User, ObjectId> repository) : IRequestHandler<CheckInCommand, List<CheckInResponse>>
     {
         public async Task<List<CheckInResponse>> Handle(CheckInCommand request, CancellationToken cancellationToken)

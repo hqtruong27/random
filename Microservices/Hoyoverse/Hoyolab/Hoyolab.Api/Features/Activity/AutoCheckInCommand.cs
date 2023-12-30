@@ -4,10 +4,8 @@ using System.Text.Json;
 
 namespace Hoyolab.Api.Features.Activity;
 
-public class AutoCheckInCommand : IRequest
+public record AutoCheckInCommand(User User) : IRequest
 {
-    public required User User { get; set; }
-
     public class AutoCheckInCommandHandler(ISettingRepository _setting) : IRequestHandler<AutoCheckInCommand>
     {
         public async Task Handle(AutoCheckInCommand request, CancellationToken cancellationToken)

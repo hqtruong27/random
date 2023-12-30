@@ -4,10 +4,8 @@ using System.Text.Json;
 
 namespace GenshinImpact.Api.Features.GachaHistories.Command;
 
-public class CrawlGachaHistoryCommand : IRequest<int>
+public sealed record CrawlGachaHistoryCommand(string Url) : IRequest<int>
 {
-    public required string Url { get; set; }
-
     public class CrawlGachaHistoryCommandHandler(IRepository<GachaHistory, long> repository
         , ISettingRepository _setting
         , IMapper mapper

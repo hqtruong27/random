@@ -1,5 +1,4 @@
-﻿using GenshinImpact.Api.Features.Banners.Command;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace GenshinImpact.Api.Controllers
 {

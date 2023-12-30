@@ -1,7 +1,7 @@
 ﻿using Common.Enum.Hoyoverse;
 namespace Common.Converters;
 
-public static partial class GI
+public static class Genshin
 {
     public static ItemType ItemTypeTranslation(string itemType, string lang)
     {
@@ -11,5 +11,4 @@ public static partial class GI
             _ => ItemType.Character,
         };
     }
-
 }

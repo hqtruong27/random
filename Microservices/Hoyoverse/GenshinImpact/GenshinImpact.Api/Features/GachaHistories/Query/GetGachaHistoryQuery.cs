@@ -2,10 +2,8 @@
 
 namespace GenshinImpact.Api.Features.GachaHistories.Query;
 
-public class GetGachaHistoryQuery : IRequest<GachaHistoryResponse>
+public sealed record GetGachaHistoryQuery(long Id) : IRequest<GachaHistoryResponse>
 {
-    public required long Id { get; set; }
-
     public class GetGachaHistoryByIdQueryHandler(IRepository<GachaHistory, long> repository, IMapper mapper) :
         IRequestHandler<GetGachaHistoryQuery, GachaHistoryResponse>
     {

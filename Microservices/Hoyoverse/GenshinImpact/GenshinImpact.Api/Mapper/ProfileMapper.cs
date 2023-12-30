@@ -13,7 +13,7 @@ public class OrganizationProfile : Profile
                 , "yyyy-MM-dd HH:mm:ss"
                 , CultureInfo.InvariantCulture
                 , DateTimeStyles.None))
-            .Map(x => x.ItemType, r => Common.Converters.GI.ItemTypeTranslation(r.ItemType, r.Lang))
+            .Map(x => x.ItemType, r => Common.Converters.Genshin.ItemTypeTranslation(r.ItemType, r.Lang))
             .ReverseMap();
     }
 }

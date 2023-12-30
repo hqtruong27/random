@@ -1,5 +1,3 @@
-using GenshinImpact.Api.Features.GachaHistories.Command;
-using GenshinImpact.Api.Features.GachaHistories.Query;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GenshinImpact.Api.Controllers;
@@ -17,7 +15,7 @@ public class GachaHistoryController(IDispatcher dispatcher) : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> Get([FromRoute] long id)
     {
-        return Ok(await dispatcher.Send(new GetGachaHistoryQuery { Id = id }));
+        return Ok(await dispatcher.Send(new GetGachaHistoryQuery(id)));
     }
 
     [HttpGet("WishCalculator")]

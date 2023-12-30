@@ -14,8 +14,7 @@ public abstract class RequestHandlerWrapper<TResponse> : RequestHandler
 
 public abstract class RequestHandlerWrapper : RequestHandler
 {
-    public abstract Task Handle(IRequest request, IServiceProvider service,
-        CancellationToken cancellationToken);
+    public abstract Task Handle(IRequest request, IServiceProvider service, CancellationToken cancellationToken);
 }
 
 public class RequestHandlerWrapperImplement<TRequest> : RequestHandlerWrapper
@@ -42,6 +41,6 @@ public class RequestHandlerWrapperImplement<TRequest, TResponse> : RequestHandle
 
     public override Task<TResponse> Handle(IRequest<TResponse> request, IServiceProvider service, CancellationToken cancellationToken)
     {
-      return service.GetRequiredService<IRequestHandler<TRequest, TResponse>>().Handle((TRequest)request, cancellationToken);
+        return service.GetRequiredService<IRequestHandler<TRequest, TResponse>>().Handle((TRequest)request, cancellationToken);
     }
 }

@@ -5,3 +5,6 @@ global using Models.GenshinImpact;
 global using Common.Constants;
 global using Hoyoverse.Infrastructure.Common.Settings;
 global using Dispatcher;
+global using GenshinImpact.Api.Features.GachaHistories.Command;
+global using GenshinImpact.Api.Features.GachaHistories.Query;
+global using GenshinImpact.Api.Features.Banners.Command;

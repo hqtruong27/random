@@ -14,10 +14,7 @@ public class CheckInJob(IDispatcher dispatcher, IRepository<User, ObjectId> repo
         //TODO: use parallel processor
         foreach (var user in await users.ToListAsync())
         {
-            await dispatcher.Send(new AutoCheckInCommand
-            {
-                User = user
-            });
+            await dispatcher.Send(new AutoCheckInCommand(user));
         }
     }
 }

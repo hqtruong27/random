@@ -5,7 +5,7 @@ using MongoDB.Bson.Serialization;
 
 namespace GenshinImpact.Api.Features.GachaHistories.Query
 {
-    public class WishCalculatorQuery : IRequest<List<WishCounterModel>>
+    public sealed record WishCalculatorQuery : IRequest<List<WishCounterModel>>
     {
         public class WishCalculatorHandler(IRepository<GachaHistory, long> repository) : IRequestHandler<WishCalculatorQuery, List<WishCounterModel>>
         {

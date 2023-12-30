@@ -2,10 +2,8 @@
 
 namespace GenshinImpact.Api.Features.Banners.Command;
 
-public class CreateBannerCommand : IRequest
+public sealed record CreateBannerCommand(string Link) : IRequest
 {
-    public required string Link { get; set; }
-
     public class CreateBannerCommandHandler(IRepository<BannerInfo, string> repository) : IRequestHandler<CreateBannerCommand>
     {
         public Task Handle(CreateBannerCommand request, CancellationToken cancellationToken)

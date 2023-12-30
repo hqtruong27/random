@@ -2,7 +2,6 @@
 
 public static class IEnumerableExtensions
 {
-
     public static void ForEach<T>(this IEnumerable<T> items, Action<T> action)
     {
         ArgumentNullException.ThrowIfNull(items);
