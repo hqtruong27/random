@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Dispatcher;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Reflection;
 
-namespace Dispatcher.Extensions;
+namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
@@ -130,7 +130,7 @@ public static class ServiceCollectionExtensions
     {
         //services.TryAddScoped(typeof(IRequestHandler<>), typeof(RequestHandlerWrapperImplement<>));
         //services.TryAddScoped(typeof(IRequestHandler<,>), typeof(RequestHandlerWrapperImplement<,>));
-        services.TryAddTransient<IDispatcher, Dispatcher>();
+        services.TryAddTransient<IDispatcher, Dispatcher.Dispatcher>();
         services.TryAddTransient(typeof(ISender), x => x.GetRequiredService<IDispatcher>());
 
         return services;

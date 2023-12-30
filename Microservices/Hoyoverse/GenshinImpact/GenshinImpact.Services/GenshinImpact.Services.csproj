@@ -13,6 +13,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Libraries\Models\Models.csproj" />
     <ProjectReference Include="..\..\Hoyoverse.Infrastructure\Hoyoverse.Infrastructure.csproj" />
+  </ItemGroup>  	
+  <ItemGroup>
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

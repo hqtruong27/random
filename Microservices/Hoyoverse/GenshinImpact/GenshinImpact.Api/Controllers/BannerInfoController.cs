@@ -1,5 +1,4 @@
-﻿using Dispatcher;
-using GenshinImpact.Api.Features.Banner;
+﻿using GenshinImpact.Api.Features.Banners.Command;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GenshinImpact.Api.Controllers

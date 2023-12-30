@@ -1,35 +1,28 @@
+using GenshinImpact.Api.Features.GachaHistories.Command;
+using GenshinImpact.Api.Features.GachaHistories.Query;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GenshinImpact.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class GachaHistoryController(IGachaHistoryService gachaHistoryService) : ControllerBase
+public class GachaHistoryController(IDispatcher dispatcher) : ControllerBase
 {
-    private readonly IGachaHistoryService _gachaHistoryService = gachaHistoryService;
-
     [HttpPost(Name = "create")]
-    public async IAsyncEnumerable<long> Create([FromBody] string url)
+    public async Task<IActionResult> Create([FromBody] CrawlGachaHistoryCommand command)
     {
-        await foreach (var item in _gachaHistoryService.CrawlAsync(url))
-        {
-            yield return item;
-        }
+        return Ok(await dispatcher.Send(command));
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> Get([FromRoute] long id)
     {
-        return Ok(await _gachaHistoryService.FindByIdAsync(id));
+        return Ok(await dispatcher.Send(new GetGachaHistoryQuery { Id = id }));
     }
 
     [HttpGet("WishCalculator")]
-    public async IAsyncEnumerable<WishCounterModel> WishCalculatorAsync()
+    public async Task<IActionResult> WishCalculatorAsync()
     {
-        await foreach (var item in _gachaHistoryService.WishCalculatorAsync())
-        {
-            yield return item;
-        }
-
+        return Ok(await dispatcher.Send(new WishCalculatorQuery()));
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Common.Helpers;
-using Dispatcher;
 
-namespace GenshinImpact.Api.Features.Banner;
+namespace GenshinImpact.Api.Features.Banners.Command;
 
 public class CreateBannerCommand : IRequest
 {

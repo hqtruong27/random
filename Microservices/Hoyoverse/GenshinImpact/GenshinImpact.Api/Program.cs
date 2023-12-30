@@ -1,6 +1,5 @@
 using System.Text.Json.Serialization;
 using Common.Enum.Hoyoverse;
-using Dispatcher.Extensions;
 using GenshinImpact.Api.Mapper;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
@@ -27,7 +26,6 @@ BsonClassMap.RegisterClassMap<GachaHistory>(map =>
 services.AddSingleton<IDbContextOptions>(builder.Configuration.GetSection("MongoDb").Get<MongoDbContextOptions>()!);
 services.AddHoyoverseDbContext();
 services.AddDispatcher(typeof(Program).Assembly);
-services.AddScoped<IGachaHistoryService, GachaHistoryService>();
 services.AddAutoMapper(typeof(OrganizationProfile)).AddControllers().AddJsonOptions(o =>
 {
     o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
