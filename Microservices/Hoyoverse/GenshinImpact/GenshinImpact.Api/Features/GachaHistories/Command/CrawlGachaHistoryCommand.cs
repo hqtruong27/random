@@ -7,25 +7,25 @@ namespace GenshinImpact.Api.Features.GachaHistories.Command;
 public sealed record CrawlGachaHistoryCommand(string Url) : IRequest<int>
 {
     public class CrawlGachaHistoryCommandHandler(IRepository<GachaHistory, long> repository
-        , ISettingRepository _setting
         , IMapper mapper
+        , ISettingRepository setting
         , ILogger<CrawlGachaHistoryCommandHandler> logger) : IRequestHandler<CrawlGachaHistoryCommand, int>
     {
         public async Task<int> Handle(CrawlGachaHistoryCommand request, CancellationToken cancellationToken)
         {
             logger.LogInformation("Start: crawl {url}", request.Url);
 
-            var setting = await _setting.Read<WishListConfig>("WISH_LIST_CONFIG");
             var queryString = UrlQueryHelper.Populate<UrlQuery>(request.Url);
-            using var client = new HttpClient();
+            var configure = await setting.Read<WishListConfig>("WISH_LIST_CONFIG");
             long endId = 0;
             var total = 0;
             var batchSize = 5000;
             var hasMoreRecords = true;
+            using var client = new HttpClient();
             var records = new List<GachaHistory>();
             while (hasMoreRecords)
             {
-                var items = await GetRecordsAsync(client, endId, setting.GachaUrl, queryString);
+                var items = await GetRecordsAsync(client, endId, configure.GachaUrl, queryString);
                 switch (items.Count)
                 {
                     case > 0:
