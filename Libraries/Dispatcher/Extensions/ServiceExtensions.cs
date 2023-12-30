@@ -6,18 +6,18 @@ namespace Dispatcher.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public class DispatcherConfigure
+    public class DispatcherOptions
     {
         public bool AutoScanReferencedAssemblies { get; set; }
     }
 
-    public static IServiceCollection AddDispatcher(this IServiceCollection services, Assembly assembly, Action<DispatcherConfigure> configure = default!)
+    public static IServiceCollection AddDispatcher(this IServiceCollection services, Assembly assembly, Action<DispatcherOptions>? configure = default)
     {
         services.ScanInterface(typeof(IRequestHandler<>), assembly)
                 .ScanInterface(typeof(IRequestHandler<,>), assembly)
                 .AddRequiredServices();
 
-        DispatcherConfigure _configure = new();
+        DispatcherOptions _configure = new();
         configure?.Invoke(_configure);
 
         if (_configure.AutoScanReferencedAssemblies)
@@ -126,28 +126,6 @@ public static class ServiceCollectionExtensions
         return arguments.Length == concreteArguments.Length && openConcretion.CanBeCastTo(openInterface);
     }
 
-    private static IServiceCollection AddRequestHandlers(this IServiceCollection services, Assembly assembly)
-    {
-        var requestHandlerTypes = assembly.GetTypes()
-     .Where(t => t.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>)));
-
-        foreach (var handlerType in requestHandlerTypes)
-        {
-            // Retrieve the IRequest<TRequest> and IHandler<TRequest, TResult> generic type arguments
-            var requestType = handlerType.GetInterfaces().FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>))?.GetGenericArguments()[0];
-            var resultType = handlerType.GetInterfaces().FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>))?.GetGenericArguments()[1];
-
-            // Construct the closed generic type for the registration
-            var closedHandlerType = typeof(IRequestHandler<,>).MakeGenericType(requestType, resultType);
-
-            // Register the handler type with the DI container
-            services.AddTransient(closedHandlerType, handlerType);
-        }
-
-
-        return services;
-    }
-
     private static IServiceCollection AddRequiredServices(this IServiceCollection services)
     {
         //services.TryAddScoped(typeof(IRequestHandler<>), typeof(RequestHandlerWrapperImplement<>));
@@ -160,9 +138,15 @@ public static class ServiceCollectionExtensions
 
     private static bool CanBeCastTo(this Type pluggedType, Type pluginType)
     {
-        if (pluggedType == null) return false;
+        if (pluggedType == null)
+        {
+            return false;
+        }
 
-        if (pluggedType == pluginType) return true;
+        if (pluggedType == pluginType)
+        {
+            return true;
+        }
 
         return pluginType.IsAssignableFrom(pluggedType);
     }
@@ -182,7 +166,8 @@ public static class ServiceCollectionExtensions
         {
             foreach (
                 var interfaceType in
-                    pluggedType.GetInterfaces().Where(type => type.IsGenericType && type.GetGenericTypeDefinition() == templateType))
+                    pluggedType.GetInterfaces().Where(
+                        type => type.IsGenericType && type.GetGenericTypeDefinition() == templateType))
             {
                 yield return interfaceType;
             }
@@ -205,10 +190,10 @@ public static class ServiceCollectionExtensions
         return !type.IsAbstract && !type.IsInterface;
     }
 
-    private static void Fill<T>(this IList<T> list, T value)
+    private static void Fill<T>(this List<T> items, T value)
     {
-        if (list.Contains(value)) return;
-        list.Add(value);
+        if (items.Contains(value)) return;
+        items.Add(value);
     }
 
     private static bool IsOpenGeneric(this Type type)
