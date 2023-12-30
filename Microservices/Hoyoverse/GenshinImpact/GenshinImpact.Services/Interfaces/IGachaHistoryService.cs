@@ -2,5 +2,4 @@
 
 public interface IGachaHistoryService
 {
-    IAsyncEnumerable<WishCounterModel> WishCalculatorAsync();
 }

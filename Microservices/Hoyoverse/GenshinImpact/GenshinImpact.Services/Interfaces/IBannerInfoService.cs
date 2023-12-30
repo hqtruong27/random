@@ -2,5 +2,4 @@
 
 public interface IBannerInfoService
 {
-    Task CreateAsync(BannerInfoRequest request);
 }

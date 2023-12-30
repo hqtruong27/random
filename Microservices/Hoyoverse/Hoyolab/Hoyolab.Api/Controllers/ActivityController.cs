@@ -1,4 +1,3 @@
-using Hoyolab.Api.Features.Activity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hoyolab.Api.Controllers
