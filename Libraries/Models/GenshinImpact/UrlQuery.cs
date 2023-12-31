@@ -1,4 +1,6 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Collections.Specialized;
+using System.Text.Json.Serialization;
+using System.Web;
 
 namespace Models.GenshinImpact
 {
@@ -57,9 +59,36 @@ namespace Models.GenshinImpact
 
         private string QueryString { get; set; } = default!;
 
-        public string ToQueryString()
+        public string ToQueryString(int size, long endId)
         {
-            return QueryString;
+            var queryStringParams = new NameValueCollection
+            {
+                { "win_mode", WinMode },
+                { "authkey_ver", AuthKeyVer.ToString() },
+                { "sign_type", SignType.ToString() },
+                { "auth_appid", AuthAppId },
+                { "init_type", InitType.ToString() },
+                { "gacha_id", GachaId },
+                { "timestamp", Timestamp },
+                { "lang", Lang },
+                { "device_type", DeviceType },
+                { "game_version", GameVersion },
+                { "region", Region },
+                { "game_biz", GameBiz },
+                { "gacha_type", GachaType.ToString() },
+                { "page", Page.ToString() },
+                { "size", size.ToString() },
+                { "end_id", endId.ToString() },
+                { "authkey", AuthKey }
+            };
+
+            string queryStringUrl = "?" + string.Join(
+                "&",
+                queryStringParams
+                    .AllKeys.Select(
+                      key => $"{HttpUtility.UrlEncode(key)}={HttpUtility.UrlEncode(queryStringParams[key])}"));
+
+            return queryStringUrl;
         }
     }
 }

@@ -6,7 +6,7 @@ namespace GenshinImpact.Api.Controllers
     [ApiController]
     public class BannerInfoController(IDispatcher dispatcher) : ControllerBase
     {
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<IActionResult> Create(CreateBannerCommand command)
         {
             await dispatcher.Send(command);

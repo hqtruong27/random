@@ -11,7 +11,7 @@ public static partial class UrlQueryHelper
     {
         var queryParameters = ParseQueryString(queryString);
 
-        var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
      
         var model = Activator.CreateInstance<T>();
         foreach (var (key, values) in queryParameters)

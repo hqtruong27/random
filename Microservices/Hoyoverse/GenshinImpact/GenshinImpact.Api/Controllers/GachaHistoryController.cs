@@ -6,8 +6,8 @@ namespace GenshinImpact.Api.Controllers;
 [Route("[controller]")]
 public class GachaHistoryController(IDispatcher dispatcher) : ControllerBase
 {
-    [HttpPost(Name = "create")]
-    public async Task<IActionResult> Create([FromBody] CrawlGachaHistoryCommand command)
+    [HttpPost("crawl")]
+    public async Task<IActionResult> Crawl([FromBody] CrawlGachaHistoryCommand command)
     {
         return Ok(await dispatcher.Send(command));
     }

@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Common.Enum.Hoyoverse;
 using Common.Helpers;
+using MongoDB.Driver.Linq;
 using System.Text.Json;
 
 namespace GenshinImpact.Api.Features.GachaHistories.Command;
@@ -17,26 +19,23 @@ public sealed record CrawlGachaHistoryCommand(string Url) : IRequest<int>
 
             var queryString = UrlQueryHelper.Populate<UrlQuery>(request.Url);
             var configure = await setting.Read<WishListConfig>("WISH_LIST_CONFIG");
-            long endId = 0;
             var total = 0;
-            var batchSize = 5000;
+            long endId = 0;
             var hasMoreRecords = true;
             using var client = new HttpClient();
             var records = new List<GachaHistory>();
+            var lastIdFromDb = await GetLastIdAsync(queryString.GachaType);
             while (hasMoreRecords)
             {
-                var items = await GetRecordsAsync(client, endId, configure.GachaUrl, queryString);
+                var items = (await GetRecordsAsync(client, endId, configure.GachaUrl, queryString))
+                    .Where(x => x.Id > lastIdFromDb)
+                    .ToList();
+
                 switch (items.Count)
                 {
                     case > 0:
                         records.AddRange(items);
                         endId = items[items.Count - 1].Id;
-                        if (records.Count > batchSize)
-                        {
-                            await repository.BulkInsertAsync(records);
-                            records.Clear();
-                        }
-
                         break;
                     default:
                         hasMoreRecords = false;
@@ -58,7 +57,7 @@ public sealed record CrawlGachaHistoryCommand(string Url) : IRequest<int>
 
         private async Task<List<GachaHistory>> GetRecordsAsync(HttpClient client, long endId, string gachaUrl, UrlQuery qs)
         {
-            var requestUri = $"{gachaUrl}?{qs.ToQueryString()}";
+            var requestUri = $"{gachaUrl}?{qs.ToQueryString(20, endId)}";
 
             var response = await client.GetAsync(requestUri).ConfigureAwait(false);
 
@@ -75,6 +74,12 @@ public sealed record CrawlGachaHistoryCommand(string Url) : IRequest<int>
             }
 
             return result?.Data.GachaHistories.Select(mapper.Map<GachaHistory>).ToList() ?? [];
+        }
+
+        private async Task<long> GetLastIdAsync(int gachaType)
+        {
+            return await repository
+                .Queries.Where(x => x.GachaType == (GachaType)gachaType).MaxAsync(x => x.Id);
         }
     }
 }
