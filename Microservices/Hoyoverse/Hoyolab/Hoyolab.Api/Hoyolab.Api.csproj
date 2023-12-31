@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Libraries\Models\Models.csproj" />
+    <ProjectReference Include="..\..\..\Monitoring\Random.ServiceDefaults\Random.ServiceDefaults.csproj" />
     <ProjectReference Include="..\..\Hoyoverse.Infrastructure\Hoyoverse.Infrastructure.csproj" />
     <ProjectReference Include="..\Hoyolab.Services\Hoyolab.Services.csproj" />
   </ItemGroup>

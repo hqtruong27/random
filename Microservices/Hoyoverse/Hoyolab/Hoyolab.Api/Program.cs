@@ -5,6 +5,8 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 var services = builder.Services;
 var environment = builder.Environment;
 var configuration = builder.Configuration
@@ -60,6 +62,8 @@ services.AddControllers();
 services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 app.Use(async (context, next) =>
 {

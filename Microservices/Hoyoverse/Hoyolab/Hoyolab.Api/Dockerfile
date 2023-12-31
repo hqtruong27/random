@@ -11,10 +11,11 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Microservices/Hoyoverse/Hoyolab/Hoyolab.Api/Hoyolab.Api.csproj", "Microservices/Hoyoverse/Hoyolab/Hoyolab.Api/"]
 COPY ["Libraries/Models/Models.csproj", "Libraries/Models/"]
-COPY ["Microservices/Hoyoverse/Hoyoverse.Infrastructure/Hoyoverse.Infrastructure.csproj", "Microservices/Hoyoverse/Hoyoverse.Infrastructure/"]
 COPY ["Libraries/Common/Common.csproj", "Libraries/Common/"]
+COPY ["Libraries/Dispatcher/Dispatcher.csproj", "Libraries/Dispatcher/"]
+COPY ["Microservices/Hoyoverse/Hoyoverse.Infrastructure/Hoyoverse.Infrastructure.csproj", "Microservices/Hoyoverse/Hoyoverse.Infrastructure/"]
 COPY ["Microservices/Hoyoverse/Hoyolab/Hoyolab.Services/Hoyolab.Services.csproj", "Microservices/Hoyoverse/Hoyolab/Hoyolab.Services/"]
-RUN dotnet restore "./Microservices/Hoyoverse/Hoyolab/Hoyolab.Api/./Hoyolab.Api.csproj"
+RUN dotnet restore "./Microservices/Hoyoverse/Hoyolab/Hoyolab.Api/Hoyolab.Api.csproj"
 COPY . .
 WORKDIR "/src/Microservices/Hoyoverse/Hoyolab/Hoyolab.Api"
 RUN dotnet build "./Hoyolab.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build

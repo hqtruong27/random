@@ -4,6 +4,8 @@ using Spending.Api.Mapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 var environmentName = builder.Environment.EnvironmentName;
 Console.WriteLine(environmentName);
 
@@ -43,6 +45,8 @@ services.AddGrpcReflection();
 services.AddAutoMapper(typeof(OrganizationProfile));
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 //app.MapReverseProxy();
 // Configure the HTTP request pipeline.

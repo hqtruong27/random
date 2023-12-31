@@ -6,6 +6,8 @@ using MongoDB.Bson.Serialization.Serializers;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 var services = builder.Services;
 var environment = builder.Environment;
 var configuration = builder.Configuration
@@ -43,6 +45,8 @@ builder.Services.AddSwaggerGen();
 // builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 app.UseDeveloperExceptionPage();
 // Configure the HTTP request pipeline.

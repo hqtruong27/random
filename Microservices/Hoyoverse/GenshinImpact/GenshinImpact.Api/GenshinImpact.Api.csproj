@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Monitoring\Random.ServiceDefaults\Random.ServiceDefaults.csproj" />
     <ProjectReference Include="..\GenshinImpact.Services\GenshinImpact.Services.csproj" />
   </ItemGroup>
 
