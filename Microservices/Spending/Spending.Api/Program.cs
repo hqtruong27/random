@@ -44,8 +44,6 @@ services.AddAutoMapper(typeof(OrganizationProfile));
 
 var app = builder.Build();
 
-app.MapDefaultEndpoints();
-
 //app.MapReverseProxy();
 // Configure the HTTP request pipeline.
 app.MapGrpcService<UserService>();
