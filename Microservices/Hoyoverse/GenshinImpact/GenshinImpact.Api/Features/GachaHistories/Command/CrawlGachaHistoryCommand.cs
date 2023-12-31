@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Common.Enum.Hoyoverse;
 using Common.Helpers;
+using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using System.Text.Json;
 
@@ -78,8 +79,7 @@ public sealed record CrawlGachaHistoryCommand(string Url) : IRequest<int>
 
         private async Task<long> GetLastIdAsync(int gachaType)
         {
-            return await repository
-                .Queries.Where(x => x.GachaType == (GachaType)gachaType).MaxAsync(x => x.Id);
+            return await repository.Queries.Where(x => x.GachaType == (GachaType)gachaType).MaxAsync(x => x.Id);
         }
     }
 }
