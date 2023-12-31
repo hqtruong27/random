@@ -10,7 +10,6 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Microservices/Hoyoverse/GenshinImpact/GenshinImpact.Api/GenshinImpact.Api.csproj", "Microservices/Hoyoverse/GenshinImpact/GenshinImpact.Api/"]
-COPY ["Microservices/Monitoring/Random.ServiceDefaults/Random.ServiceDefaults.csproj", "Microservices/Monitoring/Random.ServiceDefaults/"]
 COPY ["Microservices/Hoyoverse/GenshinImpact/GenshinImpact.Services/GenshinImpact.Services.csproj", "Microservices/Hoyoverse/GenshinImpact/GenshinImpact.Services/"]
 COPY ["Libraries/Models/Models.csproj", "Libraries/Models/"]
 COPY ["Libraries/Common/Common.csproj", "Libraries/Common/"]

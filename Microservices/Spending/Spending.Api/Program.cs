@@ -4,8 +4,6 @@ using Spending.Api.Mapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddServiceDefaults();
-
 var environmentName = builder.Environment.EnvironmentName;
 Console.WriteLine(environmentName);
 
