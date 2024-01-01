@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using Common.Enum.Hoyoverse;
 using Common.Helpers;
+using DnsClient.Protocol;
+using Microsoft.AspNetCore.Http;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using System.Text.Json;
+using System.Threading;
 
 namespace GenshinImpact.Api.Features.GachaHistories.Command;
 
@@ -21,65 +24,77 @@ public sealed record CrawlGachaHistoryCommand(string Url) : IRequest<int>
             var queryString = UrlQueryHelper.Populate<UrlQuery>(request.Url);
             var configure = await setting.Read<WishListConfig>("WISH_LIST_CONFIG");
             var total = 0;
-            long endId = 0;
-            var hasMoreRecords = true;
-            using var client = new HttpClient();
-            var records = new List<GachaHistory>();
-            var lastIdFromDb = await GetLastIdAsync(queryString.GachaType);
-            while (hasMoreRecords)
+
+            var gachaHistories = await GetGachaHistoriesAsync(configure.GachaUrl, queryString);
+            if (gachaHistories.Count > 0)
             {
-                var items = (await GetRecordsAsync(client, endId, configure.GachaUrl, queryString))
-                    .Where(x => x.Id > lastIdFromDb)
-                    .ToList();
-
-                switch (items.Count)
-                {
-                    case > 0:
-                        records.AddRange(items);
-                        endId = items[items.Count - 1].Id;
-                        break;
-                    default:
-                        hasMoreRecords = false;
-                        break;
-                }
-
-                total += items.Count;
-                await Task.Delay(500, cancellationToken);
-            }
-
-            if (records.Count > 0)
-            {
-                await repository.BulkInsertAsync(records);
+                await repository.BulkInsertAsync(gachaHistories);
             }
 
             logger.LogInformation("End: crawl success {total}", total);
             return total;
         }
 
-        private async Task<List<GachaHistory>> GetRecordsAsync(HttpClient client, long endId, string gachaUrl, UrlQuery qs)
+        private async Task<List<GachaHistory>> GetGachaHistoriesAsync(string gachaUrl, UrlQuery qs)
         {
-            var requestUri = $"{gachaUrl}?{qs.ToQueryString(20, endId)}";
+            long endId = 0;
+            var hasMoreRecords = true;
+            List<GachaHistory> result = [];
+            foreach (var gachaType in Enum.GetValues<GachaType>().ToList())
+            {
+                var lastIdFromDb = await GetLastIdAsync(gachaType);
+                do
+                {
+                    var response = await PostAsync(new(), endId, gachaUrl, qs, gachaType);
+                    var gachaHistories = response.GachaHistories.Where(x => x.Id > lastIdFromDb).ToList();
+                    switch (gachaHistories.Count)
+                    {
+                        case > 0:
+                            result.AddRange(gachaHistories.Select(mapper.Map<GachaHistory>));
+                            endId = gachaHistories[gachaHistories.Count - 1].Id;
+                            break;
+                        default:
+                            hasMoreRecords = false;
+                            break;
+                    }
+
+                    await Task.Delay(500);
+                } while (hasMoreRecords);
+            }
+
+            return result;
+        }
+
+        private async Task<long> GetLastIdAsync(GachaType gachaType)
+        {
+            var gachaHistories = repository.Queries.Where(x => x.GachaType == gachaType);
+            return !await gachaHistories.AnyAsync() ? 0 : await gachaHistories.MaxAsync(x => x.Id);
+        }
+
+        private static async Task<GachaInfoDataResponse> PostAsync(HttpClient client
+           , long endId
+           , string gachaUrl
+           , UrlQuery qs
+           , GachaType gachaType)
+        {
+            var requestUri = $"{gachaUrl}?{qs.ToQueryParams(gachaType, endId)}";
 
             var response = await client.GetAsync(requestUri).ConfigureAwait(false);
 
             var stream = await response.Content.ReadAsStreamAsync();
-            var result = await JsonSerializer.DeserializeAsync<GachaInfoResponse>(stream);
-            if (result?.Code == Genshin.Code.AuthKeyTimeOut)
+            var gachaInfo = await JsonSerializer.DeserializeAsync<GachaInfoResponse>(stream);
+
+            if (gachaInfo?.Code == Genshin.Code.AuthKeyTimeOut)
             {
                 throw new Exception("Authkey timeout");
             }
 
-            if (result?.Code == Genshin.Code.VisitTooFrequently)
+            if (gachaInfo?.Code == Genshin.Code.VisitTooFrequently)
             {
-                await GetRecordsAsync(client, endId, gachaUrl, qs);
+                await PostAsync(client, endId, gachaUrl, qs, gachaType);
             }
 
-            return result?.Data.GachaHistories.Select(mapper.Map<GachaHistory>).ToList() ?? [];
-        }
-
-        private async Task<long> GetLastIdAsync(int gachaType)
-        {
-            return await repository.Queries.Where(x => x.GachaType == (GachaType)gachaType).MaxAsync(x => x.Id);
+            return gachaInfo?.Data ?? new();
         }
     }
 }

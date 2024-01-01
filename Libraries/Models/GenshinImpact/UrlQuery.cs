@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using Common.Enum.Hoyoverse;
+using System.Collections.Specialized;
 using System.Text.Json.Serialization;
 using System.Web;
 
@@ -59,9 +60,9 @@ namespace Models.GenshinImpact
 
         private string QueryString { get; set; } = default!;
 
-        public string ToQueryString(int size, long endId)
+        public string ToQueryParams(GachaType gachaType, long endId, int size = 20)
         {
-            var queryStringParams = new NameValueCollection
+            var queryParams = new NameValueCollection
             {
                 { "win_mode", WinMode },
                 { "authkey_ver", AuthKeyVer.ToString() },
@@ -75,7 +76,7 @@ namespace Models.GenshinImpact
                 { "game_version", GameVersion },
                 { "region", Region },
                 { "game_biz", GameBiz },
-                { "gacha_type", GachaType.ToString() },
+                { "gacha_type", $"{(int)gachaType}" },
                 { "page", Page.ToString() },
                 { "size", size.ToString() },
                 { "end_id", endId.ToString() },
@@ -84,9 +85,9 @@ namespace Models.GenshinImpact
 
             string queryStringUrl = "?" + string.Join(
                 "&",
-                queryStringParams
+                queryParams
                     .AllKeys.Select(
-                      key => $"{HttpUtility.UrlEncode(key)}={HttpUtility.UrlEncode(queryStringParams[key])}"));
+                      key => $"{HttpUtility.UrlEncode(key)}={HttpUtility.UrlEncode(queryParams[key])}"));
 
             return queryStringUrl;
         }
