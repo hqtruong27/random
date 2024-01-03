@@ -33,13 +33,13 @@ public record CheckInCommand(string DiscordId) : IRequest<List<CheckInResponse>>
                     switch (i)
                     {
                         case 1:
-                            result.Add(await PostAsync(setting.CheckInUrl, hoyolab, setting.Act.Genshin));
+                            result.Add(await PostAsync(setting.Genshin, hoyolab));
                             break;
                         case 2:
-                            result.Add(await PostAsync(setting.CheckInUrl, hoyolab, setting.Act.Hsr));
+                            result.Add(await PostAsync(setting.Hsr, hoyolab));
                             break;
                         case 3:
-                            result.Add(await PostAsync(setting.CheckInUrl, hoyolab, setting.Act.Hi3));
+                            result.Add(await PostAsync(setting.Hi3, hoyolab));
                             break;
                         default:
                             break;
@@ -50,14 +50,14 @@ public record CheckInCommand(string DiscordId) : IRequest<List<CheckInResponse>>
             return result!;
         }
 
-        private static async Task<CheckInResponse> PostAsync(string url, HoyolabAccount hoyolab, string actId)
+        private static async Task<CheckInResponse> PostAsync(Config config, HoyolabAccount hoyolab)
         {
             using HttpClient client = new();
 
-            var payload = JsonSerializer.Serialize(new { act_id = actId });
+            var payload = JsonSerializer.Serialize(new { act_id = config.ActId });
             client.DefaultRequestHeaders.Add("Cookie", hoyolab.Cookie);
             var content = new StringContent(payload, Encoding.UTF8, "application/json");
-            var response = await client.PostAsync(url, content);
+            var response = await client.PostAsync(config.CheckInUrl, content);
 
             var stream = await response.Content.ReadAsStreamAsync();
             var result = await JsonSerializer.DeserializeAsync<CheckInResponse>(stream);

@@ -39,7 +39,8 @@ services.AddQuartz(q =>
     q.AddTrigger(t => t
         .WithIdentity("trigger-job", "hoyolab")
         .ForJob(jobKey)
-        .WithCronSchedule("0 0 1 ? * * * ")
+        //.WithCronSchedule("0 0 1 ? * * * ")
+        .StartNow()
         .WithDescription("daily check in job")
     );
 });
@@ -53,7 +54,6 @@ LogProvider.SetCurrentLogProvider(new ConsoleLogProvider());
 
 services.AddSingleton<IDbContextOptions>(builder.Configuration.GetSection("MongoDb").Get<MongoDbContextOptions>()!);
 services.AddHoyoverseDbContext();
-services.AddScoped<IActivityService, ActivityService>();
 services.AddDispatcher(Assembly.GetExecutingAssembly());
 
 services.AddControllers();

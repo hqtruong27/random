@@ -4,6 +4,5 @@ global using Dispatcher;
 global using Dispatcher.Extensions;
 global using Hoyoverse.Infrastructure.Common.Settings;
 global using Hoyolab.Services.Interfaces;
-global using Hoyolab.Services.Services;
 global using Hoyolab.Api.Features.Activity;
 

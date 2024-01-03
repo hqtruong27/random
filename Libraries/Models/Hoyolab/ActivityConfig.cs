@@ -2,14 +2,13 @@
 
 public record ActivityConfig
 {
-    public string CheckInUrl { get; set; } = default!;
-    public Act Act { get; set; } = new();
-
+    public Config Genshin { get; set; } = new();
+    public Config Hsr { get; set; } = new();
+    public Config Hi3 { get; set; } = new();
 }
 
-public record Act
+public record Config
 {
-    public string Genshin { get; set; } = default!;
-    public string Hsr { get; set; } = default!;
-    public string Hi3 { get; set; } = default!;
+    public string ActId { get; set; } = default!;
+    public string CheckInUrl { get; set; } = default!;
 }
