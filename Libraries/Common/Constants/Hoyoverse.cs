@@ -20,6 +20,6 @@ public static partial class Genshin
 
     public class NameTranslation
     {
-        public const string Weapons = "Vũ khí";
+        public const string Weapons = "Vũ Khí";
     }
 }

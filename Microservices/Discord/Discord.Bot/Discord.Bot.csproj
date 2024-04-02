@@ -38,6 +38,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\Libraries\Common\Common.csproj" />
 	  <ProjectReference Include="..\..\..\Libraries\Models\Models.csproj" />
+	  <ProjectReference Include="..\..\Monitoring\Random.ServiceDefaults\Random.ServiceDefaults.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

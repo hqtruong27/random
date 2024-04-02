@@ -60,7 +60,7 @@ namespace Models.GenshinImpact
 
         private string QueryString { get; set; } = default!;
 
-        public string ToQueryParams(GachaType gachaType, long endId, int size = 20)
+        public string ToQueryParams(GachaType gachaType, long beginId, long endId,  int size = 20)
         {
             var queryParams = new NameValueCollection
             {
@@ -79,9 +79,24 @@ namespace Models.GenshinImpact
                 { "gacha_type", $"{(int)gachaType}" },
                 { "page", Page.ToString() },
                 { "size", size.ToString() },
-                { "end_id", endId.ToString() },
                 { "authkey", AuthKey }
             };
+           
+            if (beginId > 0)
+            {
+                queryParams.Add(new()
+                {
+                    { "begin_id", beginId.ToString() },
+                });
+            }
+
+            if (endId > 0 || beginId == 0)
+            {
+                queryParams.Add(new()
+                {
+                    { "end_id", endId.ToString() },
+                });
+            }
 
             string queryStringUrl = "?" + string.Join(
                 "&",

@@ -7,8 +7,9 @@ public static class Genshin
     {
         return lang switch
         {
-            "vi-vn" => itemType == Constants.Genshin.NameTranslation.Weapons ? ItemType.Weapons : ItemType.Character,
-            _ => ItemType.Character,
+            "vi-vn" => itemType.Equals(Constants.Genshin.NameTranslation.Weapons, StringComparison.CurrentCultureIgnoreCase) ? ItemType.Weapons : ItemType.Character,
+            "en-us" => System.Enum.Parse<ItemType>(itemType),
+            _ => System.Enum.Parse<ItemType>(itemType),
         };
     }
 }

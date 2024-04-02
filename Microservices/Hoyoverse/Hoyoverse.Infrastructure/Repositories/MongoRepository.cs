@@ -11,6 +11,7 @@ public class MongoRepository<TEntity, TKey>(IHoyoverseDbContext context)
     : AuditableEntity<TKey>, new()
 {
     private readonly IMongoCollection<TEntity> _collection = context.Database.GetCollection<TEntity>(typeof(TEntity).Name);
+    public IMongoCollection<TEntity> Collection => _collection;
 
     public IMongoQueryable<TEntity> Queries => _collection.AsQueryable();
 

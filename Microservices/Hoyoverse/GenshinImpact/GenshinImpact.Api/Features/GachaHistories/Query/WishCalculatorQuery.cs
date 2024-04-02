@@ -7,7 +7,7 @@ namespace GenshinImpact.Api.Features.GachaHistories.Query
 {
     public sealed record WishCalculatorQuery : IRequest<List<WishCounterModel>>
     {
-        public class WishCalculatorHandler(IRepository<GachaHistory, long> repository) : IRequestHandler<WishCalculatorQuery, List<WishCounterModel>>
+        public class WishCalculatorHandler(IRepository<GachaHistory, ObjectId> repository) : IRequestHandler<WishCalculatorQuery, List<WishCounterModel>>
         {
             public async Task<List<WishCounterModel>> Handle(WishCalculatorQuery request, CancellationToken cancellationToken)
             {
@@ -22,7 +22,6 @@ namespace GenshinImpact.Api.Features.GachaHistories.Query
 
                 return result;
             }
-
             private async Task<WishCounterModel> PityCalculatorAsync(BannerType bannerType)
             {
                 var gachaType = GetGachaTypeCondition(bannerType);
@@ -42,8 +41,8 @@ namespace GenshinImpact.Api.Features.GachaHistories.Query
                     {
                         "$setWindowFields", new BsonDocument
                         {
-                            { "partitionBy", "_id" },
-                            { "sortBy", new BsonDocument(new BsonElement( "_id", 1 ))},
+                            { "partitionBy", "ReferenceId" },
+                            { "sortBy", new BsonDocument(new BsonElement( "ReferenceId", 1 ))},
                             { "output", new BsonDocument
                                 {
                                     { "PullIndex", new BsonDocument
@@ -110,7 +109,6 @@ namespace GenshinImpact.Api.Features.GachaHistories.Query
                     }
                 };
             }
-
             private static BsonArray GetGachaTypeCondition(BannerType bannerType) => bannerType switch
             {
                 BannerType.Character =>
@@ -121,7 +119,7 @@ namespace GenshinImpact.Api.Features.GachaHistories.Query
                     },
                     new BsonDocument
                     {
-                        {"GachaType", "400" }
+                        {"GachaType", GachaType.CharLimitedTwo.ToString() }
                     }
                 ],
                 BannerType.Weapon =>

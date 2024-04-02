@@ -12,10 +12,10 @@ public class GachaHistoryController(IDispatcher dispatcher) : ControllerBase
         return Ok(await dispatcher.Send(command));
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> Get([FromRoute] long id)
+    [HttpGet]
+    public async Task<IActionResult> GetGachaHistories()
     {
-        return Ok(await dispatcher.Send(new GetGachaHistoryQuery(id)));
+        return Ok(await dispatcher.Send(new GetGachaHistoriesQuery()));
     }
 
     [HttpGet("WishCalculator")]

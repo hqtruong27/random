@@ -12,8 +12,6 @@ public record AutoCheckInCommand(User User) : IRequest
         {
             var setting = await _setting.Read<ActivityConfig>("ACTIVITY_CONFIG");
 
-            using HttpClient client = new();
-
             foreach (var hoyolab in request.User.Hoyolabs)
             {
                 if (!hoyolab.IsAutoCheckIn) continue;

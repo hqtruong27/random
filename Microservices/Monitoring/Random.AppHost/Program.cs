@@ -6,4 +6,6 @@ builder.AddProject<Projects.Hoyolab_Api>("hoyolab.api");
 
 builder.AddProject<Projects.Spending_Api>("spending.api");
 
+builder.AddProject<Projects.StarRail_Api>("starrail.api");
+
 builder.Build().Run();

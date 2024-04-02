@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Hoyoverse\GenshinImpact\GenshinImpact.Api\GenshinImpact.Api.csproj" />
     <ProjectReference Include="..\..\Hoyoverse\Hoyolab\Hoyolab.Api\Hoyolab.Api.csproj" />
+    <ProjectReference Include="..\..\Hoyoverse\StarRail\StarRail.Api\StarRail.Api.csproj" />
     <ProjectReference Include="..\..\Spending\Spending.Api\Spending.Api.csproj" />
     <ProjectReference Include="..\Random.ServiceDefaults\Random.ServiceDefaults.csproj" />
   </ItemGroup>

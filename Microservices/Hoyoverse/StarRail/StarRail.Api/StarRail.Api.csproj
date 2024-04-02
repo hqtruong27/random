@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <UserSecretsId>e3c5f610-3037-4128-b2fc-c72655c9642e</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..\..\..</DockerfileContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Infrastructure\Infrastructure.Core\Infrastructure.Core.csproj" />
+    <ProjectReference Include="..\..\..\Monitoring\Random.ServiceDefaults\Random.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\StarRail.Domain\StarRail.Domain.csproj" />
+    <ProjectReference Include="..\StarRail.Shared\StarRail.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

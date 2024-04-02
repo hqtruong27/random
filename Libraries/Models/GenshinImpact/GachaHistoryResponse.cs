@@ -61,4 +61,6 @@ public class GachaHistoryResponse
     [JsonPropertyName("id")]
     [JsonConverter(typeof(JsonTypeConverter<long>))]
     public long Id { get; set; }
+
+    public string TimeZone { get; set; } = "UTC";
 }
