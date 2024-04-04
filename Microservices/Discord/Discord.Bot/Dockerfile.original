@@ -10,9 +10,7 @@ WORKDIR /src
 COPY ["Microservices/Discord/Discord.Bot/Discord.Bot.csproj", "Microservices/Discord/Discord.Bot/"]
 COPY ["Libraries/Common/Common.csproj", "Libraries/Common/"]
 COPY ["Libraries/Models/Models.csproj", "Libraries/Models/"]
-COPY ["Libraries/Dispatcher/Dispatcher.csproj", "Libraries/Dispatcher/"]
-COPY ["Microservices/Hoyoverse/Hoyoverse.Infrastructure/Hoyoverse.Infrastructure.csproj", "Microservices/Hoyoverse/Hoyoverse.Infrastructure/"]
-RUN dotnet restore "./Microservices/Discord/Discord.Bot/Discord.Bot.csproj"
+RUN dotnet restore "./Microservices/Discord/Discord.Bot/./Discord.Bot.csproj"
 COPY . .
 WORKDIR "/src/Microservices/Discord/Discord.Bot"
 RUN dotnet build "./Discord.Bot.csproj" -c $BUILD_CONFIGURATION -o /app/build
