@@ -58,15 +58,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StarRail", "StarRail", "{7A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StarRail.Api", "Microservices\Hoyoverse\StarRail\StarRail.Api\StarRail.Api.csproj", "{62FD20D2-DCD3-454E-B5CC-A1CA62763B96}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StarRail.Domain", "Microservices\Hoyoverse\StarRail\StarRail.Domain\StarRail.Domain.csproj", "{C413C226-602C-4996-82F7-F374F8BF6712}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StarRail.Core", "Microservices\Hoyoverse\StarRail\StarRail.Core\StarRail.Core.csproj", "{C413C226-602C-4996-82F7-F374F8BF6712}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StarRail.Shared", "Microservices\Hoyoverse\StarRail\StarRail.Shared\StarRail.Shared.csproj", "{56EC15AC-4DC5-49B8-9075-E8ADB8849706}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StarRail.Shared", "Microservices\Hoyoverse\StarRail\StarRail.Shared\StarRail.Shared.csproj", "{56EC15AC-4DC5-49B8-9075-E8ADB8849706}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StarRail.Infrastructure", "Microservices\Hoyoverse\StarRail\StarRail.Infrastructure\StarRail.Infrastructure.csproj", "{ADDE4C5F-65BD-40B4-B0DF-C885B6719075}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StarRail.Infrastructure", "Microservices\Hoyoverse\StarRail\StarRail.Infrastructure\StarRail.Infrastructure.csproj", "{ADDE4C5F-65BD-40B4-B0DF-C885B6719075}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{6C4333CF-1CE9-444B-B485-02D6438CBE37}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.Core", "Infrastructure\Infrastructure.Core\Infrastructure.Core.csproj", "{44B952B8-E73C-459C-9019-0770F39F8333}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{67F3FC8C-BAD3-43E5-BCE2-ED3329EB98EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Random.ExternalService", "Microservices\External\Random.ExternalService\Random.ExternalService.csproj", "{04C8E7F5-6207-4293-B13F-992F58E94AF2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gateways", "Gateways", "{B5C5A061-8D32-4157-A444-B68D96A4AB25}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -150,6 +156,10 @@ Global
 		{44B952B8-E73C-459C-9019-0770F39F8333}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44B952B8-E73C-459C-9019-0770F39F8333}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44B952B8-E73C-459C-9019-0770F39F8333}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04C8E7F5-6207-4293-B13F-992F58E94AF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04C8E7F5-6207-4293-B13F-992F58E94AF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04C8E7F5-6207-4293-B13F-992F58E94AF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04C8E7F5-6207-4293-B13F-992F58E94AF2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -184,6 +194,9 @@ Global
 		{ADDE4C5F-65BD-40B4-B0DF-C885B6719075} = {7AC83708-C41F-48AE-A9C1-265FD3969A86}
 		{6C4333CF-1CE9-444B-B485-02D6438CBE37} = {F5C3E5F0-4D22-4FCE-B780-C6A5FA304B7C}
 		{44B952B8-E73C-459C-9019-0770F39F8333} = {6C4333CF-1CE9-444B-B485-02D6438CBE37}
+		{67F3FC8C-BAD3-43E5-BCE2-ED3329EB98EA} = {3566DB53-BB7C-4F9D-B102-5F011BBEDA4F}
+		{04C8E7F5-6207-4293-B13F-992F58E94AF2} = {67F3FC8C-BAD3-43E5-BCE2-ED3329EB98EA}
+		{B5C5A061-8D32-4157-A444-B68D96A4AB25} = {3566DB53-BB7C-4F9D-B102-5F011BBEDA4F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9FF33868-F3D1-4A45-B83D-AA5E0BFEB753}

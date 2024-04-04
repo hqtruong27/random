@@ -61,6 +61,7 @@ public static partial class UrlQueryHelper
         return targetType.Name switch
         {
             nameof(Int32) => int.TryParse(value, out var intValue) ? intValue : 0,
+            nameof(Int64) => long.TryParse(value, out var intValue) ? intValue : 0,
             nameof(Boolean) => bool.TryParse(value, out var boolValue) && boolValue,
             // Add more type conversions as needed
             _ => value,

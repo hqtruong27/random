@@ -1,9 +1,9 @@
 ﻿using MongoDB.Driver;
-using StarRail.Domain.Entities;
+using StarRail.Core.Entities;
 using StarRail.Infrastructure.Common.Settings;
 
 namespace StarRail.Infrastructure.Persistence;
-internal class StarRailDbContext : IStarRailDbContext
+public class StarRailDbContext : IStarRailDbContext
 {
     private readonly IDbContextOptions _options;
     private readonly Lazy<IMongoDatabase> _database;

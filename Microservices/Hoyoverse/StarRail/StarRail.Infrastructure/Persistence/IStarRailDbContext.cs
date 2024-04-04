@@ -3,6 +3,6 @@
 namespace StarRail.Infrastructure.Persistence;
 public interface IStarRailDbContext
 {
-    public IMongoCollection<T> Set<T>();
-    public IMongoCollection<T> Set<T>(string name);
+    IMongoCollection<T> Set<T>();
+    IMongoCollection<T> Set<T>(string name);
 }

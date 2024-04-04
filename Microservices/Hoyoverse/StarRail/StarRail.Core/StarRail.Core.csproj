@@ -6,8 +6,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\StarRail.Core\StarRail.Core.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="MongoDB.Driver" Version="2.22.0" />
+	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Base\Mongo\" />
+	</ItemGroup>
 </Project>

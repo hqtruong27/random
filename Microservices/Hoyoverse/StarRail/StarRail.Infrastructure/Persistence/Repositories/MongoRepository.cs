@@ -2,8 +2,8 @@
 using System.Linq.Expressions;
 using MongoDB.Driver.Linq;
 using MongoDB.Bson;
-using StarRail.Domain.Interfaces.Repositories;
-using StarRail.Domain.Core;
+using StarRail.Core.Interfaces.Repositories;
+using StarRail.Core.Base;
 
 namespace StarRail.Infrastructure.Persistence.Repositories;
 

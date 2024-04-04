@@ -1,28 +1,33 @@
-﻿using Common.Enum.Hoyoverse;
-using Models.AggregateModels;
+﻿using Infrastructure.Core.Dispatchers;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
+using StarRail.Api.Features.Models;
+using StarRail.Core.Entities;
+using StarRail.Core.Enums;
+using StarRail.Core.Interfaces.Repositories;
 
-namespace GenshinImpact.Api.Features.GachaHistories.Query
+namespace StarRail.Api.Features.GachaHistories.Queries
 {
-    public sealed record WishCalculatorQuery : IRequest<List<WishCounterModel>>
+    public sealed record WishCalculatorQuery : IQuery<List<WishCounterModel>>
     {
-        public class WishCalculatorHandler(IRepository<GachaHistory, ObjectId> repository) : IRequestHandler<WishCalculatorQuery, List<WishCounterModel>>
+        public class WishCalculatorHandler(IRepository<GachaHistory, ObjectId> repository) : IQueryHandler<WishCalculatorQuery, List<WishCounterModel>>
         {
             public async Task<List<WishCounterModel>> Handle(WishCalculatorQuery request, CancellationToken cancellationToken)
             {
                 var result = new List<WishCounterModel>();
-                var charLimited = await PityCalculatorAsync(BannerType.Character);
-                var weapon = await PityCalculatorAsync(BannerType.Weapon);
-                var regular = await PityCalculatorAsync(BannerType.Regular);
+                var charLimited = await PityCalculatorAsync(Common.Enum.Hoyoverse.BannerType.Character);
+                var weapon = await PityCalculatorAsync(Common.Enum.Hoyoverse.BannerType.Weapon);
+                var regular = await PityCalculatorAsync(Common.Enum.Hoyoverse.BannerType.Regular);
+                var novice = await PityCalculatorAsync(Common.Enum.Hoyoverse.BannerType.Novice);
 
                 result.Add(charLimited);
                 result.Add(weapon);
                 result.Add(regular);
+                result.Add(novice);
 
                 return result;
             }
-            private async Task<WishCounterModel> PityCalculatorAsync(BannerType bannerType)
+            private async Task<WishCounterModel> PityCalculatorAsync(Common.Enum.Hoyoverse.BannerType bannerType)
             {
                 var gachaType = GetGachaTypeCondition(bannerType);
                 var stage1 = new BsonDocument
@@ -109,36 +114,32 @@ namespace GenshinImpact.Api.Features.GachaHistories.Query
                     }
                 };
             }
-            private static BsonArray GetGachaTypeCondition(BannerType bannerType) => bannerType switch
+            private static BsonArray GetGachaTypeCondition(Common.Enum.Hoyoverse.BannerType bannerType) => bannerType switch
             {
-                BannerType.Character =>
+                Common.Enum.Hoyoverse.BannerType.Character =>
                 [
                     new BsonDocument
                     {
                         {"GachaType", GachaType.CharLimited.ToString() }
-                    },
-                    new BsonDocument
-                    {
-                        {"GachaType", GachaType.CharLimitedTwo.ToString() }
                     }
                 ],
-                BannerType.Weapon =>
+                Common.Enum.Hoyoverse.BannerType.Weapon =>
                 [
                     new BsonDocument
                     {
-                        {"GachaType", GachaType.Weapons.ToString() }
+                        {"GachaType", GachaType.LightCone.ToString() }
                     }
                 ],
-                BannerType.Regular =>
+                Common.Enum.Hoyoverse.BannerType.Regular =>
                 [
                     new BsonDocument
                     {
                         {"GachaType", GachaType.Regular.ToString() }
                     }
                 ],
-                BannerType.Novice =>
+                Common.Enum.Hoyoverse.BannerType.Novice =>
                 [
-                   new BsonDocument
+                    new BsonDocument
                     {
                         {"GachaType", GachaType.Novice.ToString() }
                     }
