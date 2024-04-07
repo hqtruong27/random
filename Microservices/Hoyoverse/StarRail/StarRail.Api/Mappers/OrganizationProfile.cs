@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Microsoft.VisualBasic;
 using Random.ExternalService.Models.Response;
+using StarRail.Api.Features.Models;
 using StarRail.Core.Entities;
 using StarRail.Core.Enums;
 using System.Globalization;
@@ -21,6 +21,16 @@ public class OrganizationProfile : Profile
            .Map(x => x.ReferenceId, r => r.Id)
            .Ignore(x => x.Id)
            .ReverseMap();
+
+        CreateMap<Event, WishHistoryEvent>()
+            .ReverseMap();
+
+        CreateMap<WishBanner, WishHistoryDetail>()
+            .ReverseMap();
+
+        CreateMap<WishCounterModel, WishHistory>()
+            .Map(x => x.Banner, i => i.Banner.ToString())
+            .ReverseMap();
     }
 
     private static ItemType Convert(string itemType, string lang)

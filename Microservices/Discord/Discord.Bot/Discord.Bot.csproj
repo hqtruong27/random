@@ -15,6 +15,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		<DependentUpon>appsettings.json</DependentUpon>
     </Content>
+    <None Remove="Protos\star_rail.proto" />
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -33,7 +34,7 @@
 		<PackageReference Include="Discord.Net.Rest" Version="3.13.0" />
 		<PackageReference Include="Discord.Net.WebSocket" Version="3.13.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
-		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\Libraries\Common\Common.csproj" />
@@ -46,6 +47,7 @@
 		<Protobuf Include="Protos\google\api\annotations.proto" GrpcServices="Client" ProtoCompile="false" />
 		<Protobuf Include="Protos\google\api\http.proto" GrpcServices="Client" ProtoCompile="false" />
 		<Protobuf Include="Protos\spending.proto" GrpcServices="Client" />
+		<Protobuf Include="Protos\star_rail.proto" GrpcServices="Client" />
 		<Protobuf Include="Protos\user.proto" GrpcServices="Client" />
 	</ItemGroup>
 </Project>

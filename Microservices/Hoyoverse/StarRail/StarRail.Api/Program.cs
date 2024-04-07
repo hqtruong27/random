@@ -3,6 +3,7 @@ using Infrastructure.Core.Behaviors;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using Random.ExternalService;
+using StarRail.Api.Services;
 using StarRail.Core.Entities;
 using StarRail.Core.Enums;
 using StarRail.Core.Interfaces.Repositories;
@@ -43,6 +44,9 @@ services.AddSingleton<IDbContextOptions>(builder.Configuration.GetSection("Mongo
 services.AddSingleton<IStarRailDbContext, StarRailDbContext>();
 services.AddScoped(typeof(IRepository<,>), typeof(MongoRepository<,>));
 
+builder.Services.AddGrpc();
+builder.Services.AddGrpcReflection();
+
 var assembly = typeof(Program).Assembly;
 builder.Services.AddMediatR(config =>
 {
@@ -54,6 +58,8 @@ builder.Services.AddValidatorsFromAssembly(assembly);
 
 var app = builder.Build();
 
+app.MapGrpcService<GrpcStarRailService>();
+
 app.MapDefaultEndpoints();
 
 // Configure the HTTP request pipeline.
@@ -61,6 +67,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.MapGrpcReflectionService();
 }
 
 app.UseHttpsRedirection();
