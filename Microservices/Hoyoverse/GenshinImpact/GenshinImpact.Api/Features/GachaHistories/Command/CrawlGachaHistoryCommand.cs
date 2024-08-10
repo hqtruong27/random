@@ -67,12 +67,31 @@ public sealed record CrawlGachaHistoryCommand(string Url) : IRequest<int>
                 } while (hasMoreRecords);
             }
 
-            return [.. result.OrderBy(x => x.Time)];
+            return [.. result
+                .DistinctBy(x => new { 
+                    x.ReferenceId,
+                    x.Time
+                }).OrderBy(x => x.Time)];
         }
         private async Task<long> GetLastIdAsync(GachaType gachaType)
         {
-            var gachaHistories = repository.Queries.Where(x => x.GachaType == gachaType);
-            return !(await gachaHistories.AnyAsync()) ? 0 : await gachaHistories.MaxAsync(x => x.ReferenceId);
+            var gachaTypes = new List<GachaType>() { GachaType.CharLimited, GachaType.CharLimitedTwo };
+            IMongoQueryable<GachaHistory> gachaHistories;
+            if (gachaTypes.Contains(gachaType))
+            {
+                gachaHistories = repository.Queries.Where(x => gachaTypes.Contains(x.GachaType));
+            }
+            else
+            {
+                gachaHistories = repository.Queries.Where(x => x.GachaType == gachaType);
+            }
+
+            if (gachaHistories is null || !await gachaHistories.AnyAsync())
+            {
+                return 0;
+            }
+
+            return await gachaHistories.MaxAsync(x => x.ReferenceId);
         }
         private static async Task<GachaInfoDataResponse> PostAsync(HttpClient client
            , long beginId
