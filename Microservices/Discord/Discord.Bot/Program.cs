@@ -1,4 +1,5 @@
-﻿using Discord.Bot.Models;
+﻿using Discord.Audio;
+using Discord.Bot.Models;
 using Discord.Commands;
 using Discord.Interactions;
 using Discord.Net;
@@ -26,6 +27,7 @@ async Task StartAsync()
         GatewayIntents = GatewayIntents.MessageContent
                        | GatewayIntents.GuildMessages
                        | GatewayIntents.Guilds
+                       | GatewayIntents.GuildMembers
                        | GatewayIntents.DirectMessages
                        | GatewayIntents.GuildVoiceStates
                        | GatewayIntents.GuildIntegrations
@@ -49,7 +51,7 @@ async Task StartAsync()
 
     CommandService commands = new(commandServiceConfig);
 
-    InteractionService interactions = new(client);
+    InteractionService interactions = new(client, config: interactionConfig);
 
     var discordSettings = configuration.GetSection(nameof(DiscordSettings)).Get<DiscordSettings>()!;
     var statisticSettings = configuration.GetSection(nameof(StatisticSettings)).Get<StatisticSettings>()!;
