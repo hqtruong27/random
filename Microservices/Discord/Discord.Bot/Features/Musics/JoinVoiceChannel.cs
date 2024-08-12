@@ -1,18 +1,17 @@
 ﻿using Discord.Audio;
 using Discord.Interactions;
-using NAudio.Wave;
 using System.Diagnostics;
-using Xabe.FFmpeg;
 using YoutubeExplode;
 using YoutubeExplode.Videos.Streams;
 namespace Discord.Bot.Features.Musics;
 
-[Group(name: "music", description: "play music")]
+[Interactions.Group(name: "music", description: "play music")]
 public class JoinVoiceChannel : InteractionModuleBase<SocketInteractionContext>
 {
-    private static IAudioClient audioClient;
-    [SlashCommand("join", "join voice channel", runMode: RunMode.Async)]
-    public async Task ExecuteAsync()
+    private static IAudioClient? _audioClient;
+
+    [SlashCommand("join", "join voice channel", runMode: Interactions.RunMode.Async)]
+    public async Task JoinAsync()
     {
         var user = Context.User.ToSocketGuild();
         var voiceChannel = user.VoiceChannel;
@@ -22,85 +21,106 @@ public class JoinVoiceChannel : InteractionModuleBase<SocketInteractionContext>
             return;
         }
 
-        audioClient = await voiceChannel.ConnectAsync();
+        _audioClient = await voiceChannel.ConnectAsync();
+
+        return;
     }
 
+    [SlashCommand("ping", "a", runMode: Interactions.RunMode.Async)]
+    public async Task Ping()
+    {
+        await RespondAsync("Pong!");
+    }
 
     [SlashCommand("play", "play a song")]
     public async Task PlayAsync(string query)
     {
-        if (audioClient == null)
+        _ = Task.Run(async () =>
         {
-            await ExecuteAsync();
-        }
+            await JoinAsync();
 
-        //var youtube = new YoutubeClient();
+            var youtube = new YoutubeClient();
 
-        //var video = await youtube.Search.GetVideosAsync(query).FirstOrDefaultAsync();
-        //if (video == null)
-        //{
-        //    await ReplyAsync("No results found on YouTube.");
-        //    return;
-        //}
+            var token = new CancellationTokenSource().Token;
+            var video = await youtube.Search.GetVideosAsync(query, token).FirstOrDefaultAsync(token);
+            if (video == null)
+            {
+                await ReplyAsync("No results found on YouTube.");
+                return;
+            }
 
-        //var streamManifest = await youtube.Videos.Streams.GetManifestAsync(video.Id);
-        //var streamInfo = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate();
+            var streamManifest = await youtube.Videos.Streams.GetManifestAsync(video.Id, token);
+            var streamInfo = streamManifest.GetAudioOnlyStreams().TryGetWithHighestBitrate();
 
-        //if (streamInfo == null)
-        //{
-        //    await ReplyAsync("No suitable audio stream found.");
-        //    return;
-        //}
+            if (streamInfo == null)
+            {
+                await ReplyAsync("No suitable audio stream found.");
+                return;
+            }
 
-        //var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
+            await Context.Interaction.ModifyOriginalResponseAsync(x => x.Content = video.Title);
+            using var discordStream = _audioClient!.CreatePCMStream(AudioApplication.Mixed, bufferMillis: 1024 * 16);
+            try
+            {
+                using var ffmpeg = CreateStream(streamInfo.Url);
+                //var ffmpegErrors = await ffmpeg.StandardError.ReadToEndAsync();
+                //if (!string.IsNullOrEmpty(ffmpegErrors))
+                //{
+                //    Console.WriteLine($"FFmpeg error: {ffmpegErrors}");
+                //}
+                //// Rest of your code
+                await ffmpeg.StandardOutput.BaseStream
+                            .CopyToAsync(discordStream, bufferSize: 1024 * 16, token)
+                            .ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during streaming: {ex.Message}", token);
+            }
+            finally
+            {
+                await discordStream.FlushAsync(token);
+            }
+        });
 
-        //await PlayAudioStream(video.Url);
-        query = "1.mp3";
-        IMediaInfo mediaInfo = await FFmpeg.GetMediaInfo(query);
-        IStream audioStream = mediaInfo.AudioStreams.FirstOrDefault();
-       
+        await RespondAsync("querying...");
     }
 
-    private Process CreateFFmpegProcess(string path)
+    private static Process CreateStream(string url)
     {
         return Process.Start(new ProcessStartInfo
         {
             FileName = "ffmpeg.exe",
-            Arguments = $"-hide_banner -loglevel panic -i \"{path}\" -ac 2 -f s16le -ar 48000 pipe:1",
+            Arguments = $"-hide_banner -loglevel panic -i \"{url}\" -ac 2 -f s16le -ar 48000 pipe:1",
             UseShellExecute = false,
-            RedirectStandardOutput = true
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            CreateNoWindow = true
         })!;
     }
 
-    private async Task PlayAudioStream(string audioUrl)
+    private static async Task<string> GetYouTubeAudioUrlAsync(string query)
     {
-        var httpClient = new System.Net.Http.HttpClient();
-        var response = await httpClient.GetAsync(audioUrl, System.Net.Http.HttpCompletionOption.ResponseHeadersRead);
-
-        if (!response.IsSuccessStatusCode)
+        // Start yt-dlp process to fetch the audio URL
+        var ytDlpProcess = new Process
         {
-            throw new InvalidOperationException("Failed to download audio stream.");
-        }
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = "yt-dlp",
+                Arguments = $"-f bestaudio --get-url \"ytsearch1:{query}\"",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
+            }
+        };
 
-        using (var stream = await response.Content.ReadAsStreamAsync())
-        using (var discordStream = audioClient.CreateOpusStream())
-        {
-            var waveStream = new WaveFileReader(stream);
+        ytDlpProcess.Start();
 
-            await waveStream.CopyToAsync(discordStream);
-            await discordStream.FlushAsync().ConfigureAwait(false);
-        }
-    }
+        var url = await ytDlpProcess.StandardOutput.ReadToEndAsync();
 
-    private async Task SendSingleAsync(string path)
-    {
-        var format = new WaveFormat(48000, 16, 2);
-        using var reader = new MediaFoundationReader(path);
-        using var resamplerDmo = new ResamplerDmoStream(reader, format);
+        await ytDlpProcess.WaitForExitAsync();
+        ytDlpProcess.Dispose();
 
-        var discordStream = audioClient.CreatePCMStream(AudioApplication.Mixed);
-        await resamplerDmo.CopyToAsync(discordStream)
-           .ContinueWith(t => { return; });
-        await discordStream.FlushAsync();
+        return url.Trim();
     }
 }
