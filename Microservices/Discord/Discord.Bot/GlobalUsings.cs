@@ -2,7 +2,6 @@
 global using static Spending.Api.Protos.Spending;
 global using static Spending.Api.Protos.User;
 global using Spending.Api.Protos;
-global using Discord;
 global using Discord.Bot.Services.Commands;
 global using Discord.Bot.Services.Interactions;
 global using Discord.WebSocket;
