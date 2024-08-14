@@ -1,9 +1,10 @@
 ﻿using DisCatSharp;
 using DisCatSharp.ApplicationCommands;
+using DisCatSharp.CommandsNext;
+using DisCatSharp.Entities;
 using DisCatSharp.Enums;
 using DisCatSharp.Lavalink;
 using DisCatSharp.Net;
-using Discord.Bot.Features.Musics;
 using Discord.Bot.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -24,10 +25,13 @@ var discordSettings = configuration.GetSection(nameof(DiscordSettings)).Get<Disc
 var statisticSettings = configuration.GetSection(nameof(StatisticSettings)).Get<StatisticSettings>()!;
 var hoyolabSettings = configuration.GetSection(nameof(HoyolabSettings)).Get<HoyolabSettings>()!;
 
-var discord = new DiscordClient(new DiscordConfiguration()
+services.AddSingleton(discordSettings);
+services.AddSingleton(statisticSettings);
+services.AddSingleton(hoyolabSettings);
+var discord = new DiscordClient(new DiscordConfiguration
 {
     Token = discordSettings.Token,
-    TokenType = DisCatSharp.Enums.TokenType.Bot,
+    TokenType = TokenType.Bot,
     Intents = DiscordIntents.AllUnprivileged
             | DiscordIntents.MessageContent
             | DiscordIntents.Guilds
@@ -41,15 +45,22 @@ var discord = new DiscordClient(new DiscordConfiguration()
     ShowReleaseNotesInUpdateCheck = false
 });
 
+var assembly = typeof(Program).Assembly;
 var commands = discord.UseApplicationCommands();
 if (environment.IsProduction())
 {
-    commands.RegisterGlobalCommands(typeof(Voice).Assembly);
+    commands.RegisterGlobalCommands(assembly);
 }
 else
 {
-    commands.RegisterGuildCommands(typeof(Voice).Assembly, discordSettings.GuildId);
+    commands.RegisterGuildCommands(assembly, discordSettings.GuildId);
 }
+
+discord.UseCommandsNext(new CommandsNextConfiguration
+{
+    StringPrefixes = ["~"],
+    ServiceProvider = services.BuildServiceProvider(),
+}).RegisterCommands(assembly);
 
 var endpoint = new ConnectionEndpoint
 {
@@ -61,11 +72,19 @@ var lavaLinkConfig = new LavalinkConfiguration
 {
     Password = "youshallnotpass",
     RestEndpoint = endpoint,
-    SocketEndpoint = endpoint
+    SocketEndpoint = endpoint,
+    EnableBuiltInQueueSystem = true
 };
 
 await discord.ConnectAsync();
 await discord.UseLavalink().ConnectAsync(lavaLinkConfig);
+
+await discord.UpdateStatusAsync(new DiscordActivity
+{
+    Id = "1",
+    ActivityType = ActivityType.Playing,
+    Name = $"Node {Random.Shared.Next(1, 6)}",
+});
 
 //async Task StartAsync()
 //{

@@ -12,7 +12,7 @@ public class MusicSearchAutocompleteProvider : IAutocompleteProvider
     public async Task<IEnumerable<DiscordApplicationCommandAutocompleteChoice>> Provider(AutocompleteContext context)
     {
         var lavalink = context.Client.GetLavalink();
-        var guildPlayer = lavalink.GetGuildPlayer(context.Guild!);
+        var guildPlayer = lavalink.GetGuildPlayer(context.Guild);
         if (guildPlayer == null)
         {
             return [];
@@ -21,7 +21,7 @@ public class MusicSearchAutocompleteProvider : IAutocompleteProvider
         var query = context.Options[0].Value.ToString() ?? "";
         var loadResult = await guildPlayer.LoadTracksAsync(LavalinkSearchType.Youtube, query);
 
-        if (loadResult.LoadType == LavalinkLoadResultType.Empty || loadResult.LoadType == LavalinkLoadResultType.Error)
+        if (loadResult.LoadType is LavalinkLoadResultType.Empty or LavalinkLoadResultType.Error)
         {
             return [];
         }
@@ -43,14 +43,7 @@ public class MusicSearchAutocompleteProvider : IAutocompleteProvider
 
     private static string FormatTimestamp(TimeSpan timeSpan)
     {
-        if (timeSpan.TotalHours < 1)
-        {
-            return timeSpan.ToString(@"mm\:ss");
-        }
-        else
-        {
-            return timeSpan.ToString(@"hh\:mm\:ss");
-        }
+        return timeSpan.ToString(timeSpan.TotalHours < 1 ? @"mm\:ss" : @"hh\:mm\:ss");
     }
 
     private static string Truncate(string value, int length)
