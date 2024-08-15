@@ -9,7 +9,6 @@ namespace Discord.Bot.Services.Interactions;
 
 public class Hoyolab(ILogger<Hoyolab> logger, HoyolabSettings settings) : InteractionModuleBase<SocketInteractionContext>
 {
-    private readonly HoyolabSettings _settings = settings;
     private readonly ILogger _logger = logger;
 
     [SlashCommand("check-in", "daily check in")]
@@ -27,7 +26,7 @@ public class Hoyolab(ILogger<Hoyolab> logger, HoyolabSettings settings) : Intera
 
             var payload = JsonSerializer.Serialize(checkIn);
             var content = new StringContent(payload, Encoding.UTF8, "application/json");
-            var response = await client.PostAsync($"{_settings.Gateway}/activity/check-in", content);
+            var response = await client.PostAsync($"{settings.Gateway}/activity/check-in", content);
 
             var responseJson = await response.Content.ReadAsStringAsync();
             _logger.LogInformation("response {response}", responseJson);
