@@ -54,6 +54,7 @@ var commands = discord.UseApplicationCommands();
 if (environment.IsProduction())
 {
     commands.RegisterGlobalCommands(assembly);
+    commands.RegisterGuildCommands(assembly, discordSettings.GuildId);
 }
 else
 {
