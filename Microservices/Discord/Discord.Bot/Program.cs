@@ -5,6 +5,7 @@ using DisCatSharp.Entities;
 using DisCatSharp.Enums;
 using DisCatSharp.Lavalink;
 using DisCatSharp.Net;
+using Discord.Bot.Lavalink;
 using Discord.Bot.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -24,10 +25,12 @@ var configuration = builder.Configuration
 var discordSettings = configuration.GetSection(nameof(DiscordSettings)).Get<DiscordSettings>()!;
 var statisticSettings = configuration.GetSection(nameof(StatisticSettings)).Get<StatisticSettings>()!;
 var hoyolabSettings = configuration.GetSection(nameof(HoyolabSettings)).Get<HoyolabSettings>()!;
+var lavalinkSettings = configuration.GetSection(nameof(LavalinkSettings)).Get<LavalinkSettings>()!;
 
 services.AddSingleton(discordSettings);
 services.AddSingleton(statisticSettings);
 services.AddSingleton(hoyolabSettings);
+services.AddSingleton(lavalinkSettings);
 var discord = new DiscordClient(new DiscordConfiguration
 {
     Token = discordSettings.Token,
@@ -64,13 +67,15 @@ discord.UseCommandsNext(new CommandsNextConfiguration
 
 var endpoint = new ConnectionEndpoint
 {
-    Hostname = "localhost",
-    Port = 2333
+    Hostname = lavalinkSettings.Host,
+    Port = lavalinkSettings.Port
 };
 
 var lavaLinkConfig = new LavalinkConfiguration
 {
-    Password = "youshallnotpass",
+    Password = lavalinkSettings.Password,
+    RestEndpoint = endpoint,
+    SocketEndpoint = endpoint,
     EnableBuiltInQueueSystem = true
 };
 
