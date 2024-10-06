@@ -71,8 +71,6 @@ var endpoint = new ConnectionEndpoint
 var lavaLinkConfig = new LavalinkConfiguration
 {
     Password = "youshallnotpass",
-    RestEndpoint = endpoint,
-    SocketEndpoint = endpoint,
     EnableBuiltInQueueSystem = true
 };
 
