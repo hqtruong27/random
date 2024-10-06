@@ -1,4 +1,5 @@
-﻿using DisCatSharp;
+﻿using System.Text.Json;
+using DisCatSharp;
 using DisCatSharp.ApplicationCommands;
 using DisCatSharp.CommandsNext;
 using DisCatSharp.Entities;
@@ -79,7 +80,11 @@ var lavaLinkConfig = new LavalinkConfiguration
     EnableBuiltInQueueSystem = true
 };
 
+Console.WriteLine(lavalinkSettings);
+Console.WriteLine("lavalinkSettings {0}", JsonSerializer.Serialize(lavalinkSettings));
+
 await discord.ConnectAsync();
+
 await discord.UseLavalink().ConnectAsync(lavaLinkConfig);
 
 await discord.UpdateStatusAsync(new DiscordActivity
