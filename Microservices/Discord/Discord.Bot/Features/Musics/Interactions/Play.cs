@@ -45,17 +45,18 @@ public class Play : ApplicationCommandsModule
             _ => throw new InvalidOperationException("Unexpected load result type.")
         };
 
-        guildPlayer.AddToQueue(new Test(), track);
+        await guildPlayer.PlayAsync(track);
+        await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Now playing {query}!"));
 
-        if (guildPlayer.Player.PlayerState.Position.TotalSeconds <= 0)
-        {
-            guildPlayer.PlayQueueAsync();
-            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Now playing {query}!"));
-        }
-        else
-        {
-            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Added to queue {query}!"));
-        }
+        //if (guildPlayer.Player.PlayerState.Position.TotalSeconds <= 0)
+        //{
+        //    guildPlayer.PlayQueueAsync();
+        //    await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Now playing {query}!"));
+        //}
+        //else
+        //{
+        //    await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Added to queue {query}!"));
+        //}
     }
 
     [SlashCommand("join", "join voice channel.")]
