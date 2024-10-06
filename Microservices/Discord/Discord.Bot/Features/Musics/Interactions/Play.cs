@@ -30,9 +30,9 @@ public class Play : ApplicationCommandsModule
         }
 
         var loadResult = await guildPlayer.LoadTracksAsync(LavalinkSearchType.Youtube, query);
-
         if (loadResult.LoadType is LavalinkLoadResultType.Empty or LavalinkLoadResultType.Error)
         {
+            Console.WriteLine(loadResult.LoadType);
             await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Track search failed for {query}."));
             return;
         }
