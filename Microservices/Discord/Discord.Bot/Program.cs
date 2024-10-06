@@ -64,7 +64,7 @@ discord.UseCommandsNext(new CommandsNextConfiguration
 
 var endpoint = new ConnectionEndpoint
 {
-    Hostname = "127.0.0.1",
+    Hostname = "localhost",
     Port = 2333
 };
 
