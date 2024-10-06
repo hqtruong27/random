@@ -1,75 +1,78 @@
-version: '3.4'
-
 services:
   
   genshinimpact:
-    env_file: .env.Production
+    env_file: .env.production
     image: hqtruong27/genshinimpact.api:latest
     build:
       context: .
       dockerfile: Microservices/Hoyoverse/GenshinImpact/GenshinImpact.Api/Dockerfile
     networks:
-      - proxy-manager_default
+      - random
     depends_on:
       - mongodb
 
   hoyolab:
-    env_file: .env.Production
+    env_file: .env.production
     image: hqtruong27/hoyolab.api:latest
     build:
       context: .
       dockerfile: Microservices/Hoyoverse/Hoyolab/Hoyolab.Api/Dockerfile
     networks:
-      - proxy-manager_default
+      - random
     depends_on:
       - mongodb
 
   spending:
-    env_file: .env.Production
+    env_file: .env.production
     image: hqtruong27/spending.api:latest
     build:
       context: .
       dockerfile: Microservices/Spending/Spending.Api/Dockerfile
     networks:
-      - proxy-manager_default
+      - random
     depends_on:
       - db
    
   discord:
     image: hqtruong27/discord.bot:latest
-    env_file: .env.Production
+    env_file: .env.production
     build:
       context: .
       dockerfile: Microservices/Discord/Discord.Bot/Dockerfile
     depends_on:
       - spending
+    networks:
+      - lavalink
 
   db:
     image: postgres
     restart: always
-    env_file: .env.Production
+    env_file: .env.production
     volumes:
       - ./postgresql:/var/lib/postgresql/data
     ports:
       - 5432:5432
     networks:
-      - proxy-manager_default
+      - random
   
   mongodb:
     image: mongo:latest
     restart: always
     ports:
       - 27017:27017
-    env_file: .env.Production
+    env_file: .env.production
     volumes:
       - ./mongodb:/data/db
       - ./mongo-entrypoint:/docker-entrypoint-initdb.d
     networks:
-      - proxy-manager_default
+      - random
 
 networks:
-  proxy-manager_default:
-    external: true
+  random:
+    name: random
     driver: bridge
     ipam:
       driver: default
+  lavalink:
+    name: lavalink
+    external: true
