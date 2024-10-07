@@ -27,4 +27,4 @@ RUN dotnet publish "./GenshinImpact.Api.csproj" -c $BUILD_CONFIGURATION -o /app/
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "GenshinImpact.Api.dll"]
+ENTRYPOINT ["dotnet", "GenshinImpact.Api.dll", "--server.urls",  "http://127.0.0.1:5005"]

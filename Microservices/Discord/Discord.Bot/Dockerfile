@@ -24,4 +24,4 @@ RUN dotnet publish "./Discord.Bot.csproj" -c $BUILD_CONFIGURATION -o /app/publis
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Discord.Bot.dll", "--server.urls",  "http://127.0.0.1:5005"]
+ENTRYPOINT ["dotnet", "Discord.Bot.dll"]
