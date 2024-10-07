@@ -67,8 +67,6 @@ app.Use(async (context, next) =>
     await next.Invoke();
 });
 
-app.Urls.Add("http://*:5002");
-
 app.MapGet("/", () => "Genshin Impact Api");
 
 app.UseSwagger();
