@@ -67,8 +67,9 @@ app.Use(async (context, next) =>
     await next.Invoke();
 });
 
-app.Urls.Add("127.0.0.1:5003");
-app.Urls.Add("192.168.0.102:5004");
+app.Urls.Add("http://127.0.0.1:5003");
+app.Urls.Add("http://192.168.0.102:5004");
+app.Urls.Add("http://*:5002");
 
 app.MapGet("/", () => "Genshin Impact Api");
 
