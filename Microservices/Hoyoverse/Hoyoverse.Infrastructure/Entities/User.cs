@@ -6,7 +6,6 @@ public class User : AuditableEntity<ObjectId>
 {
     public required DiscordAccount Discord { get; set; }
     public required ICollection<HoyolabAccount> Hoyolabs { get; set; }
-
 }
 
 public class HoyolabAccount
@@ -16,10 +15,19 @@ public class HoyolabAccount
     public string UserName { get; set; } = default!;
     public string Gender { get; set; } = default!;
     public bool IsAutoCheckIn { get; set; } = default!;
+    public List<HoyolabAccountInGame> AccountInGames { get; set; } = [];
 }
 
 public class DiscordAccount
 {
     public required string Id { get; set; } = default!;
     public required string UserName { get; set; } = default!;
+}
+
+public enum HoyolabAccountInGame
+{
+    GenshinImpact,
+    StarRail,
+    HonkaiImpact3,
+    ZenlessZoneZero
 }
