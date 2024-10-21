@@ -9,7 +9,7 @@ namespace Discord.Bot.Features.Hoyoverse.Hoyolab;
 
 public class CheckIn(HoyolabSettings settings) : BaseCommandModule
 {
-    [Command("check-in")]
+    [Command("checkin")]
     public async Task CheckInAsync(CommandContext ctx)
     {
         using var client = new HttpClient();
