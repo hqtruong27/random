@@ -11,11 +11,19 @@ plugins:
     allowDirectPlaylistIds: true # Whether just playlist IDs can match. If false, only complete URLs will be loaded.
     # The clients to use for track loading. See below for a list of valid clients.
     # Clients are queried in the order they are given (so the first client is queried first and so on...)
+    # https://github.com/lavalink-devs/youtube-source/issues/55#issuecomment-2376165932 [fixed issue Something broke when playing the track. Not success status code: 403]
+    # https://github.com/lavalink-devs/youtube-source/issues/56#issuecomment-2379568023 try this if the above does not solve the problem
     clients:
       - MUSIC
-      #- ANDROID_TESTSUITE
+      - TVHTML5EMBEDDED
+      - ANDROID_MUSIC
+      - ANDROID_TESTSUITE
       - WEB
-      #- TVHTML5EMBEDDED
+      - WEBEMBEDDED
+      - ANDROID
+      - ANDROID_LITE
+      - MEDIA_CONNECT
+      - IOS
   # lavasrc:
     # providers: # Custom providers for track loading. This is the default
       # - "ytsearch:\"%ISRC%\"" # Will be ignored if track does not have an ISRC. See https://esearch.wikipedia.org/wiki/International_Standard_Recording_Code

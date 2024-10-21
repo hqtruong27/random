@@ -86,7 +86,14 @@ Console.WriteLine("lavalinkSettings {0}", JsonSerializer.Serialize(lavalinkSetti
 
 await discord.ConnectAsync();
 
-await discord.UseLavalink().ConnectAsync(lavaLinkConfig);
+try
+{
+    await discord.UseLavalink().ConnectAsync(lavaLinkConfig);
+}
+catch
+{
+    // ignored
+}
 
 await discord.UpdateStatusAsync(new DiscordActivity
 {

@@ -17,4 +17,5 @@ public class CheckInResponse
     public string Message { get; set; } = default!;
     [JsonIgnore]
     public int Type { get; set; }
+    public string Name { get; set; } = default!;
 }

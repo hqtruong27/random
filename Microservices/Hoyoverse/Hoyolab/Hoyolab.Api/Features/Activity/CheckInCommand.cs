@@ -7,11 +7,15 @@ namespace Hoyolab.Api.Features.Activity;
 
 public record CheckInCommand(string DiscordId) : IRequest<List<CheckInResponse>>
 {
-    public class CheckInCommandHandler(ISettingRepository _setting, IRepository<User, ObjectId> repository) : IRequestHandler<CheckInCommand, List<CheckInResponse>>
+    public class CheckInCommandHandler(
+        ISettingRepository setting,
+        IRepository<User, ObjectId> repository,
+        ILogger<CheckInCommandHandler> logger) : IRequestHandler<CheckInCommand, List<CheckInResponse>>
     {
         public async Task<List<CheckInResponse>> Handle(CheckInCommand request, CancellationToken cancellationToken)
         {
-            var setting = await _setting.Read<ActivityConfig>("ACTIVITY_CONFIG");
+            var config = await setting.Read<ActivityConfig>("ACTIVITY_CONFIG");
+            logger.LogInformation("config: {config}", config);
             var user = await repository.FirstOrDefaultAsync(x => x.Discord.Id == request.DiscordId);
             if (user == null)
             {
@@ -33,13 +37,19 @@ public record CheckInCommand(string DiscordId) : IRequest<List<CheckInResponse>>
                     switch (i)
                     {
                         case 1:
-                            result.Add(await PostAsync(setting.Genshin, hoyolab));
+                            var gi = await PostAsync(config.Genshin, hoyolab);
+                            gi.Name = "GI";
+                            result.Add(gi);
                             break;
                         case 2:
-                            result.Add(await PostAsync(setting.Hsr, hoyolab));
+                            var hsr = await PostAsync(config.Hsr, hoyolab);
+                            hsr.Name = "HSR";
+                            result.Add(hsr);
                             break;
                         case 3:
-                            result.Add(await PostAsync(setting.Hi3, hoyolab));
+                            var hi3 = await PostAsync(config.Hi3, hoyolab);
+                            hi3.Name = "Hi3";
+                            result.Add(hi3);
                             break;
                         default:
                             break;
@@ -47,16 +57,18 @@ public record CheckInCommand(string DiscordId) : IRequest<List<CheckInResponse>>
                 }
             }
 
-            return result!;
+            return result;
         }
 
-        private static async Task<CheckInResponse> PostAsync(Config config, HoyolabAccount hoyolab)
+        private async Task<CheckInResponse> PostAsync(Config config, HoyolabAccount hoyolab)
         {
             using HttpClient client = new();
 
             var payload = JsonSerializer.Serialize(new { act_id = config.ActId });
             client.DefaultRequestHeaders.Add("Cookie", hoyolab.Cookie);
             var content = new StringContent(payload, Encoding.UTF8, "application/json");
+
+            logger.LogInformation("payload: {url}, {payload}", config.CheckInUrl, payload);
             var response = await client.PostAsync(config.CheckInUrl, content);
 
             var stream = await response.Content.ReadAsStreamAsync();
