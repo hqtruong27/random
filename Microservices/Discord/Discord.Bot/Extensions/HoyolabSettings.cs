@@ -1,4 +1,4 @@
-﻿namespace Discord.Bot.Models;
+﻿namespace Discord.Bot.Extensions;
 
 public class HoyolabSettings
 {

@@ -1,16 +1,11 @@
-﻿using DisCatSharp.ApplicationCommands.Attributes;
-using DisCatSharp.ApplicationCommands.Context;
-using DisCatSharp.Entities;
-using DisCatSharp.Lavalink;
+﻿namespace Discord.Bot.Features.Musics.Interactions;
 
-namespace Discord.Bot.Features.Musics.Interactions;
-
-public class Pause
+public class Pause : ApplicationCommandsModule
 {
     [SlashCommand("pause", "Pause a track")]
-    public static async Task PauseAsync(InteractionContext ctx)
+    public static async Task Handle(InteractionContext ctx)
     {
-        await ctx.CreateResponseAsync(DisCatSharp.Enums.InteractionResponseType.DeferredChannelMessageWithSource);
+        await ctx.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource);
         if (ctx.Member?.VoiceState?.Channel is null)
         {
             await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("You are not in a voice channel."));

@@ -1,13 +1,9 @@
-﻿using DisCatSharp.CommandsNext;
-using DisCatSharp.CommandsNext.Attributes;
-using DisCatSharp.Lavalink;
-
-namespace Discord.Bot.Features.Musics.Commands;
+﻿namespace Discord.Bot.Features.Musics.Commands;
 
 public class Join : BaseCommandModule
 {
     [Command("join")]
-    public async Task JoinAsync(CommandContext ctx)
+    public static async Task JoinAsync(CommandContext ctx)
     {
         var lavalink = ctx.Client.GetLavalink();
         var session = lavalink.ConnectedSessions.Values.First();

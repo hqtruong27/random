@@ -1,6 +1,4 @@
-﻿using Grpc.Net.Client;
-
-namespace Discord.Bot.Extensions;
+﻿namespace Discord.Bot.Extensions;
 
 public class DiscordSettings
 {

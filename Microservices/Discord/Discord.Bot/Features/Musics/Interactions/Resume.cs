@@ -1,15 +1,9 @@
-﻿using DisCatSharp.ApplicationCommands;
-using DisCatSharp.ApplicationCommands.Attributes;
-using DisCatSharp.ApplicationCommands.Context;
-using DisCatSharp.Entities;
-using DisCatSharp.Lavalink;
-
-namespace Discord.Bot.Features.Musics.Interactions;
+﻿namespace Discord.Bot.Features.Musics.Interactions;
 
 public class Resume : ApplicationCommandsModule
 {
     [SlashCommand("resume", "Resume a track")]
-    public static async Task ResumeAsync(InteractionContext ctx)
+    public async Task Handle(InteractionContext ctx)
     {
         await ctx.CreateResponseAsync(DisCatSharp.Enums.InteractionResponseType.DeferredChannelMessageWithSource);
         if (ctx.Member?.VoiceState?.Channel is null)

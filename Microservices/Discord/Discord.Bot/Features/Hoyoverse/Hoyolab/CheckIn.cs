@@ -1,9 +1,6 @@
-﻿using DisCatSharp.CommandsNext;
-using DisCatSharp.CommandsNext.Attributes;
-using Discord.Bot.Models;
+﻿using DisCatSharp.CommandsNext.Attributes;
 using Models.Hoyolab;
 using System.Text;
-using System.Text.Json;
 
 namespace Discord.Bot.Features.Hoyoverse.Hoyolab;
 

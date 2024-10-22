@@ -13,7 +13,7 @@ public class MongoRepository<TEntity, TKey>(IHoyoverseDbContext context)
     private readonly IMongoCollection<TEntity> _collection = context.Database.GetCollection<TEntity>(typeof(TEntity).Name);
     public IMongoCollection<TEntity> Collection => _collection;
 
-    public IMongoQueryable<TEntity> Queries => _collection.AsQueryable();
+    public IQueryable<TEntity> Queries => _collection.AsQueryable();
 
     public async Task<IEnumerable<BsonDocument>> AggregateAsync(params BsonDocument[] pipeline)
     {

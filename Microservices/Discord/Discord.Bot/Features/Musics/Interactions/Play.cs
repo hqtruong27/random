@@ -1,18 +1,11 @@
-﻿using DisCatSharp.ApplicationCommands;
-using DisCatSharp.ApplicationCommands.Attributes;
-using DisCatSharp.ApplicationCommands.Context;
-using DisCatSharp.Entities;
-using DisCatSharp.Lavalink;
-using DisCatSharp.Lavalink.Entities;
-using DisCatSharp.Lavalink.Enums;
-using Discord.Bot.Features.Musics.Autocompletes;
+﻿using Discord.Bot.Features.Musics.Autocompletes;
 
 namespace Discord.Bot.Features.Musics.Interactions;
 
 public class Play : ApplicationCommandsModule
 {
     [SlashCommand("play", "Play a track.")]
-    public static async Task PlayAsync(InteractionContext ctx, [Autocomplete(typeof(MusicSearchAutocompleteProvider))][Option("query", "The query to search for", true)] string query)
+    public async Task Handle(InteractionContext ctx, [Autocomplete(typeof(MusicSearchAutocompleteProvider))][Option("query", "The query to search for", true)] string query)
     {
         await ctx.CreateResponseAsync(DisCatSharp.Enums.InteractionResponseType.DeferredChannelMessageWithSource);
         if (ctx.Member?.VoiceState?.Channel is null)
@@ -57,30 +50,6 @@ public class Play : ApplicationCommandsModule
         //{
         //    await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Added to queue {query}!"));
         //}
-    }
-
-    [SlashCommand("join", "join voice channel.")]
-    public static async Task JoinAsync(InteractionContext ctx)
-    {
-        await ctx.CreateResponseAsync(DisCatSharp.Enums.InteractionResponseType.DeferredChannelMessageWithSource);
-        var lavalink = ctx.Client.GetLavalink();
-        var session = lavalink.ConnectedSessions.Values.First();
-        var channel = ctx.Member!.VoiceState?.Channel;
-        if (channel is null)
-        {
-            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Not in channel."));
-            return;
-        }
-
-        if (channel.Type is not (DisCatSharp.Enums.ChannelType.Voice or DisCatSharp.Enums.ChannelType.Stage))
-        {
-            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Not a valid voice channel."));
-            return;
-        }
-
-        await session.ConnectAsync(channel);
-
-        await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Joined {channel.Mention}!"));
     }
 }
 

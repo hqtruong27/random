@@ -15,7 +15,7 @@ public class MongoRepository<TEntity, TKey>(IStarRailDbContext context)
 
     public IMongoCollection<TEntity> Collection => _collection;
 
-    public IMongoQueryable<TEntity> Queries => context.Set<TEntity>().AsQueryable();
+    public IQueryable<TEntity> Queries => context.Set<TEntity>().AsQueryable();
 
     public async Task<IEnumerable<BsonDocument>> AggregateAsync(params BsonDocument[] pipeline)
     {

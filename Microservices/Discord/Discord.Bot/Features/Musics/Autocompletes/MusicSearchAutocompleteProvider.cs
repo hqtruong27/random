@@ -1,11 +1,4 @@
-﻿using DisCatSharp.ApplicationCommands.Attributes;
-using DisCatSharp.ApplicationCommands.Context;
-using DisCatSharp.Entities;
-using DisCatSharp.Lavalink;
-using DisCatSharp.Lavalink.Entities;
-using DisCatSharp.Lavalink.Enums;
-
-namespace Discord.Bot.Features.Musics.Autocompletes;
+﻿namespace Discord.Bot.Features.Musics.Autocompletes;
 
 public class MusicSearchAutocompleteProvider : IAutocompleteProvider
 {

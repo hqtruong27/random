@@ -2,7 +2,6 @@
 using Common.Enum.Hoyoverse;
 using Common.Helpers;
 using MongoDB.Bson;
-using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using System.Text.Json;
 
@@ -21,7 +20,6 @@ public sealed record CrawlGachaHistoryCommand(string Url) : IRequest<int>
 
             var queryString = UrlQueryHelper.Populate<UrlQuery>(request.Url);
             var configure = await setting.Read<WishListConfig>("WISH_LIST_CONFIG");
-            var total = 0;
 
             var gachaHistories = await GetGachaHistoriesAsync(configure.GachaUrl, queryString);
             if (gachaHistories.Count > 0)
@@ -30,16 +28,17 @@ public sealed record CrawlGachaHistoryCommand(string Url) : IRequest<int>
             }
 
             logger.LogInformation("End: crawl success {total}", gachaHistories.Count);
-            return total;
+
+            return gachaHistories.Count;
         }
         private async Task<List<GachaHistory>> GetGachaHistoriesAsync(string gachaUrl, UrlQuery qs)
         {
-            var hasMoreRecords = true;
             List<GachaHistory> result = [];
             foreach (var gachaType in Enum.GetValues<GachaType>().ToList())
             {
                 long endId = 0;
-                long beginId = await GetLastIdAsync(gachaType);
+                var beginId = await GetLastIdAsync(gachaType);
+                bool hasMoreRecords;
                 do
                 {
                     var response = await PostAsync(new(), beginId, endId, gachaUrl, qs, gachaType);
@@ -76,7 +75,7 @@ public sealed record CrawlGachaHistoryCommand(string Url) : IRequest<int>
         private async Task<long> GetLastIdAsync(GachaType gachaType)
         {
             var gachaTypes = new List<GachaType>() { GachaType.CharLimited, GachaType.CharLimitedTwo };
-            IMongoQueryable<GachaHistory> gachaHistories;
+            IQueryable<GachaHistory> gachaHistories;
             if (gachaTypes.Contains(gachaType))
             {
                 gachaHistories = repository.Queries.Where(x => gachaTypes.Contains(x.GachaType));
@@ -86,7 +85,7 @@ public sealed record CrawlGachaHistoryCommand(string Url) : IRequest<int>
                 gachaHistories = repository.Queries.Where(x => x.GachaType == gachaType);
             }
 
-            if (gachaHistories is null || !await gachaHistories.AnyAsync())
+            if (!await gachaHistories.AnyAsync())
             {
                 return 0;
             }
@@ -107,14 +106,13 @@ public sealed record CrawlGachaHistoryCommand(string Url) : IRequest<int>
             var stream = await response.Content.ReadAsStreamAsync();
             var gachaInfo = await JsonSerializer.DeserializeAsync<GachaInfoResponse>(stream);
 
-            if (gachaInfo?.Code == Genshin.Code.AuthKeyTimeOut)
+            switch (gachaInfo?.Code)
             {
-                throw new Exception("Authkey timeout");
-            }
-
-            if (gachaInfo?.Code == Genshin.Code.VisitTooFrequently)
-            {
-                await PostAsync(client, beginId, endId, gachaUrl, qs, gachaType);
+                case Genshin.Code.AuthKeyTimeOut:
+                    throw new Exception("Authkey timeout");
+                case Genshin.Code.VisitTooFrequently:
+                    await PostAsync(client, beginId, endId, gachaUrl, qs, gachaType);
+                    break;
             }
 
             return gachaInfo?.Data ?? new();
