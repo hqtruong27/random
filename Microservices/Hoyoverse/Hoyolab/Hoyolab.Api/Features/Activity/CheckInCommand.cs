@@ -32,26 +32,26 @@ public record CheckInCommand(string DiscordId) : IRequest<List<CheckInResponse>>
             List<CheckInResponse> result = [];
             foreach (var hoyolab in user.Hoyolabs)
             {
-                foreach (var account in hoyolab.AccountInGames)
+                foreach (var account in hoyolab.Games)
                 {
                     switch (account)
                     {
-                        case HoyolabAccountInGame.GenshinImpact:
+                        case HoyolabGame.GenshinImpact:
                             var gi = await PostAsync(config.Genshin, hoyolab);
                             gi.Name = "GI";
                             result.Add(gi);
                             break;
-                        case HoyolabAccountInGame.StarRail:
+                        case HoyolabGame.StarRail:
                             var hsr = await PostAsync(config.Hsr, hoyolab);
                             hsr.Name = "HSR";
                             result.Add(hsr);
                             break;
-                        case HoyolabAccountInGame.HonkaiImpact3:
+                        case HoyolabGame.HonkaiImpact3:
                             var hi3 = await PostAsync(config.Hi3, hoyolab);
                             hi3.Name = "Hi3";
                             result.Add(hi3);
                             break;
-                        case HoyolabAccountInGame.ZenlessZoneZero:
+                        case HoyolabGame.ZenlessZoneZero:
                             break;
                         default:
                             break;

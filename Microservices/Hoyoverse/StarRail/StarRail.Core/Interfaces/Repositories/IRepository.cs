@@ -1,12 +1,11 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
-using MongoDB.Driver.Linq;
 using StarRail.Core.Base;
 using System.Linq.Expressions;
 
 namespace StarRail.Core.Interfaces.Repositories;
 
-public interface IRepository<TEntity, TKey> : IBulkRepository<TEntity>, IDisposable where TEntity : AuditableEntity<TKey>
+public interface IRepository<TEntity, in TKey> : IBulkRepository<TEntity>, IDisposable where TEntity : AuditableEntity<TKey>
 {
     public IMongoCollection<TEntity> Collection { get; }
     IQueryable<TEntity> Queries { get; }

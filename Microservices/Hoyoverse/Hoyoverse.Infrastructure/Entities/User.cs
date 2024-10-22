@@ -12,19 +12,19 @@ public class HoyolabAccount
 {
     public required string Id { get; set; }
     public required string Cookie { get; set; }
-    public string UserName { get; set; } = default!;
+    public string Username { get; set; } = default!;
     public string Gender { get; set; } = default!;
-    public bool IsAutoCheckIn { get; set; } = default!;
-    public List<HoyolabAccountInGame> AccountInGames { get; set; } = [];
+    public bool IsAutoCheckIn { get; set; }
+    public List<HoyolabGame> Games { get; set; } = [];
 }
 
 public class DiscordAccount
 {
     public required string Id { get; set; } = default!;
-    public required string UserName { get; set; } = default!;
+    public required string Username { get; set; } = default!;
 }
 
-public enum HoyolabAccountInGame
+public enum HoyolabGame
 {
     GenshinImpact,
     StarRail,

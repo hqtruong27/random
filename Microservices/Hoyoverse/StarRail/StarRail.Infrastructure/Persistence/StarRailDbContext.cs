@@ -9,7 +9,7 @@ public class StarRailDbContext : IStarRailDbContext
     private readonly Lazy<IMongoDatabase> _database;
     private IMongoDatabase Database => _database.Value;
     public IMongoCollection<GachaHistory> GachaHistories => Set<GachaHistory>();
-    public IMongoCollection<T> Set<T>(string name) => Set<T>(name);
+    public IMongoCollection<T> Set<T>(string name) => Database.GetCollection<T>(name);
     public IMongoCollection<T> Set<T>() => Database.GetCollection<T>(typeof(T).Name);
     public StarRailDbContext(IDbContextOptions options)
     {

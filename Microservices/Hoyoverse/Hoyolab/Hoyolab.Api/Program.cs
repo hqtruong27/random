@@ -2,6 +2,7 @@ using Hoyolab.Api.Job;
 using Quartz;
 using Quartz.Logging;
 using System.Reflection;
+using Hoyoverse.Infrastructure.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +38,7 @@ services.AddQuartz(q =>
     q.AddTrigger(t => t
         .WithIdentity("trigger-job", "hoyolab")
         .ForJob(jobKey)
-        .WithCronSchedule("0 0 1 ? * * * ")
+        .WithCronSchedule("0 0 1 ? * * *")
         .WithDescription("daily check in job")
     );
 });

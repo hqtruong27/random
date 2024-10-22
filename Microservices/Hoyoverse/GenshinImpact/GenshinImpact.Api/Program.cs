@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using Common.Enum.Hoyoverse;
 using GenshinImpact.Api.Mapper;
+using Hoyoverse.Infrastructure.Core;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 
@@ -23,7 +24,7 @@ BsonClassMap.RegisterClassMap<GachaHistory>(map =>
     map.MapMember(x => x.ItemType).SetSerializer(new EnumSerializer<ItemType>(MongoDB.Bson.BsonType.String));
 });
 
-services.AddSingleton<IDbContextOptions>(builder.Configuration.GetSection("MongoDb").Get<MongoDbContextOptions>()!);
+services.AddSingleton<IDbContextOptions>(configuration.GetSection("MongoDb").Get<MongoDbContextOptions>()!);
 services.AddHoyoverseDbContext();
 services.AddDispatcher(typeof(Program).Assembly);
 services.AddAutoMapper(typeof(OrganizationProfile)).AddControllers().AddJsonOptions(o =>

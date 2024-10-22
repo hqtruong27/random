@@ -1,9 +1,6 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson;
+﻿namespace Hoyoverse.Infrastructure.Common.Interfaces;
 
-namespace Hoyoverse.Infrastructure.Common.Interfaces;
-
-public interface IEntity<T>
+public interface IEntity<out T>
 {
     T Id { get; }
 }

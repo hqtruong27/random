@@ -1,5 +1,4 @@
 ﻿using Common.Enum.Hoyoverse;
-using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 
 namespace Hoyoverse.Infrastructure.Entities;

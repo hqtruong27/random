@@ -11,9 +11,7 @@ public class MongoRepository<TEntity, TKey>(IStarRailDbContext context)
     : IRepository<TEntity, TKey> where TEntity
     : AuditableEntity<TKey>, new()
 {
-    private readonly IMongoCollection<TEntity> _collection = context.Set<TEntity>();
-
-    public IMongoCollection<TEntity> Collection => _collection;
+    public IMongoCollection<TEntity> Collection { get; } = context.Set<TEntity>();
 
     public IQueryable<TEntity> Queries => context.Set<TEntity>().AsQueryable();
 

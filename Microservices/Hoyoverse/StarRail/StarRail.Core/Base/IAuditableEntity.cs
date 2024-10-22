@@ -1,6 +1,6 @@
 ﻿namespace StarRail.Core.Base;
 
-public interface IAuditableEntity<T> : IEntity<T>
+public interface IAuditableEntity<out T> : IEntity<T>
 {
     string? CreatedBy { get; set; }
     string? UpdatedBy { get; set; }

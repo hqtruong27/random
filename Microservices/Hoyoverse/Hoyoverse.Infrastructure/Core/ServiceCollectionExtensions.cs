@@ -1,6 +1,7 @@
 ﻿using GenshinImpact.Persistence.Repositories;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace Hoyoverse.Infrastructure.Core;
 
 public static class ServiceCollectionExtensions
 {

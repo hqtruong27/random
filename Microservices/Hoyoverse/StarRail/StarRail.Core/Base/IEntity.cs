@@ -1,6 +1,6 @@
 ﻿namespace StarRail.Core.Base;
 
-public interface IEntity<T>
+public interface IEntity<out T>
 {
     T Id { get; }
 }
