@@ -26,7 +26,7 @@
 		<PackageReference Include="DisCatSharp.ApplicationCommands" Version="10.6.4" />
 		<PackageReference Include="DisCatSharp.CommandsNext" Version="10.6.4" />
 		<PackageReference Include="DisCatSharp.Lavalink" Version="10.6.4" />
-		<PackageReference Include="Google.Protobuf" Version="3.28.2" />
+		<PackageReference Include="Google.Protobuf" Version="3.28.3" />
 		<PackageReference Include="Grpc.Net.Client" Version="2.66.0" />
 		<PackageReference Include="Grpc.Tools" Version="2.67.0">
 			<PrivateAssets>all</PrivateAssets>

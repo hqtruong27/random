@@ -1,0 +1,9 @@
+﻿global using GenshinImpact.Core.Entities;
+global using MongoDB.Driver;
+global using GenshinImpact.Infrastructure.Persistence.Interfaces;
+global using GenshinImpact.Infrastructure.Common.Settings;
+global using GenshinImpact.Infrastructure.Persistence;
+global using Microsoft.Extensions.DependencyInjection;
+global using MongoDB.Bson;
+global using MongoDB.Bson.Serialization;
+global using MongoDB.Bson.Serialization.Serializers;

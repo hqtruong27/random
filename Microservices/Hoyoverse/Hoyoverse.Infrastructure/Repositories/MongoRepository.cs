@@ -1,10 +1,10 @@
-﻿using MongoDB.Driver;
+﻿using System.Linq.Expressions;
 using Common.Extensions;
-using System.Linq.Expressions;
-using MongoDB.Driver.Linq;
 using MongoDB.Bson;
+using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
-namespace GenshinImpact.Persistence.Repositories;
+namespace Hoyoverse.Infrastructure.Repositories;
 
 public class MongoRepository<TEntity, TKey>(IHoyoverseDbContext context)
     : IRepository<TEntity, TKey> where TEntity

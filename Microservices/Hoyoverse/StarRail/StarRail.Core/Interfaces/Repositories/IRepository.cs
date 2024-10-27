@@ -7,7 +7,6 @@ namespace StarRail.Core.Interfaces.Repositories;
 
 public interface IRepository<TEntity, in TKey> : IBulkRepository<TEntity>, IDisposable where TEntity : AuditableEntity<TKey>
 {
-    public IMongoCollection<TEntity> Collection { get; }
     IQueryable<TEntity> Queries { get; }
     Task<IEnumerable<BsonDocument>> AggregateAsync(params BsonDocument[] pipeline);
     Task<long> CountAsync(Expression<Func<TEntity, bool>> predicate);

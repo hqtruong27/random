@@ -1,14 +1,13 @@
-﻿using MongoDB.Bson;
-using MongoDB.Driver;
+﻿using Hoyolab.Api.Features.Activities;
 using Quartz;
 
 namespace Hoyolab.Api.Job;
 
-public class CheckInJob(IDispatcher dispatcher, IRepository<User, ObjectId> repository) : IJob
+public class CheckInJob(IDispatcher dispatcher, IDatabaseContext database) : IJob
 {
     public async Task Execute(IJobExecutionContext context)
     {
-        var users = await repository.FindAsync(x => x.Hoyolabs.Any(i => i.IsAutoCheckIn));
+        var users = await database.Users.FindAsync(x => x.Hoyolabs.Any(i => i.IsAutoCheckIn));
         //TODO: use parallel processor
         foreach (var user in await users.ToListAsync())
         {

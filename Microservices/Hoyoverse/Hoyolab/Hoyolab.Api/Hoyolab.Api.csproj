@@ -17,12 +17,15 @@
     <PackageReference Include="Quartz.Extensions.Hosting" Version="3.13.0" />
     <PackageReference Include="Quartz.Serialization.Json" Version="3.13.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
+    <PackageReference Include="MongoDB.Driver" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Libraries\Models\Models.csproj" />
-    <ProjectReference Include="..\..\Hoyoverse.Infrastructure\Hoyoverse.Infrastructure.csproj" />
-    <ProjectReference Include="..\Hoyolab.Services\Hoyolab.Services.csproj" />
+    <ProjectReference Include="..\..\..\..\Libraries\Dispatcher\Dispatcher.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Shared\Converters\" />
   </ItemGroup>
 
 </Project>

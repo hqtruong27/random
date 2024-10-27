@@ -8,7 +8,4 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
 	</ItemGroup>
-	<ItemGroup>
-	  <ProjectReference Include="..\..\Microservices\Hoyoverse\Hoyoverse.Infrastructure\Hoyoverse.Infrastructure.csproj" />
-	</ItemGroup>
 </Project>

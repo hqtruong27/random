@@ -1,4 +1,6 @@
-﻿using MongoDB.Driver;
+﻿// ReSharper disable InconsistentNaming
+
+using MongoDB.Driver;
 using StarRail.Core.Entities;
 using StarRail.Infrastructure.Common.Settings;
 

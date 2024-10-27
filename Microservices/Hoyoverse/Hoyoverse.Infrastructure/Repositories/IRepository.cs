@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace Hoyoverse.Infrastructure.Repositories;
 
-public interface IRepository<TEntity, TKey> : IBulkRepository<TEntity>, IDisposable where TEntity : AuditableEntity<TKey>
+public interface IRepository<TEntity, in TKey> : IBulkRepository<TEntity>, IDisposable where TEntity : AuditableEntity<TKey>
 {
     IQueryable<TEntity> Queries { get; }
     Task<IEnumerable<BsonDocument>> AggregateAsync(params BsonDocument[] pipeline);

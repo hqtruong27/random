@@ -20,8 +20,8 @@ public class HoyolabAccount
 
 public class DiscordAccount
 {
-    public required string Id { get; set; } = default!;
-    public required string Username { get; set; } = default!;
+    public required string Id { get; set; }
+    public required string Username { get; set; }
 }
 
 public enum HoyolabGame

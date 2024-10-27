@@ -11,7 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.10" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.6" />
@@ -19,7 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GenshinImpact.Services\GenshinImpact.Services.csproj" />
+    <ProjectReference Include="..\..\..\..\Libraries\Dispatcher\Dispatcher.csproj" />
+    <ProjectReference Include="..\GenshinImpact.Infrastructure\GenshinImpact.Infrastructure.csproj" />
+    <ProjectReference Include="..\GenshinImpact.Shared\GenshinImpact.Shared.csproj" />
   </ItemGroup>
 
 </Project>

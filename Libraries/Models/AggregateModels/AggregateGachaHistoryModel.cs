@@ -1,12 +1,8 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿namespace Models.AggregateModels;
 
-namespace Models.AggregateModels
+public class AggregateGachaHistoryModel
 {
-    [BsonIgnoreExtraElements]
-    public class AggregateGachaHistoryModel
-    {
-        public long ReferenceId { get; set; }
-        public int PullIndex { get; set; }
-        public string Name { get; set; } = default!;
-    }
+    public long ReferenceId { get; set; }
+    public int PullIndex { get; set; }
+    public string Name { get; set; } = default!;
 }

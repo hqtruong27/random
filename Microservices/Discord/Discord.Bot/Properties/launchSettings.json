@@ -8,10 +8,7 @@
       },
       "dotnetRunMessages": true,
       "Docker": {
-        "commandName": "Docker",
-        "environmentVariables": {
-          "ASPNETCORE_HTTP_PORTS": "8080"
-        }
+        "commandName": "Docker"
       }
     },
     "Docker": {
