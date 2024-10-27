@@ -6,7 +6,7 @@ public class AutoCheckInCommandHandler(IDatabaseContext context) : IRequestHandl
 {
     public async Task Handle(AutoCheckInCommand request, CancellationToken cancellationToken)
     {
-        var setting = await context.Settings
+        var setting = await context.Options
             .AsQueryable()
             .FirstOrDefaultAsync(x => x.Key == "ACTIVITY_CONFIG", cancellationToken);
         var configure = BsonSerializer.Deserialize<ActivityConfig>(setting.Value);
