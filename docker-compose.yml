@@ -1,7 +1,9 @@
 services:
+  
   genshinimpact:
     env_file: .env.production
     image: hqtruong27/genshinimpact.api:latest
+    restart: always
     ports:
      - "8080:8080" # Map container port 8080 to host port 8080
      - "8081:8081"
@@ -16,6 +18,10 @@ services:
   hoyolab:
     env_file: .env.production
     image: hqtruong27/hoyolab.api:latest
+    restart: always
+    ports:
+      - "5000:8080"
+      - "5001:8081"
     build:
       context: .
       dockerfile: Microservices/Hoyoverse/Hoyolab/Hoyolab.Api/Dockerfile
@@ -27,6 +33,7 @@ services:
   spending:
     env_file: .env.production
     image: hqtruong27/spending.api:latest
+    restart: always
     build:
       context: .
       dockerfile: Microservices/Spending/Spending.Api/Dockerfile
@@ -37,6 +44,7 @@ services:
    
   discord:
     image: hqtruong27/discord.bot:latest
+    restart: always
     env_file: .env.production
     build:
       context: .
@@ -44,6 +52,7 @@ services:
     depends_on:
       - spending
     networks:
+      - random
       - lavalink
 
   db:
@@ -70,7 +79,6 @@ services:
       - random
 
 networks:
-
   random:
     name: random
     driver: bridge
