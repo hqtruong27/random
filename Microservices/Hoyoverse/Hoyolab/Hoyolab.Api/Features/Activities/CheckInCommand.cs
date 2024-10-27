@@ -8,10 +8,10 @@ public class CheckInCommandHandler(
 {
     public async Task<List<CheckInResponse>> Handle(CheckInCommand request, CancellationToken cancellationToken)
     {
-        var setting = await context.Settings
+        var option = await context.Options
             .AsQueryable()
             .FirstOrDefaultAsync(x => x.Key == "ACTIVITY_CONFIG", cancellationToken);
-        var configure = BsonSerializer.Deserialize<ActivityConfig>(setting.Value);
+        var configure = BsonSerializer.Deserialize<ActivityConfig>(option.Value);
 
         logger.LogInformation("config: {configure}", configure);
 

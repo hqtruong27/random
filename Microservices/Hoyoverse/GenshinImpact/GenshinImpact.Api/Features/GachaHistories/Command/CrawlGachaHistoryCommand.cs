@@ -4,7 +4,7 @@ public sealed record CrawlGachaHistoryCommand(string Url) : IRequest<int>;
 
 public class CrawlGachaHistoryCommandHandler(IRepository<GachaHistory> repository
     , IMapper mapper
-    , IRepository<Options, string> settingRepository
+    , IRepository<Option, string> settingRepository
     , ILogger<CrawlGachaHistoryCommandHandler> logger) : IRequestHandler<CrawlGachaHistoryCommand, int>
 {
     public async Task<int> Handle(CrawlGachaHistoryCommand request, CancellationToken cancellationToken)
