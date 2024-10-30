@@ -1,4 +1,6 @@
-﻿var builder = Host.CreateApplicationBuilder(args);
+﻿using Discord.Bot.Common;
+
+var builder = Host.CreateApplicationBuilder(args);
 
 var services = builder.Services;
 var environment = builder.Environment;
@@ -82,7 +84,7 @@ await discord.UpdateStatusAsync(new DiscordActivity
 {
     Id = "1",
     ActivityType = ActivityType.Playing,
-    Name = $"Node {Random.Shared.Next(1, 6)}",
+    Name = Constants.Games[Random.Shared.Next(0, Constants.Games.Count - 1)],
 });
 
 var app = builder.Build();

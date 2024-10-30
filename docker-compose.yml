@@ -1,12 +1,12 @@
 services:
   
-  genshinimpact:
+  genshin-impact:
     env_file: .env.production
     image: hqtruong27/genshinimpact.api:latest
     restart: always
     ports:
-     - "8080:8080" # Map container port 8080 to host port 8080
-     - "8081:8081"
+     - "8080"
+     - "8081"
     build:
       context: .
       dockerfile: Microservices/Hoyoverse/GenshinImpact/GenshinImpact.Api/Dockerfile
@@ -14,14 +14,17 @@ services:
       - random
     depends_on:
       - mongodb
+      - traefik
+    labels:
+      - "traefik.http.routers.genshin-impact.rule=Host(`genshin.localhost`)"
 
   hoyolab:
     env_file: .env.production
     image: hqtruong27/hoyolab.api:latest
     restart: always
     ports:
-      - "5000:8080"
-      - "5001:8081"
+      - "8080"
+      - "8081"
     build:
       context: .
       dockerfile: Microservices/Hoyoverse/Hoyolab/Hoyolab.Api/Dockerfile
@@ -29,6 +32,9 @@ services:
       - random
     depends_on:
       - mongodb
+      - traefik
+    labels:
+      - "traefik.http.routers.hoyolab.rule=Host(`hoyolab.localhost`)"
 
   spending:
     env_file: .env.production
@@ -41,6 +47,7 @@ services:
       - random
     depends_on:
       - db
+      - traefik
    
   discord:
     image: hqtruong27/discord.bot:latest
@@ -51,9 +58,9 @@ services:
       dockerfile: Microservices/Discord/Discord.Bot/Dockerfile
     depends_on:
       - spending
+      - lavalink
     networks:
       - random
-      - lavalink
 
   db:
     image: postgres
@@ -78,12 +85,90 @@ services:
     networks:
       - random
 
+  lavalink:
+    # pin the image version to Lavalink v4
+    image: ghcr.io/lavalink-devs/lavalink:4
+    container_name: lavalink
+    restart: unless-stopped
+    environment:
+      # set Java options here
+      - _JAVA_OPTIONS=-Xmx6G
+      # set lavalink server port
+      - SERVER_PORT=2333
+      # set password for lavalink
+      - LAVALINK_SERVER_PASSWORD=youshallnotpass
+    volumes:
+      # mount application.yml from the same directory or use environment variables
+      - ./lavalink/application.yml:/opt/Lavalink/application.yml
+      # persist plugins between restarts, make sure to set the correct permissions (user: 322, group: 322)
+      - ./lavalink/plugins/:/opt/Lavalink/plugins/
+    networks:
+      - random
+    expose:
+      # lavalink exposes port 2333 to connect to for other containers (this is for documentation purposes only)
+      - 2333
+    ports:
+      # you only need this if you want to make your lavalink accessible from outside of containers
+      - "2333:2333"
+    depends_on:
+      - traefik
+
+  traefik:
+    # The official v3 Traefik docker image
+    image: traefik:v3.1
+    # Enables the web UI and tells Traefik to listen to docker
+    command: --api.insecure=true --providers.docker
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "81:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - random
+    labels:
+      - "traefik.http.routers.traefik.rule=Host(`traefik.localhost`)"
+
+  whoami:
+    # A container that exposes an API to show its IP address
+    image: traefik/whoami
+    labels:
+      - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
+    depends_on:
+      - traefik
+    networks:
+      - random
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    # For DHCP it is recommended to remove these ports and instead add: network_mode: "host"
+    ports:
+      - "5353:53/tcp"
+      - "5353:53/udp"
+      - "67:67/udp" # Only required if you are using Pi-hole as your DHCP server
+      - "82:82/tcp"
+    environment:
+      TZ: 'Asia/Bangkok'
+      # WEBPASSWORD: 'set a secure password here or it will be random'
+    # Volumes store your data between container upgrades
+    volumes:
+      - './etc-pihole:/etc/pihole'
+      - './etc-dnsmasq.d:/etc/dnsmasq.d'
+    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+    cap_add:
+      - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
+    restart: unless-stopped
+    networks:
+      - random
+
 networks:
   random:
     name: random
     driver: bridge
     ipam:
       driver: default
-  lavalink:
-    name: lavalink
-    external: true
+      #use IP windows for internal network, for wsl see README.md
+      config:
+        - subnet: 172.22.130.0/24
