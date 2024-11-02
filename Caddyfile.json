@@ -1,0 +1,66 @@
+{
+  "apps": {
+    "http": {
+      "servers": {
+        "example": {
+          "listen": [ ":443" ],
+          "routes": [
+            {
+              "match": [
+                {
+                  "host": [ "genshin-impact.localhost" ]
+                }
+              ],
+              "handle": [
+                {
+                  "handler": "reverse_proxy",
+                  "upstreams": [
+                    {
+                      "dial": "genshin-impact:8080"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "match": [
+                {
+                  "host": [ "hoyolab.localhost" ]
+                }
+              ],
+              "handle": [
+                {
+                  "handler": "reverse_proxy",
+                  "upstreams": [
+                    {
+                      "dial": "hoyolab:8080"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "tls_connection_policies": [
+            {
+              "match": {
+                "sni": [ "genshin-impact.localhost", "hoyolab.localhost" ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    "tls": {
+      "automation": {
+        "policies": [
+          {
+            "subjects": [ "genshin-impact.localhost", "hoyolab.localhost" ],
+            "issuer": {
+              "module": "internal"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

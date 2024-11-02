@@ -12,6 +12,7 @@
       <DependentUpon>.env</DependentUpon>
     </None>
     <None Include=".wslconfig" />
+    <None Include="Caddyfile" />
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
@@ -21,6 +22,7 @@
     <None Include="mongo-entrypoint\init-users.sh" />
     <None Include="nginx.conf" />
     <None Include="remove_all_proxyport_netsh.bat" />
+    <None Include="traefik.yml" />
     <None Include="update_wsl_port_forwarding.ps1" />
   </ItemGroup>
 </Project>

@@ -51,7 +51,7 @@ else
 
 discord.UseCommandsNext(new CommandsNextConfiguration
 {
-    StringPrefixes = ["~"],
+    StringPrefixes = ["!", "~", "-"],
     ServiceProvider = services.BuildServiceProvider(),
 }).RegisterCommands(assembly);
 
@@ -80,11 +80,13 @@ catch
     // ignored
 }
 
+var watching = Constants.Watching[Random.Shared.Next(0, Constants.Watching.Count)];
+
 await discord.UpdateStatusAsync(new DiscordActivity
 {
-    Id = "1",
-    ActivityType = ActivityType.Playing,
-    Name = Constants.Games[Random.Shared.Next(0, Constants.Games.Count - 1)],
+    Id = watching,
+    ActivityType = ActivityType.Watching,
+    Name = watching
 });
 
 var app = builder.Build();

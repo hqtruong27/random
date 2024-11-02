@@ -1,0 +1,11 @@
+{
+	auto_https off
+}
+
+genshin-impact.localhost:80 {
+	reverse_proxy genshin-impact:8080
+}
+
+hoyolab.localhost:80 {
+	reverse_proxy hoyolab:8080
+}
