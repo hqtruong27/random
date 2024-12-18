@@ -128,8 +128,6 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddRequiredServices(this IServiceCollection services)
     {
-        //services.TryAddScoped(typeof(IRequestHandler<>), typeof(RequestHandlerWrapperImplement<>));
-        //services.TryAddScoped(typeof(IRequestHandler<,>), typeof(RequestHandlerWrapperImplement<,>));
         services.TryAddTransient<IDispatcher, Dispatcher.Dispatcher>();
         services.TryAddTransient(typeof(ISender), x => x.GetRequiredService<IDispatcher>());
 

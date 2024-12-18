@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Infrastructure.Core.Behaviors;
+namespace Infrastructure.Behaviors;
 
 public class LoggingBehavior<TRequest, TResponse>(ILogger<LoggingBehavior<TRequest, TResponse>> logger) : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
@@ -15,9 +15,7 @@ public class LoggingBehavior<TRequest, TResponse>(ILogger<LoggingBehavior<TReque
             request
             );
 
-        var timer = new Stopwatch();
-        timer.Start();
-
+        var timer = Stopwatch.StartNew();
         var response = await next();
 
         timer.Stop();
@@ -29,7 +27,11 @@ public class LoggingBehavior<TRequest, TResponse>(ILogger<LoggingBehavior<TReque
                 timeTaken.Milliseconds
                 );
 
-        logger.LogInformation("[END] Handled {Request} with {Response}", typeof(TRequest).Name, typeof(TResponse).Name);
+        logger.LogInformation(
+            "[END] Handled {Request} with {Response}",
+            typeof(TRequest).Name,
+            typeof(TResponse).Name
+            );
 
         return response;
     }

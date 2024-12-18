@@ -4,7 +4,7 @@ using System.Collections.Concurrent;
 
 namespace Dispatcher;
 
-public interface IDispatcher : ISender { }
+public interface IDispatcher : ISender;
 
 public class Dispatcher(IServiceProvider service) : IDispatcher
 {

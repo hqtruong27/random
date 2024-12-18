@@ -4,7 +4,10 @@ using System.Collections.Concurrent;
 namespace Dispatcher.Extensions;
 public static class RequestHandlerExtensions
 {
-    public static THandler Get<THandler>(this ConcurrentDictionary<Type, RequestHandler> handlers, object request, Type? responseType = default)
+    public static THandler Get<THandler>(this ConcurrentDictionary<Type, RequestHandler> handlers,
+        object request,
+        Type? responseType = default
+        )
     {
         var requestHandler = handlers.GetOrAdd(request.GetType(), requestType =>
         {
@@ -26,6 +29,8 @@ public static class RequestHandlerExtensions
     {
         return obj is T converted
             ? converted
-            : throw new InvalidCastException($"Cannot convert object of type {obj.GetType()} to type {typeof(T)}.");
+            : throw new InvalidCastException(
+                $"Cannot convert object of type {obj.GetType()} to type {typeof(T)}."
+                );
     }
 }

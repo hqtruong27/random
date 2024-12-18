@@ -1,38 +1,16 @@
 services:
   
-  genshin-impact:
+  hoyoverse:
     env_file: .env.production
-    image: hqtruong27/genshinimpact.api:latest
-    restart: always
-    container_name: genshin-impact
-    ports:
-     - "8080"
-     - "8081"
-    build:
-      context: .
-      dockerfile: Microservices/Hoyoverse/GenshinImpact/GenshinImpact.Api/Dockerfile
-    environment:
-      - VIRTUAL_HOST=genshin-impact.localhost
-    networks:
-      - random
-    depends_on:
-      - mongodb
-
-  hoyolab:
-    env_file: .env.production
-    image: hqtruong27/hoyolab.api:latest
-    container_name: hoyolab
+    image: hqtruong27/hoyoverse-api:latest
+    container_name: hoyoverse
     restart: always
     ports:
       - "8080"
       - "8081"
     build:
       context: .
-      dockerfile: Microservices/Hoyoverse/Hoyolab/Hoyolab.Api/Dockerfile
-    environment:
-      - VIRTUAL_HOST=hoyolab.localhost
-    dns:
-      - 1.0.0.1
+      dockerfile: Microservices/Hoyoverse/Hoyoverse.Api/Dockerfile
     networks:
       - random
     depends_on:
@@ -46,16 +24,14 @@ services:
     build:
       context: .
       dockerfile: Microservices/Spending/Spending.Api/Dockerfile
-    environment:
-      - VIRTUAL_HOST=spending.localhost
     networks:
       - random
     depends_on:
-      - db
+      - postgresql
    
   discord:
     image: hqtruong27/discord.bot:latest
-    restart: unless-stopped
+    restart: always
     container_name: discord
     env_file: .env.production
     build:
@@ -69,8 +45,8 @@ services:
     networks:
       - random
 
-  db:
-    image: postgres
+  postgresql:
+    image: postgresql
     restart: always
     container_name: postgresql
     env_file: .env.production
@@ -95,10 +71,9 @@ services:
       - random
 
   lavalink:
-    # pin the image version to Lavalink v4
     image: ghcr.io/lavalink-devs/lavalink:4
     container_name: lavalink
-    restart: unless-stopped
+    restart: always
     env_file: .env.production
     volumes:
       # mount application.yml from the same directory or use environment variables
@@ -118,22 +93,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-  caddy:
-    image: caddy:latest
-    container_name: caddy
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./Caddyfile.json:/etc/caddy/Caddyfile.json
-      - caddy_data:/data
-      - caddy_config:/config
-    networks:
-      - random
-
-volumes:
-  caddy_data:
-  caddy_config:
 
 networks:
   random:

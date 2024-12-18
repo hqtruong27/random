@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+    <AspnetVersion>9.0.0</AspnetVersion>
+    <EntityFrameworkCoreVersion>9.0.0</EntityFrameworkCoreVersion>
+    <DisCatSharpVersion>10.6.4</DisCatSharpVersion>
+    <QuartzVersion>3.13.1</QuartzVersion>
+    <GrpcVersion>2.67.0</GrpcVersion>
+  </PropertyGroup>
+  <!-- Microsoft -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="$(AspnetVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="$(AspnetVersion)" />
+    <PackageVersion Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.6" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="$(AspnetVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="$(AspnetVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(AspnetVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="$(AspnetVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="$(AspnetVersion)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="$(AspnetVersion)" />
+    <PackageVersion Include="Microsoft.AspNetCore.Grpc.JsonTranscoding" Version="$(AspnetVersion)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="$(AspnetVersion)" />
+    <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="$(AspnetVersion)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="$(AspnetVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="$(AspnetVersion)" />
+    <PackageVersion Include="System.Text.Json" Version="$(AspnetVersion)" />
+    <PackageVersion Include="System.Formats.Asn1" Version="$(AspnetVersion)" />
+    <PackageVersion Include="Microsoft.Playwright" Version="1.49.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageVersion Include="NATS.Client" Version="1.1.6" />
+	<PackageVersion Include="Azure.Messaging.ServiceBus" Version="7.18.2" />
+    <PackageVersion Include="Google.Cloud.PubSub.V1" Version="3.19.0" />
+    <PackageVersion Include="AWSSDK.SimpleNotificationService" Version="3.7.400.64" />
+    <PackageVersion Include="AWSSDK.SQS" Version="3.7.400.64" />
+	<PackageVersion Include="RabbitMQ.Client" Version="7.0.0" />
+  </ItemGroup>
+  <!-- Quartz -->
+  <ItemGroup>
+    <PackageVersion Include="Quartz" Version="$(QuartzVersion)" />
+    <PackageVersion Include="Quartz.Extensions.DependencyInjection" Version="$(QuartzVersion)" />
+    <PackageVersion Include="Quartz.Extensions.Hosting" Version="$(QuartzVersion)" />
+    <PackageVersion Include="Quartz.Serialization.Json" Version="$(QuartzVersion)" />
+  </ItemGroup>
+  <!-- gRPC -->
+  <ItemGroup>
+    <PackageVersion Include="Grpc.Net.Client" Version="$(GrpcVersion)" />
+    <PackageVersion Include="Grpc.AspNetCore" Version="$(GrpcVersion)" />
+    <PackageVersion Include="Grpc.AspNetCore.Server.Reflection" Version="$(GrpcVersion)" />
+    <PackageVersion Include="Grpc.Tools" Version="2.68.1" />
+    <PackageVersion Include="Google.Protobuf" Version="3.29.1" />
+    <PackageVersion Include="Refit.HttpClientFactory" Version="8.0.0" />
+  </ItemGroup>
+  <!-- Discord -->
+  <ItemGroup>
+    <PackageVersion Include="DisCatSharp" Version="$(DisCatSharpVersion)" />
+    <PackageVersion Include="DisCatSharp.ApplicationCommands" Version="$(DisCatSharpVersion)" />
+    <PackageVersion Include="DisCatSharp.CommandsNext" Version="$(DisCatSharpVersion)" />
+    <PackageVersion Include="DisCatSharp.Lavalink" Version="$(DisCatSharpVersion)" />
+  </ItemGroup>
+  <!-- Database -->
+  <ItemGroup>
+    <PackageVersion Include="MongoDB.Driver" Version="3.1.0" />
+    <PackageVersion Include="MongoDB.EntityFrameworkCore" Version="8.1.1" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.2" />
+  </ItemGroup>
+  <!-- Humanizer -->
+  <ItemGroup>
+    <PackageVersion Include="Humanizer" Version="2.14.1" />
+    <PackageVersion Include="Humanizer.Core" Version="2.14.1" />
+  </ItemGroup>
+  <!-- Api Versioning -->
+  <ItemGroup>
+    <PackageVersion Include="Asp.Versioning.Http" Version="8.1.0" />
+    <PackageVersion Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+  </ItemGroup>
+  <!-- Other -->
+  <ItemGroup>
+    <PackageVersion Include="MediatR" Version="12.4.1" />
+    <PackageVersion Include="AutoMapper" Version="13.0.1" />
+    <PackageVersion Include="YamlDotNet" Version="16.2.1" />
+    <PackageVersion Include="System.Net.Security" Version="4.3.2" />
+    <PackageVersion Include="FluentValidation.AspNetCore" Version="11.3.0" />
+    <PackageVersion Include="Scalar.AspNetCore" Version="1.2.51" />
+  </ItemGroup>
+</Project>

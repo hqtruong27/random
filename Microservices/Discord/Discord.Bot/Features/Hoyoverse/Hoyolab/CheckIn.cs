@@ -1,10 +1,6 @@
-﻿using DisCatSharp.CommandsNext.Attributes;
-using Models.Hoyolab;
-using System.Text;
+﻿namespace Discord.Bot.Features.Hoyoverse.Hoyolab;
 
-namespace Discord.Bot.Features.Hoyoverse.Hoyolab;
-
-public class CheckIn(HoyolabSettings settings) : BaseCommandModule
+public class CheckIn(HoyolabOptions settings) : BaseCommandModule
 {
     [Command("checkin")]
     public async Task CheckInAsync(CommandContext ctx)

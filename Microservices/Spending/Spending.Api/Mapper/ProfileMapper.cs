@@ -1,5 +1,5 @@
-﻿using Common.Enum;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
+using Spending.Infrastructure.EnumTypes;
 
 namespace Spending.Api.Mapper;
 

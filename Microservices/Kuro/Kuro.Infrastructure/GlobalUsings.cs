@@ -1,0 +1,14 @@
+﻿global using Infrastructure.Persistence.Schemas.Base;
+global using MongoDB.Bson;
+global using MongoDB.Bson.Serialization;
+global using MongoDB.Bson.Serialization.Attributes;
+global using MongoDB.Bson.Serialization.IdGenerators;
+global using MongoDB.Bson.Serialization.Serializers;
+global using Infrastructure.Persistence;
+global using Infrastructure.Persistence.Options;
+global using System.Linq.Expressions;
+global using Infrastructure.Persistence.Repositories.Interfaces;
+global using MongoDB.Driver;
+global using MongoDB.Driver.Linq;
+global using Humanizer;
+global using Infrastructure.Persistence.Schemas;

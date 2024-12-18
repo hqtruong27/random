@@ -1,0 +1,175 @@
+﻿//public static Delegate CreateDynamicDelegate(string httpMethod, Type inputType, ISender sender)
+    //{
+    //    if (HttpMethodsAsParameters.Contains(httpMethod))
+    //    {
+    //        return async (HttpContext context) =>
+    //        {
+    //            var instance = await CreateInstance(inputType, context);
+    //            return await sender.Send(instance);
+    //        };
+    //    }
+
+    //    // Check if the type implements IRequest<>
+    //    var iRequestInterface = inputType
+    //        .GetInterfaces()
+    //        .FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequest<>));
+
+    //    if (iRequestInterface != null)
+    //    {
+    //        // Handle commands with a response (IRequest<>)
+    //        var responseType = iRequestInterface.GetGenericArguments()[0];
+    //        var delegateType = typeof(Func<,>)
+    //            .MakeGenericType(inputType, typeof(Task<>)
+    //                .MakeGenericType(responseType));
+
+    //        var method = typeof(DynamicHandler)
+    //            .GetMethod(nameof(DynamicHandler.Handle))?
+    //            .MakeGenericMethod(inputType, responseType);
+
+    //        return method == null
+    //            ? throw new InvalidOperationException(
+    //                $"Handler method not found for generic IRequest<>"
+    //                )
+    //            : Delegate.CreateDelegate(delegateType, new DynamicHandler(sender), method);
+    //    }
+
+    //    // Handle commands without a response (IRequest)
+    //    if (inputType.GetInterfaces().Any(i => i == typeof(IRequest)))
+    //    {
+    //        var delegateType = typeof(Func<,>).MakeGenericType(inputType, typeof(Task));
+    //        var method = typeof(DynamicHandler)
+    //            .GetMethod(nameof(DynamicHandler.HandleNoResponse))?
+    //            .MakeGenericMethod(inputType);
+
+    //        return method == null
+    //            ? throw new InvalidOperationException(
+    //                $"Handler method not found for non-generic IRequest"
+    //                )
+    //            : Delegate.CreateDelegate(delegateType, new DynamicHandler(sender), method);
+    //    }
+
+    //    throw new InvalidOperationException(
+    //        $"{inputType.Name} does not implement IRequest or IRequest<>"
+    //        );
+    //}
+
+    //private static async Task<object> CreateInstance(Type type, HttpContext context)
+    //{
+    //    // Create an instance of the target type with default values
+    //    var instance = CreateInstanceWithDefaults(type)
+    //        ?? throw new InvalidOperationException($"Unable to create an instance of type {type.Name}.");
+
+    //    var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+    //    Dictionary<string, object?>? payload = null;
+    //    // Enable buffering to allow reading the body multiple times
+    //    if (context.Request.ContentLength > 0)
+    //    {
+    //        context.Request.EnableBuffering();
+    //        using var streamReader = new StreamReader(context.Request.Body, leaveOpen: true);
+    //        var bodyText = await streamReader.ReadToEndAsync();
+    //        context.Request.Body.Position = 0;
+
+    //        if (!string.IsNullOrWhiteSpace(bodyText))
+    //        {
+    //            payload = JsonSerializer.Deserialize<Dictionary<string, object?>>(
+    //                bodyText,
+    //                options: new()
+    //                {
+    //                    Converters = { new LowerCaseKeyConverter() }
+    //                });
+    //        }
+    //    }
+
+    //    foreach (var property in properties)
+    //    {
+    //        object? value = null;
+
+    //        if (context.Request.RouteValues.TryGetValue(property.Name, out var routeValue))
+    //        {
+    //            value = routeValue;
+    //        }
+    //        else if (context.Request.Query.TryGetValue(property.Name, out var queryValue))
+    //        {
+    //            value = queryValue;
+    //        }
+    //        else if (payload != null && payload.TryGetValue(property.Name.ToLowerInvariant(), out var bodyValue))
+    //        {
+    //            value = bodyValue;
+    //        }
+    //        else if (context.Request.Headers.TryGetValue(property.Name, out var headerValue))
+    //        {
+    //            value = headerValue;
+    //        }
+
+    //        if (value != null)
+    //        {
+    //            var convertedValue = Convert.ChangeType(value.ToString(), property.PropertyType);
+    //            property.SetValue(instance, convertedValue);
+    //        }
+    //    }
+
+    //    return Task.FromResult(instance);
+    //}
+
+    //private static object? CreateInstanceWithDefaults(Type type)
+    //{
+    //    if (type.IsValueType) // Handle value types (structs)
+    //    {
+    //        return Activator.CreateInstance(type);
+    //    }
+
+    //    if (!type.IsClass)
+    //    {
+    //        throw new InvalidOperationException($"Unsupported type: {type.Name}");
+    //    }
+
+    //    if (HasExplicitParameterlessConstructor(type))
+    //    {
+    //        return Activator.CreateInstance(type); // Use parameterless constructor
+    //    }
+
+    //    // Find and invoke the constructor with default values if no parameterless constructor
+    //    var constructor = type.GetConstructors()
+    //        .OrderByDescending(c => c.GetParameters().Length)
+    //        .FirstOrDefault() ?? throw new InvalidOperationException(
+    //            $"No constructors found for type {type.Name}"
+    //            );
+
+    //    var parameters = constructor.GetParameters()
+    //        .Select(p => p.ParameterType.IsValueType
+    //            ? Activator.CreateInstance(p.ParameterType)
+    //            : null
+    //            )
+    //        .ToArray();
+
+    //    return constructor.Invoke(parameters);
+    //}
+
+    //private static bool HasExplicitParameterlessConstructor(Type type)
+    //{
+    //    // Get all public constructors of the type
+    //    var constructors = type.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
+
+    //    // Check for an explicit parameterless constructor
+    //    return constructors.Any(c => c.GetParameters().Length == 0);
+    //}
+
+    //internal class DynamicHandler(ISender sender)
+    //{
+    //    public Task<TResponse> Handle<TInput, TResponse>(TInput input)
+    //        where TInput : IRequest<TResponse>
+    //        => sender.Send(input);
+
+    //    public Task HandleNoResponse<TInput>(TInput input)
+    //        where TInput : IRequest
+    //        => sender.Send(input);
+    //}
+
+    //internal static List<string> HttpMethodsAsParameters =
+    //[
+    //    HttpMethods.Get,
+    //    HttpMethods.Head,
+    //    HttpMethods.Delete,
+    //    HttpMethods.Options
+    //];

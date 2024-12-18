@@ -1,7 +1,25 @@
-﻿global using FluentValidation;
-global using Infrastructure.Core.Dispatchers;
+﻿global using System.Reflection;
+global using FluentValidation;
+global using Infrastructure.Behaviors;
+global using Infrastructure.Dispatchers;
+global using Infrastructure.Extensions;
+global using Infrastructure.Persistence;
+global using Infrastructure.Persistence.Options;
 global using MediatR;
+global using Microsoft.AspNetCore.Builder;
 global using Microsoft.AspNetCore.Diagnostics;
 global using Microsoft.AspNetCore.Http;
 global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
+global using System.Text;
+global using System.Text.Json;
+global using Infrastructure.Options;
+global using Amazon;
+global using Amazon.SimpleNotificationService;
+global using Amazon.SQS;
+global using Infrastructure.MessageBrokers;
+global using Amazon.SQS.Model;
+global using Infrastructure.MessageBrokers.Messaging;
+global using Amazon.SimpleNotificationService.Model;
+

@@ -1,20 +1,21 @@
 # See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
 # This stage is used when running from VS in fast mode (Default for Debug configuration)
-FROM mcr.microsoft.com/dotnet/runtime:8.0 AS base
-USER app
+FROM mcr.microsoft.com/dotnet/runtime:9.0 AS base
+USER $APP_UID
 WORKDIR /app
 
 
 # This stage is used to build the service project
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+COPY ["Directory.Packages.props", "."]
+COPY ["Directory.Build.props", "."]
+COPY ["Nuget.config", "."]
 COPY ["Microservices/Discord/Discord.Bot/Discord.Bot.csproj", "Microservices/Discord/Discord.Bot/"]
-COPY ["Libraries/Models/Models.csproj", "Libraries/Models/"]
-COPY ["Libraries/Common/Common.csproj", "Libraries/Common/"]
-COPY ["Libraries/Dispatcher/Dispatcher.csproj", "Libraries/Dispatcher/"]
-COPY ["Microservices/Hoyoverse/Hoyoverse.Infrastructure/Hoyoverse.Infrastructure.csproj", "Microservices/Hoyoverse/Hoyoverse.Infrastructure/"]
+COPY ["Libraries/Shared/Shared.csproj", "Libraries/Shared/"]
+COPY ["Microservices/Discord/Discord.Shared/Discord.Shared.csproj", "Microservices/Discord/Discord.Shared/"]
 RUN dotnet restore "./Microservices/Discord/Discord.Bot/Discord.Bot.csproj"
 COPY . .
 WORKDIR "/src/Microservices/Discord/Discord.Bot"

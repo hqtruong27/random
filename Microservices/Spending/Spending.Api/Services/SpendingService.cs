@@ -1,5 +1,4 @@
-﻿using Spending.Infrastructure.Entities;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 namespace Spending.Api.Services;
 

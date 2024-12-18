@@ -1,4 +1,3 @@
-using Models.Helpers;
 using System.Text.Json;
 
 namespace Spending.Api.Services;
@@ -30,7 +29,7 @@ public class UserService(ILogger<UserService> logger, StatisticsDbContext contex
             UserName = request.UserName,
             Surname = surname,
             GivenName = givenName,
-            Status = Common.Enum.UserStatus.Activated,
+            Status = UserStatus.Activated,
         });
 
         await _context.SaveChangesAsync();

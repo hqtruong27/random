@@ -2,12 +2,12 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <UserSecretsId>f31aaedf-1d2d-4239-aace-17ecde524ed8</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..\..</DockerfileContext>
+	<NoWarn>$(NoWarn);DV2001</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,24 +22,25 @@
   </ItemGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="DisCatSharp" Version="10.6.4" />
-		<PackageReference Include="DisCatSharp.ApplicationCommands" Version="10.6.4" />
-		<PackageReference Include="DisCatSharp.CommandsNext" Version="10.6.4" />
-		<PackageReference Include="DisCatSharp.Lavalink" Version="10.6.4" />
-		<PackageReference Include="Google.Protobuf" Version="3.28.3" />
-		<PackageReference Include="Grpc.Net.Client" Version="2.66.0" />
-		<PackageReference Include="Grpc.Tools" Version="2.67.0">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
-		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
-		<PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
-		<PackageReference Include="System.Net.Security" Version="4.3.2" />
-		<PackageReference Include="System.Text.Json" Version="8.0.5" />
+		<PackageReference Include="DisCatSharp" />
+		<PackageReference Include="DisCatSharp.ApplicationCommands" />
+		<PackageReference Include="DisCatSharp.CommandsNext" />
+		<PackageReference Include="DisCatSharp.Lavalink" />
+		<PackageReference Include="Google.Protobuf" />
+		<PackageReference Include="Grpc.Net.Client" />
+		<PackageReference Include="Grpc.Tools">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference> 
+		<PackageReference Include="Microsoft.Extensions.Hosting" /> 
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+		<PackageReference Include="System.Formats.Asn1" />
+		<PackageReference Include="System.Net.Security" />
+		<PackageReference Include="System.Text.Json" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\..\..\Libraries\Models\Models.csproj" />
+	  <ProjectReference Include="..\..\..\Libraries\Shared\Shared.csproj" />
+	  <ProjectReference Include="..\Discord.Shared\Discord.Shared.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

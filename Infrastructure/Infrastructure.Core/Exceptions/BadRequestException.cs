@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Core.Exceptions;
+﻿namespace Infrastructure.Exceptions;
 
 public class BadRequestException : Exception
 {

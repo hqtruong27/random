@@ -1,10 +1,9 @@
-﻿namespace Common.Enum.Hoyoverse
+﻿namespace Common.Enum.Hoyoverse;
+
+public enum BannerType
 {
-    public enum BannerType
-    {
-        Character,
-        Weapon,
-        Regular,
-        Novice
-    }
+    Character,
+    Weapon,
+    Regular,
+    Novice
 }

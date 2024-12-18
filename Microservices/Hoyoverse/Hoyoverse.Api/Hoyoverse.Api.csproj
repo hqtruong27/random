@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+	<RootNamespace>Hoyoverse</RootNamespace>
+	<ContainerRepository>hoyoverse-api</ContainerRepository>
+	<ContainerImageTag>latest</ContainerImageTag>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>c78955fe-7087-458a-97b8-4d062079ea90</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..\..</DockerfileContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<PackageReference Include="Quartz" />
+	<PackageReference Include="Quartz.Extensions.DependencyInjection" />
+	<PackageReference Include="Quartz.Extensions.Hosting" />
+	<PackageReference Include="Quartz.Serialization.Json" />
+	<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" />
+	<PackageReference Include="Asp.Versioning.Http" />
+	<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+	<PackageReference Include="Scalar.AspNetCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Infrastructure\Infrastructure.Core\Infrastructure.Core.csproj" />
+    <ProjectReference Include="..\..\External\Wrappers\Wrappers.csproj" />
+    <ProjectReference Include="..\Hoyoverse.Shared\Hoyoverse.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\StarRail\GachaHistories\Contracts\" />
+  </ItemGroup>
+
+</Project>
