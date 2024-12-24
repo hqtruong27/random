@@ -1,6 +1,4 @@
-﻿using Hoyoverse.Persistence.Schemas.Base;
-
-namespace Hoyoverse.Persistence.Schemas;
+﻿namespace Hoyoverse.Persistence.Schemas;
 
 public class User : AuditableEntity
 {

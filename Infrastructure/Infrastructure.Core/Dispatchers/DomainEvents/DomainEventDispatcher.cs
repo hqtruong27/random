@@ -6,7 +6,7 @@ public class DomainEventDispatcher(
     Channel<Func<IServiceProvider, CancellationToken, Task>> channel,
     ILogger<DomainEventDispatcher> logger) : IDomainEventDispatcher
 {
-    public async Task Raise<T>(T @event) where T : IDomainEvent
+    public async Task Raise<T>(T @event, CancellationToken cancellationToken = default) where T : IDomainEvent
     {
         logger.LogInformation(
             "Raising event: {EventType} (ID: {EventId})",
@@ -14,14 +14,12 @@ public class DomainEventDispatcher(
             @event.Id
             );
 
-        await channel.Writer.WriteAsync(async (serviceProvider, cancellationToken) =>
+        await channel.Writer.WriteAsync(async (serviceProvider, stopToken) =>
         {
-            await using var scope = serviceProvider.CreateAsyncScope();
-
             try
             {
-                var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
-                await publisher.Publish(@event, cancellationToken);
+                var publisher = serviceProvider.GetRequiredService<IPublisher>();
+                await publisher.Publish(@event, stopToken);
 
                 //var eventStore = scope.ServiceProvider.GetRequiredService<IEventStore>();
                 //await eventStore.SaveEventAsync(@event.Id, @event, DateTime.UtcNow, typeof(T).Name);
@@ -41,6 +39,6 @@ public class DomainEventDispatcher(
                     @event.Id
                     );
             }
-        });
+        }, cancellationToken);
     } 
 }

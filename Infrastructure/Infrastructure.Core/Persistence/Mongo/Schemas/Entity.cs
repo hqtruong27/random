@@ -1,4 +1,4 @@
-﻿namespace Hoyoverse.Persistence.Schemas.Base;
+﻿namespace Infrastructure.Persistence.Mongo.Schemas;
 
 public class Entity<T> : IEntity<T>
 {

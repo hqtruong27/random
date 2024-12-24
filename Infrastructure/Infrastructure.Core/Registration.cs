@@ -1,4 +1,6 @@
-﻿using Microsoft.Playwright;
+﻿using Infrastructure.Persistence.Repositories.Abstractions;
+using Infrastructure.Persistence.Repositories;
+using Microsoft.Playwright;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -25,6 +27,16 @@ public static class Registration
         builder.Invoke(new DbContextOptionsBuilder(services));
         services.AddSingleton(typeof(TContext));
         services.AddSingleton(typeof(IDbContext), typeof(TContext));
+
+        services.AddRepositories();
+
+        return services;
+    }
+
+    public static IServiceCollection AddRepositories(this IServiceCollection services)
+    {
+        services.AddScoped(typeof(IRepository<>), typeof(MongoRepository<>));
+        services.AddScoped(typeof(IRepository<,>), typeof(MongoRepository<,>));
 
         return services;
     }

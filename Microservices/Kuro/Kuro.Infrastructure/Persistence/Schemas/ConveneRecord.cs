@@ -1,4 +1,6 @@
-﻿namespace Infrastructure.Persistence.Schemas;
+﻿using Infrastructure.Persistence.Mongo.Schemas;
+
+namespace Infrastructure.Persistence.Schemas;
 
 public class ConveneRecord : AuditableEntity
 {

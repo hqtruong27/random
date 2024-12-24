@@ -1,18 +1,16 @@
 ﻿namespace Infrastructure;
 
-public class AmbientContext
+internal class EventContextAccessor
 {
-    private static readonly AsyncLocal<AmbientContext> _current = new();
+    private static readonly AsyncLocal<EventContextAccessor> _current = new();
 
-    public static AmbientContext Current
+    public static EventContextAccessor Current
     {
-        get => _current.Value ??= new();
+        get => _current.Value ?? new();
         set => _current.Value = value;
     }
 
     public IServiceProvider ServiceProvider { get; init; } = null!;
-    public HttpContext HttpContext { get; init; } = default!;
-
     public IDomainEventDispatcher DomainEvent
         => ServiceProvider.GetRequiredService<IDomainEventDispatcher>();
 

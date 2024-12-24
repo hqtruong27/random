@@ -1,4 +1,9 @@
-﻿namespace Infrastructure.Persistence.Repositories.Interfaces;
+﻿using System.Linq.Expressions;
+using Infrastructure.Persistence.Mongo.Schemas;
+using MongoDB.Bson;
+using MongoDB.Driver;
+
+namespace Infrastructure.Persistence.Repositories.Abstractions;
 
 public interface IRepository<TEntity, in TKey> : IBulkRepository<TEntity>, IDisposable where TEntity : IAuditableEntity<TKey>
 {

@@ -16,6 +16,7 @@ services
 
 var app = builder.Build();
 
-app.UseHttpRequestPipeline().MapEndpoints();
+app.UseHttpRequestPipeline();
+app.MapEndpoints();
 
 await app.RunAsync();

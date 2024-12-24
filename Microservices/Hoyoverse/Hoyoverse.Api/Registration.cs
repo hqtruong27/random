@@ -1,5 +1,4 @@
 ﻿using Hoyoverse.Job;
-using Hoyoverse.Persistence.Repositories;
 using Scalar.AspNetCore;
 
 namespace Hoyoverse;
@@ -48,14 +47,6 @@ public static class Registration
         });
 
         services.AddRepositories();
-
-        return services;
-    }
-
-    public static IServiceCollection AddRepositories(this IServiceCollection services)
-    {
-        services.AddSingleton(typeof(IRepository<>), typeof(MongoRepository<>));
-        services.AddSingleton(typeof(IRepository<,>), typeof(MongoRepository<,>));
 
         return services;
     }

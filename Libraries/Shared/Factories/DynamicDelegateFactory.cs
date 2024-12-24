@@ -2,31 +2,32 @@
 
 public static class DynamicDelegateFactory
 {
-    public static Delegate Create(string httpMethod, Type inputType, ISender sender)
+    public static Delegate Create(string httpMethod, Type inputType, IServiceProvider serviceProvider)
     {
         if (HttpMethodHelper.IsHttpMethodSupported(httpMethod))
         {
             return async (HttpContext context) =>
             {
+                var sender = context.RequestServices.GetRequiredService<ISender>();
                 var instance = await InstanceCreator.CreateInstance(inputType, context);
                 return await sender.Send(instance);
             };
         }
 
-        return inputType.CreateDelegateBasedOnRequestType(sender);
+        return inputType.CreateDelegateBasedOnRequestType(serviceProvider);
     }
 
-    private static Delegate CreateDelegateBasedOnRequestType(this Type inputType, ISender sender)
+    private static Delegate CreateDelegateBasedOnRequestType(this Type inputType, IServiceProvider serviceProvider)
     {
         var iRequestInterface = inputType.GetIRequestInterface();
         if (iRequestInterface != null)
         {
-            return DynamicHandlerFactory.CreateForGenericRequest(iRequestInterface, inputType, sender);
+            return DynamicHandlerFactory.CreateForGenericRequest(iRequestInterface, inputType, serviceProvider);
         }
 
         if (inputType.ImplementsInterface<IRequest>())
         {
-            return DynamicHandlerFactory.CreateForNonGenericRequest(inputType, sender);
+            return DynamicHandlerFactory.CreateForNonGenericRequest(inputType, serviceProvider);
         }
 
         throw new InvalidOperationException(
@@ -34,4 +35,3 @@ public static class DynamicDelegateFactory
             );
     }
 }
-

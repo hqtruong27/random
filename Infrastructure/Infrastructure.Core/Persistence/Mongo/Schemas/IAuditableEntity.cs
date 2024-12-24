@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Persistence.Schemas.Base;
+﻿namespace Infrastructure.Persistence.Mongo.Schemas;
 
 public interface IAuditableEntity<T> : IEntity<T>
 {

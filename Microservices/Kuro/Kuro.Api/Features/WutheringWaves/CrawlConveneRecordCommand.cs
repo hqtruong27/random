@@ -1,20 +1,17 @@
-﻿using Kuro.Features.WutheringWaves.Events;
+﻿namespace Kuro.Features.WutheringWaves;
 
-namespace Kuro.Features.WutheringWaves;
-
-[Post("wuthering-waves/crawl-convene")]
-public record CrawlConveneRecordCommand(string Url) : ICommand<int>;
-
-public class CrawlConveneRecordCommandHandler : CommandHandler<CrawlConveneRecordCommand, int>
+[Get("wuthering-waves/crawl-convene")]
+public record CrawlConveneRecordCommand(string Url, string Name, string Description) : ICommand<ConveneRecord>
 {
-    public async override Task<int> Handle(CrawlConveneRecordCommand request, CancellationToken cancellationToken)
-    {
-        await Event.PublishAsync(new HelloCreated
-        {
-            Description = "aaa",
-            Name = typeof(HelloCreated).Name
-        }, cancellationToken);
+    public int Position { get; set; }
+    public int? La { get; set; }
+    public TestEnum Last { get; set; }
+}
 
-        return await Task.FromResult(1);
+public class CrawlConveneRecordCommandHandler : CommandHandler<CrawlConveneRecordCommand, ConveneRecord>
+{
+    public async override Task<ConveneRecord> Handle(CrawlConveneRecordCommand request, CancellationToken cancellationToken)
+    {
+        return await Task.FromResult(new ConveneRecord());
     }
 }

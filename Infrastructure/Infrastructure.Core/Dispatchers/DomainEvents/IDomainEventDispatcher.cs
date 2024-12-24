@@ -2,5 +2,5 @@
 
 public interface IDomainEventDispatcher
 {
-    Task Raise<T>(T @event) where T : IDomainEvent;
+    Task Raise<T>(T @event, CancellationToken cancellationToken = default) where T : IDomainEvent;
 }

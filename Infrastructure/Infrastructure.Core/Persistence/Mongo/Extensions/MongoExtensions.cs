@@ -1,6 +1,9 @@
-﻿namespace Infrastructure.Persistence.Extensions;
+﻿using Infrastructure.Persistence.Mongo.Schemas;
+using MongoDB.Driver;
 
-public static class MongoDbExtensions
+namespace Infrastructure.Persistence.Mongo.Extensions;
+
+public static class MongoExtensions
 {
     public static Task BulkInsertAsync<TDocument>(
         this IMongoCollection<TDocument> collection,

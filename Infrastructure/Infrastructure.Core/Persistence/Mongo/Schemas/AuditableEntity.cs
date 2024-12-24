@@ -1,4 +1,10 @@
-﻿namespace Hoyoverse.Persistence.Schemas.Base;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson.Serialization.IdGenerators;
+using MongoDB.Bson.Serialization.Serializers;
+
+namespace Infrastructure.Persistence.Mongo.Schemas;
 
 public class AuditableEntity : IAuditableEntity
 {

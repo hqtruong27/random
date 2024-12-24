@@ -1,6 +1,13 @@
-﻿namespace Hoyoverse.Persistence.Repositories;
+﻿using System.Linq.Expressions;
+using Infrastructure.Persistence.Mongo.Schemas;
+using Infrastructure.Persistence.Repositories.Abstractions;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
-public class MongoRepository<TEntity, TKey>(HoyoverseDbContext context)
+namespace Infrastructure.Persistence.Repositories;
+
+public class MongoRepository<TEntity, TKey>(IDbContext context)
     : IRepository<TEntity, TKey> where TEntity
     : IAuditableEntity<TKey>, new()
 {
@@ -107,6 +114,6 @@ public class MongoRepository<TEntity, TKey>(HoyoverseDbContext context)
     public void Dispose() => GC.SuppressFinalize(this);
 }
 
-public class MongoRepository<TEntity>(HoyoverseDbContext context)
+public class MongoRepository<TEntity>(IDbContext context)
     : MongoRepository<TEntity, string>(context), IRepository<TEntity> where TEntity
     : IAuditableEntity, new();

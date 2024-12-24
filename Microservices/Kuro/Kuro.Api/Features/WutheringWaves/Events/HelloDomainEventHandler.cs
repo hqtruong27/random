@@ -7,12 +7,12 @@ public class DomainHelloCreated : IDomainEvent
     public Guid Id { get; set; }
 }
 
-public class HelloDomainEventHandler : DomainEventHandler<DomainHelloCreated>
+public class HelloDomainEventHandler(IRepository<ConveneRecord> repository) : DomainEventHandler<DomainHelloCreated>
 {
     public override async Task Handle(DomainHelloCreated @event, CancellationToken cancellationToken)
     {
         Console.WriteLine($"{@event.Description}, {@event.Name}");
-        await Task.Delay(2000 * 10, cancellationToken);
+        var convene = await repository.Queries.FirstOrDefaultAsync(cancellationToken);
         Console.WriteLine("Task run successfully");
     }
 }

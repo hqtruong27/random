@@ -5,7 +5,7 @@ namespace Infrastructure.Dispatchers;
 
 public class ChannelEventReader(
     Channel<Func<IServiceProvider, CancellationToken, Task>> channel,
-    IServiceProvider serviceProvider,
+    IServiceScopeFactory serviceScopeFactory,
     ILogger<ChannelEventReader> logger) : BackgroundService
 {
 
@@ -19,7 +19,15 @@ public class ChannelEventReader(
             {
                 logger.LogInformation("Processing event from channel...");
 
-                await workItem(serviceProvider, stoppingToken);
+                await using (var scope = serviceScopeFactory.CreateAsyncScope())
+                {
+                    DomainEventContextAccessor.Current = new()
+                    {
+                        ServiceProvider = scope.ServiceProvider
+                    };
+
+                    await workItem(scope.ServiceProvider, stoppingToken);
+                }
 
                 logger.LogInformation("Event processed successfully.");
             }
@@ -31,6 +39,10 @@ public class ChannelEventReader(
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error processing event from channel.");
+            }
+            finally
+            {
+                DomainEventContextAccessor.Current = null!;
             }
         }
 

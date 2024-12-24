@@ -22,4 +22,4 @@ global using Infrastructure.MessageBrokers;
 global using Amazon.SQS.Model;
 global using Infrastructure.MessageBrokers.Messaging;
 global using Amazon.SimpleNotificationService.Model;
-
+global using ValidationException = FluentValidation.ValidationException;

@@ -11,6 +11,12 @@ public static class EndpointExtensions
 
         services.TryAddEnumerable(serviceDescriptors);
 
+        var apiRouteTypes = AppDomain.CurrentDomain
+           .GetAssemblies()
+           .SelectMany(assembly => assembly.GetTypes())
+           .Where(type => type.IsClass && type.HasApiRoute())
+           .ToList();
+
         return services;
     }
 
@@ -25,12 +31,12 @@ public static class EndpointExtensions
             endpoint.MapEndpoint(builder);
         }
 
-        builder.MapRouteAttributes(app.Services);
+        builder.MapRouteAttributes();
 
         return app;
     }
 
-    public static IEndpointRouteBuilder MapRouteAttributes(this IEndpointRouteBuilder app, IServiceProvider services)
+    public static IEndpointRouteBuilder MapRouteAttributes(this IEndpointRouteBuilder app)
     {
         var apiRouteTypes = AppDomain.CurrentDomain
             .GetAssemblies()
@@ -38,16 +44,15 @@ public static class EndpointExtensions
             .Where(type => type.IsClass && type.HasApiRoute())
             .ToList();
 
-        var sender = services.GetRequiredService<ISender>();
         foreach (var routeType in apiRouteTypes)
         {
-            app.MapRouteForType(routeType, sender);
+            app.MapRouteForType(routeType);
         }
 
         return app;
     }
 
-    private static void MapRouteForType(this IEndpointRouteBuilder app, Type routeType, ISender sender)
+    private static void MapRouteForType(this IEndpointRouteBuilder app, Type routeType)
     {
         var routeAttr = routeType.GetRouteAttribute();
         var tagsAttr = routeType.GetTagsAttribute();
@@ -58,13 +63,25 @@ public static class EndpointExtensions
                 $"HTTP method route not found for {routeType.Name}"
                 );
 
-        var dynamicDelegate = DynamicDelegateFactory.Create(httpMethod, routeType, sender);
+        var dynamicDelegate = DynamicDelegateFactory.Create(httpMethod, routeType, app.ServiceProvider);
         app.MapMethods(route, [httpMethod], dynamicDelegate)
-           .WithOpenApi()
+           .WithOpenApi(operation =>
+           {
+               if (HttpMethodHelper.IsHttpMethodSupported(httpMethod))
+               {
+                   operation.Parameters = OpenApiExtensions.GenerateParameters(routeType);
+               }
+
+               return operation;
+           })
            .WithTags(
                 tagsAttr?.Tags
                 .Select(x => x.Pascalize())
                 .ToArray() ?? route.DefaultTags(routeType.Assembly)
-                );
+                )
+           .Produces(
+            StatusCodes.Status200OK,
+            routeType.GetIRequestInterface()?.GetGenericArguments()[0]
+            );
     }
 }

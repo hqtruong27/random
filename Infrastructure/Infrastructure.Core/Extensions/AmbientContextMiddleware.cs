@@ -4,7 +4,7 @@ public class AmbientContextMiddleware(RequestDelegate next)
 {
     public async Task InvokeAsync(HttpContext context, IServiceProvider serviceProvider)
     {
-        AmbientContext.Current = new() { ServiceProvider = serviceProvider };
+        AmbientContext.Current = new() { ServiceProvider = serviceProvider, HttpContext = context };
 
         try
         {
@@ -12,7 +12,7 @@ public class AmbientContextMiddleware(RequestDelegate next)
         }
         finally
         {
-            AmbientContext.Current = new() { ServiceProvider = null! };
+            AmbientContext.Current = new() { ServiceProvider = null!, HttpContext = null! };
         }
     }
 }

@@ -9,18 +9,25 @@ public class HelloCreated : IEvent
     public DateTime OccurredOn { get; set; }
 }
 
-public class HelloEventHandler : IEventHandler<HelloCreated>
+public class HelloEventHandler : Reactor<HelloCreated>
 {
-    public async Task Handle(HelloCreated @event, CancellationToken cancellationToken)
+    public override async Task Handle(HelloCreated @event, CancellationToken cancellationToken)
     {
         await Task.CompletedTask;
     }
 }
 
-public class NotHelloEventHandler : IEventHandler<HelloCreated>
+public class NotHelloEventHandler : Reactor<HelloCreated>
 {
-    public async Task Handle(HelloCreated @event, CancellationToken cancellationToken)
+    public override async Task Handle(HelloCreated @event, CancellationToken cancellationToken)
     {
+        //await DomainEvent.Raise(new DomainHelloCreated
+        //{
+        //    Description = "Hello",
+        //    Name = "World",
+        //    Id = Guid.NewGuid()
+        //});
+
         await Task.CompletedTask;
     }
 }

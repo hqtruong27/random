@@ -1,9 +1,4 @@
-﻿using Amazon.Runtime;
-using Amazon.SimpleNotificationService;
-using Amazon.SQS;
-using Kuro.Features.WutheringWaves.Events;
-
-namespace Kuro;
+﻿namespace Kuro;
 
 public static class ServiceCollectionExtensions
 {
@@ -23,7 +18,8 @@ public static class ServiceCollectionExtensions
             .Build();
 
         services.AddOpenApi();
-
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen();
         return (services, configuration, typeof(Program).Assembly);
     }
 
@@ -41,22 +37,12 @@ public static class ServiceCollectionExtensions
             }
         });
 
-        services.AddRepositories();
-
         return services;
     }
 
     public static IServiceCollection AddOptions(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddOptions();
-        return services;
-    }
-
-    public static IServiceCollection AddRepositories(this IServiceCollection services)
-    {
-        services.AddSingleton(typeof(IRepository<>), typeof(MongoRepository<>));
-        services.AddSingleton(typeof(IRepository<,>), typeof(MongoRepository<,>));
-
         return services;
     }
 
@@ -90,15 +76,18 @@ public static class WebApplicationExtensions
                 return;
             }
 
-            await next.Invoke();
+            await next(context);
         });
 
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
             app.MapScalarApiReference();
+            app.UseSwagger();
+            app.UseSwaggerUI();
         }
 
+        app.UseRouting();
         app.UseHttpsRedirection();
         app.UseAmbientContext();
         app.UseLoggingChannelEventReader();

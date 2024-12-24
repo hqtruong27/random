@@ -1,4 +1,5 @@
-﻿namespace Hoyoverse.Features.GenshinImpact.GachaHistories.Command;
+﻿
+namespace Hoyoverse.Features.GenshinImpact.GachaHistories.Command;
 
 [Tags("GenshinImpact")]
 [Post("genshin-impact/crawl-gacha-history")]

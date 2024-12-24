@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Persistence.Repositories.Interfaces;
+﻿namespace Infrastructure.Persistence.Repositories.Abstractions;
 
 public interface IBulkRepository<in TEntity>
 {
