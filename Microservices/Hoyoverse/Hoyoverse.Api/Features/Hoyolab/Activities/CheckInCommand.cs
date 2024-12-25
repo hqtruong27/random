@@ -2,13 +2,13 @@
 
 [Post]
 [Route("activity/check-in")]
-public record CheckInCommand(string DiscordId, DateTime Date) : IRequest<List<CheckInResponse>>;
+public record CheckInCommand(string DiscordId, DateTime Date) : ICommand<List<CheckInResponse>>;
 
 public class CheckInCommandHandler(
     HoyoverseDbContext context,
-    ILogger<CheckInCommandHandler> logger) : IRequestHandler<CheckInCommand, List<CheckInResponse>>
+    ILogger<CheckInCommandHandler> logger) : CommandHandler<CheckInCommand, List<CheckInResponse>>
 {
-    public async Task<List<CheckInResponse>> Handle(CheckInCommand request, CancellationToken cancellationToken)
+    public override async Task<List<CheckInResponse>> Handle(CheckInCommand request, CancellationToken cancellationToken)
     {
         var option = await context.Options
             .AsQueryable()

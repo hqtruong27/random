@@ -11,6 +11,12 @@ services
     .AddQuartz()
     .AddExternalService(configuration)
     .AddCustomLogging()
+    .AddDomainEventPublisher()
+    .AddEventPublisher(builder =>
+    {
+        builder.RegisterEventHandlerFromAssembly(assembly);
+        builder.UseAwsSnsSqs(configure => configuration.GetSection("Aws").Bind(configure));
+    })
     .AddEndpoints();
 
 await builder

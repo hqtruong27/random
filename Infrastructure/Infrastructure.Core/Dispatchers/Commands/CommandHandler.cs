@@ -1,9 +1,9 @@
 ﻿namespace Infrastructure.Dispatchers;
 
 public abstract class CommandHandler<TCommand> : AmbientContextHandler, ICommandHandler<TCommand>
-    where TCommand : ICommand<Unit>
+    where TCommand : ICommand
 {
-    public abstract Task<Unit> Handle(TCommand request, CancellationToken cancellationToken);
+    public abstract Task Handle(TCommand request, CancellationToken cancellationToken);
 }
 
 public abstract class CommandHandler<TCommand, TResponse> : AmbientContextHandler, ICommandHandler<TCommand, TResponse>

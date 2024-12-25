@@ -82,6 +82,7 @@ public static class EndpointExtensions
            .Produces(
             StatusCodes.Status200OK,
             routeType.GetIRequestInterface()?.GetGenericArguments()[0]
-            );
+            )
+           .WithMetadata(routeType);
     }
 }

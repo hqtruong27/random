@@ -65,6 +65,11 @@ public class ObjectIdAsStringSerializer : SerializerBase<string>
             return reader.ReadObjectId().ToString();
         }
 
+        if (bsonType == BsonType.String)
+        {
+            return reader.ReadString();
+        }
+
         throw new FormatException($"Cannot deserialize BsonType '{bsonType}' to a string.");
     }
 

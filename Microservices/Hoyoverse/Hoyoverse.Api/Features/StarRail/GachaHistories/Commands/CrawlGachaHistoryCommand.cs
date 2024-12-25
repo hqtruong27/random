@@ -7,9 +7,9 @@ public sealed record CrawlGachaHistoryCommand(string Url) : ICommand<int>;
 public class CrawlGachaHistoryCommandHandler(
     IRepository<StarRailGachaHistory, ObjectId> repository,
     ILogger<CrawlGachaHistoryCommandHandler> logger,
-    IHoyoverseService hoyoverse) : ICommandHandler<CrawlGachaHistoryCommand, int>
+    IHoyoverseService hoyoverse) : CommandHandler<CrawlGachaHistoryCommand, int>
 {
-    public async Task<int> Handle(CrawlGachaHistoryCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(CrawlGachaHistoryCommand request, CancellationToken cancellationToken)
     {
         logger.LogInformation("Start: crawl {url}", request.Url);
         var queryString = UrlQueryHelper.Populate<GetGachaHistoryRequest>(request.Url);

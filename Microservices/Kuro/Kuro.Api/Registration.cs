@@ -1,4 +1,6 @@
-﻿namespace Kuro;
+﻿using Microsoft.OpenApi.Models;
+
+namespace Kuro;
 
 public static class ServiceCollectionExtensions
 {
@@ -19,7 +21,11 @@ public static class ServiceCollectionExtensions
 
         services.AddOpenApi();
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
+        services.AddSwaggerGen(c =>
+        {
+            c.CustomSchemaIds(type => type.FullName);
+        });
+
         return (services, configuration, typeof(Program).Assembly);
     }
 

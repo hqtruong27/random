@@ -1,7 +1,6 @@
 ﻿namespace Infrastructure.Dispatchers;
 
-public interface ICommandHandler<in TCommand> : ICommandHandler<TCommand, Unit>
-    where TCommand : ICommand<Unit>;
+public interface ICommandHandler<TCommand> : IRequestHandler<TCommand>  where TCommand : ICommand, IRequest;
 
 public interface ICommandHandler<in TCommand, TResponse> : IRequestHandler<TCommand, TResponse>
     where TCommand : ICommand<TResponse>

@@ -21,6 +21,11 @@ public static class Registration
             .Build();
 
         services.AddOpenApi();
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen(c =>
+        {
+            c.CustomSchemaIds(type => type.FullName);
+        });
 
         InstallPlaywright();
 
@@ -70,7 +75,7 @@ public static class Registration
             options.Scheduling.IgnoreDuplicates = true;
         });
 
-        var mongoDbContextOptions = configuration.GetSection("MongoDb").Get<MongoDbContextOptions>()!;
+        var mongoDbContextOptions = configuration.GetSection("Hoyoverse:MongoDb").Get<MongoDbContextOptions>()!;
         services.AddSingleton<IDbContextOptions>(mongoDbContextOptions);
 
         return services;
@@ -99,17 +104,17 @@ public static class Registration
             );
 
 
-            var redeemCodeJobKey = new JobKey("RedeemCodeGenshinImpact", "Hoyolab");
-            q.AddJob<RedeemCodeCommandJob>(redeemCodeJobKey, j => j
-                .WithDescription("RedeemCodeGenshinImpact")
-            );
+            //var redeemCodeJobKey = new JobKey("RedeemCodeGenshinImpact", "Hoyolab");
+            //q.AddJob<RedeemCodeCommandJob>(redeemCodeJobKey, j => j
+            //    .WithDescription("RedeemCodeGenshinImpact")
+            //);
 
-            q.AddTrigger(t => t
-                .WithIdentity("RedeemCodeGenshinImpact", "Hoyolab")
-                .ForJob(redeemCodeJobKey)
-                .WithCronSchedule("0 0 1 ? * * *")
-                .WithDescription("redeem code gi job")
-            );
+            //q.AddTrigger(t => t
+            //    .WithIdentity("RedeemCodeGenshinImpact", "Hoyolab")
+            //    .ForJob(redeemCodeJobKey)
+            //    .WithCronSchedule("0 0 1 ? * * *")
+            //    .WithDescription("redeem code gi job")
+            //);
         });
 
         services.AddQuartzHostedService(opt =>
@@ -154,7 +159,7 @@ public static class Registration
                 return;
             }
 
-            await next.Invoke();
+            await next.Invoke(context);
         });
 
         // Configure the HTTP request pipeline.
@@ -162,11 +167,14 @@ public static class Registration
         {
             app.MapOpenApi();
             app.MapScalarApiReference();
+            app.UseSwagger();
+            app.UseSwaggerUI();
         }
 
         app.UseRouting();
         app.MapEndpoints();
-        //app.UseAuthorization();
+        app.UseAmbientContext();
+        app.UseLoggingChannelEventReader();
 
         return app;
     }

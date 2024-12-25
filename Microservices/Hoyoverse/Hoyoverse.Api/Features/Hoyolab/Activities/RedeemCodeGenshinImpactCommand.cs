@@ -3,16 +3,20 @@ using Microsoft.Playwright;
 
 namespace Hoyoverse.Features.Hoyolab.Activities;
 
-[Get]
-[Route("hoyolab/redeem-code")]
-public record RedeemCodeCommand(User User) : MediatR.IRequest;
+[Post("hoyolab/activities/redeem-code/genshin-impact")]
+public record RedeemCodeGenshinImpactCommand(User User) : ICommand;
 
-public class GetFromGenshinImpactFandomCommandHandler(
-    ILogger<GetFromGenshinImpactFandomCommandHandler> logger,
-    HoyoverseDbContext context) : IRequestHandler<RedeemCodeCommand>
+public class RedeemCodeGenshinImpactCommandHandler(ILogger<RedeemCodeGenshinImpactCommandHandler> logger) : CommandHandler<RedeemCodeGenshinImpactCommand>
 {
-    public async Task Handle(RedeemCodeCommand request, CancellationToken cancellationToken)
+    public override async Task Handle(RedeemCodeGenshinImpactCommand request, CancellationToken cancellationToken)
     {
+        var options = await Context.Queries<Option>().FirstAsync(
+            x => x.Key == "REDEEM_CODE_CONFIG",
+            cancellationToken
+            );
+
+        var config = BsonSerializer.Deserialize<RedeemCodeConfig>(options.Value);
+
         using var playwright = await Playwright.CreateAsync();
         await using var browser = await playwright.Chromium.LaunchAsync(new()
         {
@@ -22,11 +26,10 @@ public class GetFromGenshinImpactFandomCommandHandler(
 
         var page = await browser.NewPageAsync();
 
-        await page.GotoAsync("https://genshin-impact.fandom.com/wiki/Promotional_Code",
-            new PageGotoOptions
-            {
-                WaitUntil = WaitUntilState.DOMContentLoaded
-            });
+        await page.GotoAsync(config.GenshinImpact.UrlRedeem, new()
+        {
+            WaitUntil = WaitUntilState.DOMContentLoaded
+        });
 
         var tableLocator = page.Locator(".wikitable.sortable.tdl3.tdl4.jquery-tablesorter");
 
@@ -61,9 +64,7 @@ public class GetFromGenshinImpactFandomCommandHandler(
 
         await browser.CloseAsync();
 
-        var setting = await context.Options
-           .AsQueryable()
-           .FirstOrDefaultAsync(x => x.Key == "ACTIVITY_CONFIG", cancellationToken);
+        var setting = await Context.Queries<Option>().FirstAsync(x => x.Key == "ACTIVITY_CONFIG", cancellationToken);
         var configure = BsonSerializer.Deserialize<ActivityConfig>(setting.Value);
 
         foreach (var code in promotionalCodes)
@@ -73,19 +74,19 @@ public class GetFromGenshinImpactFandomCommandHandler(
                 var giAccount = account.Games.Exists(game => game == HoyolabGame.GenshinImpact);
                 if (giAccount)
                 {
-                    await GetAsync(account, code);
+                    await GetAsync(account, config.GenshinImpact.Url, code);
                 }
             }
         }
     }
 
-    private static async Task<CheckInResponse> GetAsync(HoyolabAccount hoyolab, string code)
+    private static async Task<CheckInResponse> GetAsync(HoyolabAccount hoyolab, string url, string code)
     {
         using HttpClient client = new();
 
         client.DefaultRequestHeaders.Add("Cookie", hoyolab.Cookie);
-        var url = $"https://sg-hk4e-api.hoyoverse.com/common/apicdkey/api/webExchangeCdkey?uid=839631094&region=os_asia&lang=en&cdkey={code}&game_biz=hk4e_global&sLangKey=en-us";
-        var response = await client.GetAsync(url);
+
+        var response = await client.GetAsync(string.Format(url, code));
 
         var stream = await response.Content.ReadAsStreamAsync();
         var result = await JsonSerializer.DeserializeAsync<CheckInResponse>(stream);

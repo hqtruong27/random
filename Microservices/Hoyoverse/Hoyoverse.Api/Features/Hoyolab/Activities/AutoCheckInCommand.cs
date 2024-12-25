@@ -1,10 +1,10 @@
 ﻿namespace Hoyoverse.Features.Hoyolab.Activities;
 
-public record AutoCheckInCommand(User User) : IRequest;
+public record AutoCheckInCommand(User User) : ICommand;
 
-public class AutoCheckInCommandHandler(HoyoverseDbContext context) : IRequestHandler<AutoCheckInCommand>
+public class AutoCheckInCommandHandler(HoyoverseDbContext context) : CommandHandler<AutoCheckInCommand>
 {
-    public async Task Handle(AutoCheckInCommand request, CancellationToken cancellationToken)
+    public override async Task Handle(AutoCheckInCommand request, CancellationToken cancellationToken)
     {
         var setting = await context.Options
             .AsQueryable()

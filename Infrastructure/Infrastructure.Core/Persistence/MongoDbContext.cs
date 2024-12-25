@@ -10,6 +10,7 @@ public class MongoDbContext : IDbContext
     protected IMongoDatabase Database => _database.Value;
     public IMongoCollection<T> Set<T>(string name) => Database.GetCollection<T>(name);
     public IMongoCollection<T> Set<T>() => Database.GetCollection<T>(typeof(T).Name.Underscore());
+    public IQueryable<T> Queries<T>() => Set<T>().AsQueryable();
     public MongoDbContext(IDbContextOptions options)
     {
         _options = options;
