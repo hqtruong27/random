@@ -1,6 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
-
-namespace Kuro;
+﻿namespace Kuro;
 
 public static class ServiceCollectionExtensions
 {
@@ -51,23 +49,6 @@ public static class ServiceCollectionExtensions
         services.AddOptions();
         return services;
     }
-
-    public static IServiceCollection AddEndpoints(this IServiceCollection services)
-    {
-        services.AddApiVersioning(options =>
-        {
-            options.DefaultApiVersion = new(1);
-            options.ApiVersionReader = new UrlSegmentApiVersionReader();
-        }).AddApiExplorer(options =>
-        {
-            options.GroupNameFormat = "'v'V";
-            options.SubstituteApiVersionInUrl = true;
-        });
-
-        services.AddEndpoints(typeof(Program).Assembly);
-
-        return services;
-    }
 }
 
 public static class WebApplicationExtensions
@@ -93,25 +74,12 @@ public static class WebApplicationExtensions
             app.UseSwaggerUI();
         }
 
+        app.UseApiVersioning();
         app.UseRouting();
         app.UseHttpsRedirection();
         app.UseAmbientContext();
         app.UseLoggingChannelEventReader();
 
         return app;
-    }
-
-    public static void MapEndpoints(this WebApplication app)
-    {
-        var apiVersionSet = app.NewApiVersionSet()
-            .HasApiVersion(new ApiVersion(1))
-            .ReportApiVersions()
-            .Build();
-
-        var versionedGroup = app
-            .MapGroup("api/v{version:apiVersion}")
-            .WithApiVersionSet(apiVersionSet);
-
-        app.MapEndpoints(versionedGroup);
     }
 }

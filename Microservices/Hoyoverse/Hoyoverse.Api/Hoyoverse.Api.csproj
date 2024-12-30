@@ -16,8 +16,6 @@
 	<PackageReference Include="Quartz.Extensions.DependencyInjection" />
 	<PackageReference Include="Quartz.Extensions.Hosting" />
 	<PackageReference Include="Quartz.Serialization.Json" />
-	<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" />
-	<PackageReference Include="Asp.Versioning.Http" />
 	<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
 	<PackageReference Include="Scalar.AspNetCore" />
 	<PackageReference Include="Swashbuckle.AspNetCore" />

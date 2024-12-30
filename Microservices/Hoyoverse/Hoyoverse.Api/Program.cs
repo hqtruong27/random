@@ -17,9 +17,10 @@ services
         builder.RegisterEventHandlerFromAssembly(assembly);
         builder.UseAwsSnsSqs(configure => configuration.GetSection("Aws").Bind(configure));
     })
-    .AddEndpoints();
+    .AddApiVersioning(assembly, version: 1);
 
-await builder
-    .Build()
+var app = builder.Build();
+
+await app
     .UseHttpRequestPipeline()
     .RunAsync();

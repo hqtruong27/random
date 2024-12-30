@@ -42,7 +42,18 @@ public class EventTypeResolver(Dictionary<string, Type> eventTypes)
             _eventHandlers[eventType] = value;
         }
 
-        value.Add(handler);
+        // Check if any existing handler has the same type 
+        var handlerType = handler.Target?.GetType();
+        if (value.Any(h => h.Target?.GetType() == handlerType))
+        {
+            Console.WriteLine(
+                $"Handler type {handlerType?.FullName} is already registered for event type {eventType.FullName}"
+                );
+        }
+        else
+        {
+            value.Add(handler);
+        }
     }
 
     public void RegisterHandlers(Type eventType, IEnumerable<Func<object, CancellationToken, Task>> handlers)
@@ -91,7 +102,7 @@ public class EventTypeResolver(Dictionary<string, Type> eventTypes)
         catch (JsonException ex)
         {
             Console.WriteLine($"Error de-serializing event data for event type {message.EventType}: {ex.Message}");
-            return ([], new());
+            return (handlers, new());
         }
 
         return (handlers, @event);

@@ -1,7 +1,26 @@
-﻿namespace Shared.Extensions;
+﻿using Asp.Versioning;
+
+namespace Shared.Extensions;
 
 public static class EndpointExtensions
 {
+    public static IServiceCollection AddApiVersioning(this IServiceCollection services, Assembly assembly, int version = 1)
+    {
+        services.AddApiVersioning(options =>
+        {
+            options.DefaultApiVersion = new(version);
+            options.ApiVersionReader = new UrlSegmentApiVersionReader();
+        }).AddApiExplorer(options =>
+        {
+            options.GroupNameFormat = "'v'V";
+            options.SubstituteApiVersionInUrl = true;
+        });
+
+        services.AddEndpoints(assembly);
+
+        return services;
+    }
+
     public static IServiceCollection AddEndpoints(this IServiceCollection services, Assembly assembly)
     {
         var serviceDescriptors = assembly.DefinedTypes
@@ -20,6 +39,20 @@ public static class EndpointExtensions
         return services;
     }
 
+    public static IApplicationBuilder UseApiVersioning(this WebApplication app)
+    {
+        var apiVersionSet = app.NewApiVersionSet()
+            .HasApiVersion(new ApiVersion(1))
+            .ReportApiVersions()
+            .Build();
+
+        var versionedGroup = app
+            .MapGroup("api/v{version:apiVersion}")
+            .WithApiVersionSet(apiVersionSet);
+
+        return app.MapEndpoints(versionedGroup);
+    }
+
     public static IApplicationBuilder MapEndpoints(this WebApplication app, RouteGroupBuilder? routeGroupBuilder = default)
     {
         var endpoints = app.Services.GetRequiredService<IEnumerable<IEndpoint>>();
@@ -36,7 +69,7 @@ public static class EndpointExtensions
         return app;
     }
 
-    public static IEndpointRouteBuilder MapRouteAttributes(this IEndpointRouteBuilder app)
+    private static IEndpointRouteBuilder MapRouteAttributes(this IEndpointRouteBuilder app)
     {
         var apiRouteTypes = AppDomain.CurrentDomain
             .GetAssemblies()
@@ -72,6 +105,10 @@ public static class EndpointExtensions
                    operation.Parameters = OpenApiExtensions.GenerateParameters(routeType);
                }
 
+               else
+               {
+                   operation.RequestBody = OpenApiExtensions.GenerateRequestBody(routeType);
+               }
                return operation;
            })
            .WithTags(

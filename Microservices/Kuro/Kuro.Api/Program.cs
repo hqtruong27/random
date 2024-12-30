@@ -12,11 +12,10 @@ services
         builder.RegisterEventHandlerFromAssembly(assembly);
         builder.UseAwsSnsSqs(configure => configuration.GetSection("Aws").Bind(configure));
     })
-    .AddEndpoints();
+    .AddApiVersioning(assembly);
 
 var app = builder.Build();
 
 app.UseHttpRequestPipeline();
-app.MapEndpoints();
 
 await app.RunAsync();

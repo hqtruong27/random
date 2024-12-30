@@ -13,11 +13,12 @@
     <PackageReference Include="MediatR" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="YamlDotNet" />
-    <PackageReference Include="Asp.Versioning.Http" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Microsoft.Playwright" />
 	<PackageReference Include="Humanizer" />
 	<PackageReference Include="Humanizer.Core" />
+    <PackageReference Include="Asp.Versioning.Http" />
+	<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" />
   </ItemGroup>
 
 </Project>

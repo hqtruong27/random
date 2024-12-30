@@ -36,7 +36,7 @@ public static class OpenApiComponentGenerator
         };
 
         generatedSchemas[type.FullName!] = schema;
-        components.Schemas[type.Name + "-get"] = schema; // Using Type Name as Schema Name, consider customization
+        components.Schemas[type.FullName] = schema; // Using Type Name as Schema Name, consider customization
 
         foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
         {

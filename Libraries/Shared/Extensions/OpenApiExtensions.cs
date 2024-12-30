@@ -94,6 +94,77 @@ public static class OpenApiExtensions
         return openApiParameters;
     }
 
+    public static OpenApiRequestBody GenerateRequestBody(Type routeType)
+    {
+        // Handle both records and regular classes
+        var properties = routeType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+        if (!properties.Any())
+        {
+            return null; // No properties to include in the request body
+        }
+
+        // Build a schema for the request body
+        var requestBodySchema = new OpenApiSchema
+        {
+            Type = "object",
+            Properties = new Dictionary<string, OpenApiSchema>()
+        };
+
+        // Handle primary constructor parameters for records
+        if (routeType.IsRecord())
+        {
+            ConstructorInfo ctor = routeType.GetConstructors()[0];
+            ParameterInfo[] parameters = ctor.GetParameters();
+
+            foreach (var parameter in parameters)
+            {
+                // Exclude parameters that are not meant for the body (e.g., [FromRoute])
+                if (parameter.GetCustomAttribute<FromRouteAttribute>() != null) continue;
+
+                requestBodySchema.Properties.Add(
+                    parameter.Name.ToLower(),
+                    GetOpenApiSchema(parameter.ParameterType)
+                );
+                if (parameter.IsParameterRequired())
+                {
+                    requestBodySchema.Required.Add(parameter.Name.ToLower());
+                }
+            }
+        }
+
+        foreach (var property in properties)
+        {
+            // Skip properties that are already handled as constructor parameters in records
+            if (routeType.IsRecord() && routeType.GetConstructors()[0].GetParameters().Any(p => p.Name == property.Name)) continue;
+
+            // Exclude properties that are not meant for the body (e.g., [FromRoute])
+            if (property.GetCustomAttribute<FromRouteAttribute>() != null) continue;
+
+            requestBodySchema.Properties.Add(
+                property.Name,
+                GetOpenApiSchema(property.PropertyType)
+            );
+            if (property.IsPropertyRequired())
+            {
+                requestBodySchema.Required.Add(property.Name);
+            }
+        }
+
+        return new OpenApiRequestBody
+        {
+            Description = "Request body",
+            Required = true, // Request body is generally required if it exists
+            Content =
+        {
+            ["application/json"] = new OpenApiMediaType
+            {
+                Schema = requestBodySchema
+            }
+        }
+        };
+    }
+
     private static OpenApiSchema GetOpenApiSchema(Type type)
     {
         var schema = new OpenApiSchema

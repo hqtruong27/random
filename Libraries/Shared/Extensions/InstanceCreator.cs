@@ -29,14 +29,25 @@ public static class InstanceCreator
             var bodyText = await streamReader.ReadToEndAsync();
             context.Request.Body.Position = 0;
 
-            if (!string.IsNullOrWhiteSpace(bodyText))
+            try
             {
+                // Attempt to deserialize as a dictionary
                 payload = JsonSerializer.Deserialize<Dictionary<string, object?>>(
                     bodyText,
                     options: new()
                     {
                         Converters = { new LowerCaseKeyConverter() }
                     });
+            }
+            catch (JsonException) when (bodyText.TrimStart().StartsWith('['))
+            {
+                // Exception filter: This block ONLY executes if:
+                // 1. A JsonException occurred, AND
+                // 2. The bodyText starts with '[' after trimming whitespace.
+
+                // Ignore the list and do nothing.
+                // (Optional) Log the event:
+                // _logger.LogInformation("Request body was a list, ignoring deserialization.");
             }
         }
 
@@ -380,7 +391,7 @@ public static class InstanceCreator
     private static object ConvertToCollection(object value, Type collectionType)
     {
         var collection = (ICollection)Activator.CreateInstance(collectionType)!;
-        var addMethod = collectionType.GetMethod("Add") 
+        var addMethod = collectionType.GetMethod("Add")
             ?? throw new InvalidOperationException(
                 "Collection type must have an Add method."
                 );

@@ -81,6 +81,50 @@ public class EventBusOptionsBuilder(IServiceCollection services)
         return this;
     }
 
+
+    public EventBusOptionsBuilder RegisterEventHandler<TEvent, TEventHandler>(ServiceLifetime lifetime = ServiceLifetime.Scoped)
+    where TEvent : IEvent
+    where TEventHandler : IEventHandler<TEvent>
+    {
+        // 1. Register the specific handler with the DI container
+        services.Add(
+            new ServiceDescriptor(
+                typeof(IEventHandler<TEvent>),
+                typeof(TEventHandler),
+                lifetime
+                )
+            );
+
+        // 2. Build a service provider (consider optimizing this if called frequently)
+        var serviceProvider = services.BuildServiceProvider();
+
+        // 3. Get or create the EventTypeResolver
+        var eventTypeResolver = serviceProvider.GetService<EventTypeResolver>();
+        if (eventTypeResolver == null)
+        {
+            eventTypeResolver = new([]);
+            services.AddSingleton(eventTypeResolver);
+            services.AddSingleton<IEventDispatcher, DelegateEventDispatcher>();
+        }
+
+        eventTypeResolver.RegisterEventType(typeof(TEvent).Name, typeof(TEvent));
+        // 4. Get the handler instance from the service provider
+        var handler = serviceProvider.GetRequiredService<IEventHandler<TEvent>>();
+
+        // 5. Create the delegate for the Handle method
+        var delegateType = typeof(Func<,,>).MakeGenericType(typeof(TEvent), typeof(CancellationToken), typeof(Task));
+        var handleMethod = handler.GetType().GetMethod("Handle")!;
+        var handlerDelegate = Delegate.CreateDelegate(delegateType, handler, handleMethod);
+
+        // 6. Register the handler with the EventTypeResolver
+        eventTypeResolver.RegisterHandler(
+            typeof(TEvent),
+            (@event, cancellationToken) => (Task)handlerDelegate.DynamicInvoke(@event, cancellationToken)!
+        );
+
+        return this;
+    }
+
     public EventBusOptionsBuilder RegisterEventHandlerFromAssembly(Assembly assembly, ServiceLifetime lifetime = ServiceLifetime.Scoped)
     {
         // 1. Find all IEventHandler<> implementations in the assembly
@@ -136,7 +180,7 @@ public class EventBusOptionsBuilder(IServiceCollection services)
 
                 eventTypeResolver.RegisterHandler(
                     eventType,
-                    (@event, cancellationToken) 
+                    (@event, cancellationToken)
                         => (Task)handlerDelegate.DynamicInvoke(@event, cancellationToken)!
                         );
             }

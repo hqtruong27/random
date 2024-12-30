@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿namespace Kuro.Features.WutheringWaves;
 
-namespace Kuro.Features.WutheringWaves;
-
-[Get("wuthering-waves/test-command/{name:int}")]
-public record TestCommand(string Url, [FromRoute] TestEnum Name) : ICommand<int>;
+[Post("wuthering-waves/test-command")]
+public record TestCommand(string Url, TestEnum Name) : ICommand<int>;
 
 public class TestCommandHandler() : CommandHandler<TestCommand, int>
 {

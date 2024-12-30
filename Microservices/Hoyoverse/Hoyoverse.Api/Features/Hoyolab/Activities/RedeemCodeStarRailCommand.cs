@@ -1,15 +1,13 @@
 ﻿using System.Web;
-using Hoyoverse.Features.Hoyolab.Events;
 using Microsoft.Playwright;
 
 namespace Hoyoverse.Features.Hoyolab.Activities;
 
-[Post("hoyolab/activities/redeem-code/genshin-impact")]
-public record RedeemCodeGenshinImpactCommand(HoyolabAccount Account) : ICommand;
+public sealed record RedeemCodeStarRailCommand(HoyolabAccount Account) : ICommand;
 
-public class RedeemCodeGenshinImpactCommandHandler(ILogger<RedeemCodeGenshinImpactCommandHandler> logger) : CommandHandler<RedeemCodeGenshinImpactCommand>
+public class RedeemCodeStarRailCommandHandler(ILogger<RedeemCodeStarRailCommandHandler> logger) : CommandHandler<RedeemCodeStarRailCommand>
 {
-    public override async Task Handle(RedeemCodeGenshinImpactCommand request, CancellationToken cancellationToken)
+    public override async Task Handle(RedeemCodeStarRailCommand request, CancellationToken cancellationToken)
     {
         var options = await Context.Queries<Option>().FirstAsync(
             x => x.Key == "REDEEM_CODE_CONFIG",
@@ -27,14 +25,14 @@ public class RedeemCodeGenshinImpactCommandHandler(ILogger<RedeemCodeGenshinImpa
 
         var page = await browser.NewPageAsync();
 
-        await page.GotoAsync(config.GenshinImpact.UrlRedeem, new()
+        await page.GotoAsync(config.Hsr.UrlRedeem, new()
         {
             WaitUntil = WaitUntilState.DOMContentLoaded
         });
 
-        var tableLocator = page.Locator(".wikitable.sortable.tdl3.tdl4.jquery-tablesorter");
+        var tableLocator = page.Locator(".wikitable sortable tdl3 tdl4 jquery-tablesorter");
 
-        var links = tableLocator.Locator("a[href^='https://genshin.hoyoverse.com/gift?code=']");
+        var links = tableLocator.Locator("a[href^='https://hsr.hoyoverse.com/gift?code=']");
 
         List<string> promotionalCodes = [];
         int count = await links.CountAsync();
@@ -68,24 +66,10 @@ public class RedeemCodeGenshinImpactCommandHandler(ILogger<RedeemCodeGenshinImpa
         var setting = await Context.Queries<Option>().FirstAsync(x => x.Key == "ACTIVITY_CONFIG", cancellationToken);
         var configure = BsonSerializer.Deserialize<ActivityConfig>(setting.Value);
 
-        List<RedeemCodeMessage> redeems = [];
-
-        foreach (var code in promotionalCodes.Take(3))
+        foreach (var code in promotionalCodes)
         {
-            var response = await GetAsync(request.Account, config.GenshinImpact.Url, code);
-            redeems.Add(new RedeemCodeMessage
-            {
-                Code = code,
-                Message = response.Message
-            });
-
-            await Task.Delay(5000 + 10, cancellationToken);
+            await GetAsync(request.Account, config.Hsr.Url, code);
         }
-
-        await Event.PublishAsync(new RedeemCodeRedeemed
-        {
-            Redeems = redeems
-        }, cancellationToken);
     }
 
     private static async Task<CheckInResponse> GetAsync(HoyolabAccount hoyolab, string url, string code)
@@ -99,6 +83,7 @@ public class RedeemCodeGenshinImpactCommandHandler(ILogger<RedeemCodeGenshinImpa
         var stream = await response.Content.ReadAsStreamAsync();
         var result = await JsonSerializer.DeserializeAsync<CheckInResponse>(stream);
 
+        await Task.Delay(5001);
         return result!;
     }
 }

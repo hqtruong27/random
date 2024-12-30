@@ -1,4 +1,5 @@
-﻿using Hoyoverse.Job;
+﻿using Hoyoverse.QuartzJobs;
+using Infrastructure.Quartz;
 using Scalar.AspNetCore;
 
 namespace Hoyoverse;
@@ -20,7 +21,8 @@ public static class Registration
             .AddEnvironmentVariables()
             .Build();
 
-        services.AddOpenApi();
+        services.AddHttpContextAccessor();
+        //services.AddOpenApi();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(c =>
         {
@@ -50,8 +52,6 @@ public static class Registration
                 builder.AutoScanMongoConfiguration(assembly);
             }
         });
-
-        services.AddRepositories();
 
         return services;
     }
@@ -85,6 +85,8 @@ public static class Registration
     {
         services.AddQuartz(q =>
         {
+            q.AddJobListener<QuartzJobContextListener>();
+
             q.SchedulerId = "Scheduler-Core";
             q.UseDefaultThreadPool(tp =>
             {
@@ -94,27 +96,28 @@ public static class Registration
             var checkInJobKey = new JobKey("AutoCheckIn", "Hoyolab");
             q.AddJob<CheckInJob>(checkInJobKey, j => j
                 .WithDescription("AutoCheckIn")
+                .StoreDurably()
             );
 
             q.AddTrigger(t => t
-                .WithIdentity("AutoCheckIn", "Hoyolab")
+                .WithIdentity("AutoCheckIn-Trigger", "Hoyolab")
                 .ForJob(checkInJobKey)
                 .WithCronSchedule("0 0 1 ? * * *")
                 .WithDescription("daily check in job")
             );
 
+            var redeemCodeJobKey = new JobKey("RedeemCodeGenshinImpact", "Hoyolab");
+            q.AddJob<RedeemCodeCommandJob>(redeemCodeJobKey, j => j
+                .WithDescription("RedeemCodeGenshinImpact")
+                .StoreDurably()
+            );
 
-            //var redeemCodeJobKey = new JobKey("RedeemCodeGenshinImpact", "Hoyolab");
-            //q.AddJob<RedeemCodeCommandJob>(redeemCodeJobKey, j => j
-            //    .WithDescription("RedeemCodeGenshinImpact")
-            //);
-
-            //q.AddTrigger(t => t
-            //    .WithIdentity("RedeemCodeGenshinImpact", "Hoyolab")
-            //    .ForJob(redeemCodeJobKey)
-            //    .WithCronSchedule("0 0 1 ? * * *")
-            //    .WithDescription("redeem code gi job")
-            //);
+            q.AddTrigger(t => t
+                .WithIdentity("RedeemCodeGenshinImpact-Trigger", "Hoyolab")
+                .ForJob(redeemCodeJobKey)
+                .StartNow()
+                .WithDescription("redeem code job")
+            );
         });
 
         services.AddQuartzHostedService(opt =>
@@ -128,23 +131,6 @@ public static class Registration
     public static IServiceCollection AddCustomLogging(this IServiceCollection services)
     {
         LogProvider.SetCurrentLogProvider(new ConsoleLogProvider());
-
-        return services;
-    }
-
-    public static IServiceCollection AddEndpoints(this IServiceCollection services)
-    {
-        services.AddApiVersioning(options =>
-        {
-            options.DefaultApiVersion = new(1);
-            options.ApiVersionReader = new UrlSegmentApiVersionReader();
-        }).AddApiExplorer(options =>
-        {
-            options.GroupNameFormat = "'v'V";
-            options.SubstituteApiVersionInUrl = true;
-        });
-
-        services.AddEndpoints(typeof(Program).Assembly);
 
         return services;
     }
@@ -171,26 +157,13 @@ public static class Registration
             app.UseSwaggerUI();
         }
 
+        app.UseApiVersioning();
         app.UseRouting();
         app.MapEndpoints();
         app.UseAmbientContext();
         app.UseLoggingChannelEventReader();
 
         return app;
-    }
-
-    public static void MapEndpoints(this WebApplication app)
-    {
-        var apiVersionSet = app.NewApiVersionSet()
-            .HasApiVersion(new ApiVersion(1))
-            .ReportApiVersions()
-            .Build();
-
-        var versionedGroup = app
-            .MapGroup("api/v{version:apiVersion}")
-            .WithApiVersionSet(apiVersionSet);
-
-        app.MapEndpoints(versionedGroup);
     }
 }
 

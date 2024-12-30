@@ -1,4 +1,5 @@
-﻿
+﻿using Discord.Bot.Features.Hoyoverse.Hoyolab.Events;
+
 namespace Discord.Bot;
 
 public static class Registration
@@ -38,6 +39,19 @@ public static class Registration
         return services;
     }
 
+    public static IServiceCollection AddInfrastructureCore(this IServiceCollection services, IConfiguration configuration, Assembly assembly)
+    {
+        services
+            .AddDomainEventPublisher()
+            .AddEventPublisher(builder =>
+            {
+                builder.RegisterEventHandler<RedeemCodeRedeemed, RedeemCodeRedeemedHandler>();
+                builder.UseAwsSnsSqs(configure => configuration.GetSection("Aws").Bind(configure));
+            });
+
+        return services;
+    }
+
     public static DiscordClient AddDiscordClient(this IServiceCollection services,
         IConfiguration configuration,
         IHostEnvironment environment,
@@ -45,7 +59,6 @@ public static class Registration
         )
     {
         var discordOptions = configuration.GetSection(nameof(DiscordOptions)).Get<DiscordOptions>()!;
-        var hoyolabOptions = configuration.GetSection(nameof(HoyolabOptions)).Get<HoyolabOptions>()!;
 
         var discord = new DiscordClient(new DiscordConfiguration
         {
@@ -117,13 +130,20 @@ public static class Registration
 
     public static async Task SetStartUpStatusAsync(this DiscordClient discord)
     {
-        var playing = Constants.Playing[Random.Shared.Next(0, Constants.Playing.Count)];
-
-        await discord.UpdateStatusAsync(new DiscordActivity
+        try
         {
-            Id = playing,
-            ActivityType = ActivityType.Playing,
-            Name = playing
-        });
+            var (type, status, name) = Constants.GetRandomShuffledActivity();
+
+            await discord.UpdateStatusAsync(new DiscordActivity
+            {
+                Id = name,
+                ActivityType = Enum.Parse<ActivityType>(type),
+                Name = name
+            }, Enum.Parse<UserStatus>(status));
+        }
+        catch
+        {
+            
+        }
     }
 }

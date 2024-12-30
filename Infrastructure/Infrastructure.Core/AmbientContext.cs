@@ -11,7 +11,7 @@ public class AmbientContext
     }
 
     public IServiceProvider ServiceProvider { get; init; } = null!;
-    public HttpContext HttpContext { get; init; } = default!;
+    public HttpContext? HttpContext { get; init; }
 
     public IDomainEventDispatcher DomainEvent
         => ServiceProvider.GetRequiredService<IDomainEventDispatcher>();
@@ -20,5 +20,10 @@ public class AmbientContext
         => ServiceProvider.GetRequiredService<IEventPublisher>();
 
     public IDbContext Context
-       => ServiceProvider.GetRequiredService<IDbContext>();
+    {
+        get
+        {
+            return ServiceProvider.GetRequiredService<IDbContext>();
+        }
+    }
 }
