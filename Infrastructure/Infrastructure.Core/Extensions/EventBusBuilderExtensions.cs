@@ -10,6 +10,9 @@ public static class EventBusServiceCollectionExtensions
         ServiceLifetime lifetime = ServiceLifetime.Singleton
         )
     {
+        services.AddSingleton(new EventTypeResolver([]));
+        services.AddSingleton<IEventDispatcher, DelegateEventDispatcher>();
+
         var optionsBuilder = new EventBusOptionsBuilder(services);
         builder.Invoke(optionsBuilder);
 

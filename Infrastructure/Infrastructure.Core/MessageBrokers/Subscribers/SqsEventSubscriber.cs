@@ -2,7 +2,7 @@
 
 public class SqsEventSubscriber(IAmazonSQS sqsClient, AwsOptions options) : IEventSubscriber
 {
-    public async Task SubscribeAsync(Func<IMessage, CancellationToken, Task> handler, CancellationToken cancellationToken)
+    public async Task SubscribeAsync(Func<IMessage, CancellationToken, Task<bool>> handler, CancellationToken cancellationToken)
     {
         while (!cancellationToken.IsCancellationRequested)
         {
@@ -18,7 +18,10 @@ public class SqsEventSubscriber(IAmazonSQS sqsClient, AwsOptions options) : IEve
 
             foreach (var message in response.Messages)
             {
-                await handler(new SqsMessage(message), cancellationToken);
+                if (!await handler(new SqsMessage(message), cancellationToken))
+                {
+                    continue;
+                }
 
                 await sqsClient.DeleteMessageAsync(
                     options.SqsQueueUrl,

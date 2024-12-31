@@ -72,7 +72,7 @@ public class RedeemCodeStarRailCommandHandler(ILogger<RedeemCodeStarRailCommandH
         }
     }
 
-    private static async Task<CheckInResponse> GetAsync(HoyolabAccount hoyolab, string url, string code)
+    private static async Task<HoyoverseResponse> GetAsync(HoyolabAccount hoyolab, string url, string code)
     {
         using HttpClient client = new();
 
@@ -81,7 +81,7 @@ public class RedeemCodeStarRailCommandHandler(ILogger<RedeemCodeStarRailCommandH
         var response = await client.GetAsync(string.Format(url, code));
 
         var stream = await response.Content.ReadAsStreamAsync();
-        var result = await JsonSerializer.DeserializeAsync<CheckInResponse>(stream);
+        var result = await JsonSerializer.DeserializeAsync<HoyoverseResponse>(stream);
 
         await Task.Delay(5001);
         return result!;

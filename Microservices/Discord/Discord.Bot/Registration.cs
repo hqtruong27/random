@@ -39,7 +39,7 @@ public static class Registration
         return services;
     }
 
-    public static IServiceCollection AddInfrastructureCore(this IServiceCollection services, IConfiguration configuration, Assembly assembly)
+    public static IServiceCollection AddInfrastructureCore(this IServiceCollection services, IConfiguration configuration)
     {
         services
             .AddDomainEventPublisher()
@@ -76,6 +76,8 @@ public static class Registration
             MinimumLogLevel = LogLevel.Trace,
             ShowReleaseNotesInUpdateCheck = false
         });
+
+        services.AddSingleton(discord);
 
         var commands = discord.UseApplicationCommands();
         if (environment.IsProduction())

@@ -2,18 +2,25 @@
 
 public interface IEventDispatcher
 {
-    Task Dispatch(IMessage message, CancellationToken cancellationToken);
+    Task<bool> Dispatch(IMessage message, CancellationToken cancellationToken);
 }
 
 public class DelegateEventDispatcher(EventTypeResolver eventTypeResolver) : IEventDispatcher
 {
-    public async Task Dispatch(IMessage message, CancellationToken cancellationToken)
+    public async Task<bool> Dispatch(IMessage message, CancellationToken cancellationToken)
     {
         var (handlers, @event) = eventTypeResolver.Resolve(message);
+        if (handlers is null)
+        {
+            return false;
+        }
+
         foreach (var handler in handlers)
         {
             await handler(@event, cancellationToken);
         }
+
+        return true;
     }
 }
 

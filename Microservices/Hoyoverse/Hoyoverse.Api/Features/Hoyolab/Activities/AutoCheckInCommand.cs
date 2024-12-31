@@ -36,7 +36,7 @@ public class AutoCheckInCommandHandler(HoyoverseDbContext context) : CommandHand
         }
     }
 
-    private static async Task<CheckInResponse> PostAsync(Config config, HoyolabAccount hoyolab)
+    private static async Task<HoyoverseResponse> PostAsync(Config config, HoyolabAccount hoyolab)
     {
         using HttpClient client = new();
 
@@ -46,7 +46,7 @@ public class AutoCheckInCommandHandler(HoyoverseDbContext context) : CommandHand
         var response = await client.PostAsync(config.CheckInUrl, content);
 
         var stream = await response.Content.ReadAsStreamAsync();
-        var result = await JsonSerializer.DeserializeAsync<CheckInResponse>(stream);
+        var result = await JsonSerializer.DeserializeAsync<HoyoverseResponse>(stream);
 
         return result!;
     }

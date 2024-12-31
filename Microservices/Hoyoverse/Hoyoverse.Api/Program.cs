@@ -14,7 +14,6 @@ services
     .AddDomainEventPublisher()
     .AddEventPublisher(builder =>
     {
-        builder.RegisterEventHandlerFromAssembly(assembly);
         builder.UseAwsSnsSqs(configure => configuration.GetSection("Aws").Bind(configure));
     })
     .AddApiVersioning(assembly, version: 1);

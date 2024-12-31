@@ -2,11 +2,12 @@
 
 var (services, configuration, assembly) = await builder.SetupAsync();
 
-services
-    .AddOptions(configuration)
-    .AddInfrastructureCore(configuration, assembly);
+services.AddOptions(configuration);
 
 var discord = services.AddDiscordClient(configuration, builder.Environment, assembly);
+
+//Registration is only possible after registering for the Discord client;
+services.AddInfrastructureCore(configuration); 
 
 var (type, status, name) = Constants.GetRandomShuffledActivity();
 await discord.ConnectAsync(new DiscordActivity

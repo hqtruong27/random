@@ -5,8 +5,7 @@ public class CheckInRequest : IRequest<string>
     public required string DiscordId { get; set; }
 }
 
-
-public class CheckInResponse
+public class HoyoverseResponse
 {
     [JsonPropertyName("retcode")]
     public int Code { get; set; }

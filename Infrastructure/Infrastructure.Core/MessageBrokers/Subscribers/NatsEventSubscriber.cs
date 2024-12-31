@@ -8,7 +8,7 @@ public class NatsEventSubscriber(
     ILogger<NatsEventSubscriber> logger) : IEventSubscriber, IDisposable
 {
 
-    public Task SubscribeAsync(Func<IMessage, CancellationToken, Task> handler, CancellationToken cancellationToken)
+    public Task SubscribeAsync(Func<IMessage, CancellationToken, Task<bool>> handler, CancellationToken cancellationToken)
     {
         try
         {

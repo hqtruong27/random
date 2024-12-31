@@ -29,7 +29,8 @@ public class RedeemCodeGenshinImpactCommandHandler(ILogger<RedeemCodeGenshinImpa
 
         await page.GotoAsync(config.GenshinImpact.UrlRedeem, new()
         {
-            WaitUntil = WaitUntilState.DOMContentLoaded
+            WaitUntil = WaitUntilState.DOMContentLoaded,
+            Timeout = 1000 * 60
         });
 
         var tableLocator = page.Locator(".wikitable.sortable.tdl3.tdl4.jquery-tablesorter");
@@ -84,11 +85,18 @@ public class RedeemCodeGenshinImpactCommandHandler(ILogger<RedeemCodeGenshinImpa
 
         await Event.PublishAsync(new RedeemCodeRedeemed
         {
-            Redeems = redeems
+            Redeems = redeems,
+            Discord = new()
+            {
+                GuildId = 735540677294948414,
+                ChannelId = 735543117163397141,
+                Game = "Genshin Impact"
+
+            }
         }, cancellationToken);
     }
 
-    private static async Task<CheckInResponse> GetAsync(HoyolabAccount hoyolab, string url, string code)
+    private static async Task<HoyoverseResponse> GetAsync(HoyolabAccount hoyolab, string url, string code)
     {
         using HttpClient client = new();
 
@@ -97,7 +105,7 @@ public class RedeemCodeGenshinImpactCommandHandler(ILogger<RedeemCodeGenshinImpa
         var response = await client.GetAsync(string.Format(url, code));
 
         var stream = await response.Content.ReadAsStreamAsync();
-        var result = await JsonSerializer.DeserializeAsync<CheckInResponse>(stream);
+        var result = await JsonSerializer.DeserializeAsync<HoyoverseResponse>(stream);
 
         return result!;
     }

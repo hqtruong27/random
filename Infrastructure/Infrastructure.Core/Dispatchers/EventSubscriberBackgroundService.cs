@@ -19,7 +19,7 @@ public class EventSubscriberBackgroundService(
 
             try
             {
-                await eventDispatcher.Dispatch(message, cancellationToken);
+                return await eventDispatcher.Dispatch(message, cancellationToken);
             }
             finally
             {

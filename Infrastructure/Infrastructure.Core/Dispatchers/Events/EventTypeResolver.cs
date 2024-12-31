@@ -79,19 +79,19 @@ public class EventTypeResolver(Dictionary<string, Type> eventTypes)
 
     // --- Method for Resolving Handlers and Payload ---
 
-    public (IEnumerable<Func<object, CancellationToken, Task>> Handlers, object Event) Resolve(IMessage message)
+    public (IEnumerable<Func<object, CancellationToken, Task>>? Handlers, object Event) Resolve(IMessage message)
     {
         var eventType = GetEventType(message.EventType);
         if (eventType == null)
         {
-            Console.WriteLine($"Unknown event type: {message.EventType}");
-            return ([], new());
+            //Console.WriteLine($"Unknown event type: {message.EventType}");
+            return (null, new());
         }
 
         if (!_eventHandlers.TryGetValue(eventType, out var handlers))
         {
-            Console.WriteLine($"No handlers registered for event type: {message.EventType}");
-            return ([], new());
+            //Console.WriteLine($"No handlers registered for event type: {message.EventType}");
+            return (null, new());
         }
 
         object @event;
@@ -102,7 +102,7 @@ public class EventTypeResolver(Dictionary<string, Type> eventTypes)
         catch (JsonException ex)
         {
             Console.WriteLine($"Error de-serializing event data for event type {message.EventType}: {ex.Message}");
-            return (handlers, new());
+            return (null, new());
         }
 
         return (handlers, @event);

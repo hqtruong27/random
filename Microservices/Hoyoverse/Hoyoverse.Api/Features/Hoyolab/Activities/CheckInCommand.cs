@@ -2,13 +2,13 @@
 
 [Post]
 [Route("activity/check-in")]
-public record CheckInCommand(string DiscordId, DateTime Date) : ICommand<List<CheckInResponse>>;
+public record CheckInCommand(string DiscordId, DateTime Date) : ICommand<List<HoyoverseResponse>>;
 
 public class CheckInCommandHandler(
     HoyoverseDbContext context,
-    ILogger<CheckInCommandHandler> logger) : CommandHandler<CheckInCommand, List<CheckInResponse>>
+    ILogger<CheckInCommandHandler> logger) : CommandHandler<CheckInCommand, List<HoyoverseResponse>>
 {
-    public override async Task<List<CheckInResponse>> Handle(CheckInCommand request, CancellationToken cancellationToken)
+    public override async Task<List<HoyoverseResponse>> Handle(CheckInCommand request, CancellationToken cancellationToken)
     {
         var option = await context.Options
             .AsQueryable()
@@ -25,7 +25,7 @@ public class CheckInCommandHandler(
         {
             return
             [
-                new CheckInResponse
+                new HoyoverseResponse
                     {
                         Code = -1,
                         Message = "Login Discord first"
@@ -33,7 +33,7 @@ public class CheckInCommandHandler(
             ];
         }
 
-        List<CheckInResponse> result = [];
+        List<HoyoverseResponse> result = [];
         foreach (var hoyolab in user.Hoyolabs)
         {
             foreach (var account in hoyolab.Games)
@@ -64,7 +64,7 @@ public class CheckInCommandHandler(
         return result;
     }
 
-    private async Task<CheckInResponse> PostAsync(Config config, HoyolabAccount hoyolab)
+    private async Task<HoyoverseResponse> PostAsync(Config config, HoyolabAccount hoyolab)
     {
         using HttpClient client = new();
 
@@ -76,7 +76,7 @@ public class CheckInCommandHandler(
         var response = await client.PostAsync(config.CheckInUrl, content);
 
         var stream = await response.Content.ReadAsStreamAsync();
-        var result = await JsonSerializer.DeserializeAsync<CheckInResponse>(stream);
+        var result = await JsonSerializer.DeserializeAsync<HoyoverseResponse>(stream);
 
         return result!;
     }

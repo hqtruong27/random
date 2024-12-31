@@ -2,5 +2,5 @@
 
 public interface IEventSubscriber
 {
-    Task SubscribeAsync(Func<IMessage, CancellationToken, Task> handler, CancellationToken cancellationToken);
+    Task SubscribeAsync(Func<IMessage, CancellationToken, Task<bool>> handler, CancellationToken cancellationToken);
 }

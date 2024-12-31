@@ -1,4 +1,5 @@
-﻿using NATS.Client;
+﻿using Microsoft.Extensions.DependencyInjection.Extensions;
+using NATS.Client;
 using Shared.Extensions;
 
 namespace Infrastructure.Options;
@@ -103,8 +104,8 @@ public class EventBusOptionsBuilder(IServiceCollection services)
         if (eventTypeResolver == null)
         {
             eventTypeResolver = new([]);
-            services.AddSingleton(eventTypeResolver);
-            services.AddSingleton<IEventDispatcher, DelegateEventDispatcher>();
+            services.TryAddSingleton(eventTypeResolver);
+            services.TryAddSingleton<IEventDispatcher, DelegateEventDispatcher>();
         }
 
         eventTypeResolver.RegisterEventType(typeof(TEvent).Name, typeof(TEvent));
