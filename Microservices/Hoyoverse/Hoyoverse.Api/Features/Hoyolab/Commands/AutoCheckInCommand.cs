@@ -1,4 +1,4 @@
-﻿namespace Hoyoverse.Features.Hoyolab.Activities;
+﻿namespace Hoyoverse.Features.Hoyolab.Commands;
 
 public record AutoCheckInCommand(User User) : ICommand;
 
@@ -11,37 +11,38 @@ public class AutoCheckInCommandHandler(HoyoverseDbContext context) : CommandHand
             .FirstOrDefaultAsync(x => x.Key == "ACTIVITY_CONFIG", cancellationToken);
         var configure = BsonSerializer.Deserialize<ActivityConfig>(setting.Value);
 
-        foreach (var hoyolab in request.User.Hoyolabs)
+        foreach (var account in request.User.Accounts("hoyolab"))
         {
-            foreach (var account in hoyolab.Games)
+            var hoyolabAccount = account.FromJson<HoyolabAccount>();
+            if (hoyolabAccount == null) continue;
+
+            foreach (var game in hoyolabAccount.Games)
             {
-                switch (account)
+                switch (game)
                 {
-                    case HoyolabGame.GenshinImpact:
-                        var gi = await PostAsync(configure.Genshin, hoyolab);
+                    case LinkedAccountGame.GenshinImpact:
+                        var gi = await PostAsync(configure.Genshin, account);
                         gi.Name = "GI";
                         break;
-                    case HoyolabGame.StarRail:
-                        var hsr = await PostAsync(configure.Hsr, hoyolab);
+                    case LinkedAccountGame.StarRail:
+                        var hsr = await PostAsync(configure.Hsr, account);
                         hsr.Name = "HSR";
                         break;
-                    case HoyolabGame.HonkaiImpact3:
-                        var hi3 = await PostAsync(configure.Hi3, hoyolab);
+                    case LinkedAccountGame.Hi3:
+                        var hi3 = await PostAsync(configure.Hi3, account);
                         hi3.Name = "Hi3";
-                        break;
-                    case HoyolabGame.ZenlessZoneZero:
                         break;
                 }
             }
         }
     }
 
-    private static async Task<HoyoverseResponse> PostAsync(Config config, HoyolabAccount hoyolab)
+    private static async Task<HoyoverseResponse> PostAsync(Config config, LinkedAccount account)
     {
         using HttpClient client = new();
 
         var payload = JsonSerializer.Serialize(new { act_id = config.ActId });
-        client.DefaultRequestHeaders.Add("Cookie", hoyolab.Cookie);
+        client.DefaultRequestHeaders.Add("Cookie", account.Token);
         var content = new StringContent(payload, Encoding.UTF8, "application/json");
         var response = await client.PostAsync(config.CheckInUrl, content);
 

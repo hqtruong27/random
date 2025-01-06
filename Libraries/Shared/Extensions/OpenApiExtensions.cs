@@ -99,9 +99,9 @@ public static class OpenApiExtensions
         // Handle both records and regular classes
         var properties = routeType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
-        if (!properties.Any())
+        if (properties.Length == 0)
         {
-            return null; // No properties to include in the request body
+            return null!; // No properties to include in the request body
         }
 
         // Build a schema for the request body
@@ -123,8 +123,9 @@ public static class OpenApiExtensions
                 if (parameter.GetCustomAttribute<FromRouteAttribute>() != null) continue;
 
                 requestBodySchema.Properties.Add(
-                    parameter.Name.ToLower(),
-                    GetOpenApiSchema(parameter.ParameterType)
+                    parameter.Name!.ToLower(),
+                    GetOpenApiSchema(parameter.ParameterType
+                    )
                 );
                 if (parameter.IsParameterRequired())
                 {

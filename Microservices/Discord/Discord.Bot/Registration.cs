@@ -112,7 +112,8 @@ public static class Registration
             Password = options.Password,
             RestEndpoint = endpoint,
             SocketEndpoint = endpoint,
-            EnableBuiltInQueueSystem = true
+            EnableBuiltInQueueSystem = true,
+            QueueEntry = new Features.Tracks.Interactions.Test()
         });
     }
 

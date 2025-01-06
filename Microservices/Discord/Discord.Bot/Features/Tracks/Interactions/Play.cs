@@ -1,6 +1,6 @@
 ﻿using Discord.Bot.Features.Tracks.Autocompletes;
 
-namespace Discord.Bot.Features.Musics.Interactions;
+namespace Discord.Bot.Features.Tracks.Interactions;
 
 public class Play : ApplicationCommandsModule
 {
@@ -38,7 +38,7 @@ public class Play : ApplicationCommandsModule
             _ => throw new InvalidOperationException("Unexpected load result type.")
         };
 
-        await guildPlayer.PlayAsync(track);
+        guildPlayer.PlayQueueAsync(track);
         await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Now playing {query}!"));
 
         //if (guildPlayer.Player.PlayerState.Position.TotalSeconds <= 0)

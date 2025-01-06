@@ -1,4 +1,4 @@
-﻿namespace Hoyoverse.Features.StarRail.GachaHistories.Commands;
+﻿namespace Hoyoverse.Features.StarRail.Commands;
 
 [Tags("StarRail")]
 [Post("starrail/crawl-gacha-history")]

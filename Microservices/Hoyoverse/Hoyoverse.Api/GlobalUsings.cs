@@ -39,5 +39,4 @@ global using Wrappers.Messages;
 global using Infrastructure.Persistence.Mongo.Schemas;
 global using Humanizer;
 global using Infrastructure.Persistence.Options;
-global using Infrastructure.Persistence.Mongo.Extensions;
 global using Infrastructure.Persistence.Repositories.Abstractions;

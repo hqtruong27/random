@@ -1,4 +1,4 @@
-﻿namespace Hoyoverse.Features.GenshinImpact.GachaHistories.Queries;
+﻿namespace Hoyoverse.Features.GenshinImpact.Queries;
 
 [Tags("GenshinImpact")]
 [Get("genshin-impact/get-gacha-histories")]

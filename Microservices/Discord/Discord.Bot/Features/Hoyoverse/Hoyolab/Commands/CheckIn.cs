@@ -1,16 +1,18 @@
-﻿namespace Discord.Bot.Features.Hoyoverse.Hoyolab;
+﻿using Discord.Bot.Features.Hoyoverse.Hoyolab.Contracts;
+
+namespace Discord.Bot.Features.Hoyoverse.Hoyolab.Commands;
 
 public class CheckIn(HoyolabOptions settings) : BaseCommandModule
 {
     [Command("checkin")]
     public async Task CheckInAsync(CommandContext ctx)
     {
-        using var client = new HttpClient();
         var checkIn = new CheckInRequest
         {
             DiscordId = ctx.UserId.ToString(),
         };
 
+        using var client = new HttpClient();
         var payload = JsonSerializer.Serialize(checkIn);
         var content = new StringContent(payload, Encoding.UTF8, "application/json");
         var response = await client.PostAsync($"{settings.Gateway}/activity/check-in", content);

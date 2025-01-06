@@ -1,4 +1,4 @@
-﻿namespace Discord.Bot.Features.Hoyoverse.Hoyolab;
+﻿namespace Discord.Bot.Features.Hoyoverse.Hoyolab.Contracts;
 
 public class CheckInResponse
 {

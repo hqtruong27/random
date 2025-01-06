@@ -29,14 +29,13 @@
     <PackageVersion Include="System.Formats.Asn1" Version="$(AspnetVersion)" />
     <PackageVersion Include="Microsoft.Playwright" Version="1.49.0" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageVersion Include="NATS.Client" Version="1.1.6" />
-	<PackageVersion Include="Azure.Messaging.ServiceBus" Version="7.18.2" />
+    <PackageVersion Include="Azure.Messaging.ServiceBus" Version="7.18.2" />
     <PackageVersion Include="Google.Cloud.PubSub.V1" Version="3.19.0" />
     <PackageVersion Include="AWSSDK.SimpleNotificationService" Version="3.7.400.69" />
     <PackageVersion Include="AWSSDK.SQS" Version="3.7.400.69" />
-	<PackageVersion Include="RabbitMQ.Client" Version="7.0.0" />
+    <PackageVersion Include="RabbitMQ.Client" Version="7.0.0" />
   </ItemGroup>
   <!-- Quartz -->
   <ItemGroup>
@@ -59,7 +58,7 @@
     <PackageVersion Include="DisCatSharp" Version="$(DisCatSharpVersion)" />
     <PackageVersion Include="DisCatSharp.ApplicationCommands" Version="$(DisCatSharpVersion)" />
     <PackageVersion Include="DisCatSharp.CommandsNext" Version="$(DisCatSharpVersion)" />
-    <PackageVersion Include="DisCatSharp.Lavalink" Version="$(DisCatSharpVersion)" />
+    <PackageVersion Include="DisCatSharp.Lavalink" Version="10.6.4" />
   </ItemGroup>
   <!-- Database -->
   <ItemGroup>

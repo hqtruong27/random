@@ -1,20 +1,8 @@
-﻿using Discord.Shared.Helpers;
+﻿using Discord.Bot.Features.Hoyoverse.Hoyolab.Contracts;
+using Discord.Shared.Helpers;
 using Infrastructure.Dispatchers;
 
 namespace Discord.Bot.Features.Hoyoverse.Hoyolab.Events;
-
-public class RedeemCodeMessage
-{
-    public string Code { get; set; } = default!;
-    public string Message { get; set; } = default!;
-}
-
-public class DiscordInformation
-{
-    public ulong GuildId { get; set; }
-    public ulong ChannelId { get; set; }
-    public string Game { get; set; } = default!;
-}
 
 public class RedeemCodeRedeemed : IEvent
 {
@@ -37,7 +25,7 @@ public class RedeemCodeRedeemedHandler(DiscordClient discord, ILogger<RedeemCode
         var description = @event.Redeems.CreateTable();
 
         var embed = new DiscordEmbedBuilder()
-           .WithTitle($"Redeem code {@event.Discord.Game}")
+           .WithTitle($"Redemption code: {@event.Discord.Game}")
            .WithColor(DiscordColor.Gold)
            .WithDescription(description)
            .Build();

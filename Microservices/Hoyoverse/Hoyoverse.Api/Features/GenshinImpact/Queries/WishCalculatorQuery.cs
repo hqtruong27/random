@@ -1,34 +1,28 @@
-﻿namespace Hoyoverse.Features.StarRail.GachaHistories.Queries;
+﻿namespace Hoyoverse.Features.GenshinImpact.Queries;
 
-[Tags("StarRail")]
-[Get("starrail/wish-calculator")]
-public sealed record WishCalculatorQuery : IQuery<List<WishCounterModel>>;
+[Tags("GenshinImpact")]
+[Get("genshin-impact/wish-calculator")]
+public sealed record WishCalculatorQuery : IRequest<List<WishCounterModel>>;
 
-public class WishCalculatorHandler(IRepository<StarRailGachaHistory, ObjectId> repository)
-    : IQueryHandler<WishCalculatorQuery, List<WishCounterModel>>
+public class WishCalculatorHandler(IRepository<GenshinImpactGachaHistory> repository)
+    : IRequestHandler<WishCalculatorQuery, List<WishCounterModel>>
 {
     public async Task<List<WishCounterModel>> Handle(WishCalculatorQuery request, CancellationToken cancellationToken)
     {
-        var charLimited = await PityCalculatorAsync(BannerType.Character);
-        var weapon = await PityCalculatorAsync(BannerType.Weapon);
-        var regular = await PityCalculatorAsync(BannerType.Regular);
-        var novice = await PityCalculatorAsync(BannerType.Novice);
+        var charLimited = await PityCalculatorAsync(BannerType.Character, cancellationToken);
+        var weapon = await PityCalculatorAsync(BannerType.Weapon, cancellationToken);
+        var regular = await PityCalculatorAsync(BannerType.Regular, cancellationToken);
 
-        return [
-            charLimited,
-            weapon,
-            regular,
-            novice
-        ];
+        return [charLimited, weapon, regular];
     }
-
-    private async Task<WishCounterModel> PityCalculatorAsync(BannerType bannerType)
+    private async Task<WishCounterModel> PityCalculatorAsync(BannerType bannerType, CancellationToken cancellationToken)
     {
         var gachaType = GetGachaTypeCondition(bannerType);
         var stage1 = new BsonDocument
         {
             {
-                "$match", new BsonDocument
+                "$match",
+                new BsonDocument
                 {
                     {
                         "$or", gachaType
@@ -40,7 +34,8 @@ public class WishCalculatorHandler(IRepository<StarRailGachaHistory, ObjectId> r
         var stage2 = new BsonDocument
         {
             {
-                "$setWindowFields", new BsonDocument
+                "$setWindowFields",
+                new BsonDocument
                 {
                     { "partitionBy", "ReferenceId" },
                     { "sortBy", new BsonDocument(new BsonElement( "ReferenceId", 1 ))},
@@ -60,9 +55,10 @@ public class WishCalculatorHandler(IRepository<StarRailGachaHistory, ObjectId> r
         var stage3 = new BsonDocument
         {
             {
-                "$match", new BsonDocument
+                "$match",
+                new BsonDocument
                 {
-                    { "RankType", StarRailRankType.Five.ToString() },
+                    { "RankType", nameof(GenshinImpactRankType.Five) },
                 }
             }
         };
@@ -91,17 +87,20 @@ public class WishCalculatorHandler(IRepository<StarRailGachaHistory, ObjectId> r
                     ItemName = item.Name,
                     PullIndex = item.PullIndex
                 });
+
                 continue;
             }
+
             listEvent.Add(new Event
             {
                 ItemName = item.Name,
                 PullIndex = item.PullIndex - first.PullIndex
             });
+
             first = item;
         }
 
-        return new WishCounterModel
+        return new()
         {
             Banner = bannerType,
             Detail = new WishBanner
@@ -112,36 +111,39 @@ public class WishCalculatorHandler(IRepository<StarRailGachaHistory, ObjectId> r
             }
         };
     }
-
     private static BsonArray GetGachaTypeCondition(BannerType bannerType) => bannerType switch
     {
         BannerType.Character =>
         [
             new BsonDocument
-                {
-                    { "GachaType", nameof(StarRailGachaType.CharLimited) }
-                }
+            {
+                { "GachaType", nameof(GenshinImpactGachaType.CharLimited) }
+            },
+            new BsonDocument
+            {
+                { "GachaType", nameof(GenshinImpactGachaType.CharLimitedTwo) }
+            }
         ],
         BannerType.Weapon =>
         [
             new BsonDocument
-                {
-                    { "GachaType", nameof(StarRailGachaType.LightCone) }
-                }
+            {
+                { "GachaType", nameof(GenshinImpactGachaType.Weapons) }
+            }
         ],
         BannerType.Regular =>
         [
             new BsonDocument
-                {
-                    { "GachaType", nameof(StarRailGachaType.Regular) }
-                }
+            {
+                { "GachaType", nameof(GenshinImpactGachaType.Regular) }
+            }
         ],
         BannerType.Novice =>
         [
             new BsonDocument
-                {
-                    { "GachaType", nameof(StarRailGachaType.Novice) }
-                }
+            {
+                { "GachaType", nameof(GenshinImpactGachaType.Novice) }
+            }
         ],
         _ => []
     };

@@ -1,4 +1,4 @@
-﻿namespace Hoyoverse.Features.Hoyolab.Activities;
+﻿namespace Hoyoverse.Features.Hoyolab.Commands;
 
 [Post]
 [Route("activity/check-in")]
@@ -19,7 +19,10 @@ public class CheckInCommandHandler(
 
         var user = await context.Users
             .AsQueryable()
-            .FirstOrDefaultAsync(x => x.Discord.Id == request.DiscordId, cancellationToken);
+            .FirstOrDefaultAsync(
+                x => x.DiscordAccount != null && x.DiscordAccount.Id == request.DiscordId,
+                cancellationToken
+                );
 
         if (user == null)
         {
@@ -34,28 +37,28 @@ public class CheckInCommandHandler(
         }
 
         List<HoyoverseResponse> result = [];
-        foreach (var hoyolab in user.Hoyolabs)
+        foreach (var account in user.Accounts("hoyolab"))
         {
-            foreach (var account in hoyolab.Games)
+            var hoyolabAccount = account.FromJson<HoyolabAccount>();
+            if (hoyolabAccount == null) continue;
+            foreach (var game in hoyolabAccount.Games)
             {
-                switch (account)
+                switch (game)
                 {
-                    case HoyolabGame.GenshinImpact:
-                        var gi = await PostAsync(configure.Genshin, hoyolab);
+                    case LinkedAccountGame.GenshinImpact:
+                        var gi = await PostAsync(configure.Genshin, account);
                         gi.Name = "GI";
                         result.Add(gi);
                         break;
-                    case HoyolabGame.StarRail:
-                        var hsr = await PostAsync(configure.Hsr, hoyolab);
+                    case LinkedAccountGame.StarRail:
+                        var hsr = await PostAsync(configure.Hsr, account);
                         hsr.Name = "HSR";
                         result.Add(hsr);
                         break;
-                    case HoyolabGame.HonkaiImpact3:
-                        var hi3 = await PostAsync(configure.Hi3, hoyolab);
+                    case LinkedAccountGame.Hi3:
+                        var hi3 = await PostAsync(configure.Hi3, account);
                         hi3.Name = "Hi3";
                         result.Add(hi3);
-                        break;
-                    case HoyolabGame.ZenlessZoneZero:
                         break;
                 }
             }
@@ -64,12 +67,12 @@ public class CheckInCommandHandler(
         return result;
     }
 
-    private async Task<HoyoverseResponse> PostAsync(Config config, HoyolabAccount hoyolab)
+    private async Task<HoyoverseResponse> PostAsync(Config config, LinkedAccount account)
     {
         using HttpClient client = new();
 
         var payload = JsonSerializer.Serialize(new { act_id = config.ActId });
-        client.DefaultRequestHeaders.Add("Cookie", hoyolab.Cookie);
+        client.DefaultRequestHeaders.Add("Cookie", account.Token);
         var content = new StringContent(payload, Encoding.UTF8, "application/json");
 
         logger.LogInformation("payload: {url}, {payload}", config.CheckInUrl, payload);

@@ -1,5 +1,4 @@
-﻿
-namespace Hoyoverse.Features.GenshinImpact.GachaHistories.Command;
+﻿namespace Hoyoverse.Features.GenshinImpact.Commands;
 
 [Tags("GenshinImpact")]
 [Post("genshin-impact/crawl-gacha-history")]
@@ -86,7 +85,7 @@ public class CrawlGachaHistoryCommandHandler(HoyoverseDbContext context
             return 0;
         }
 
-        var ea =  gachaHistories.OrderByDescending(x => x.ReferenceId).First();
+        var ea = gachaHistories.OrderByDescending(x => x.ReferenceId).First();
         return await gachaHistories.MaxAsync(x => x.ReferenceId);
     }
 

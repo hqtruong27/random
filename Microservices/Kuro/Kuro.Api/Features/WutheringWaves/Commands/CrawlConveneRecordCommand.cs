@@ -1,4 +1,4 @@
-﻿namespace Kuro.Features.WutheringWaves;
+﻿namespace Kuro.Features.WutheringWaves.Commands;
 
 [Get("wuthering-waves/crawl-convene")]
 public record CrawlConveneRecordCommand(string Url, string Name, string Description) : ICommand<ConveneRecord>

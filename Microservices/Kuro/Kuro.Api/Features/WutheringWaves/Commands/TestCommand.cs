@@ -1,4 +1,4 @@
-﻿namespace Kuro.Features.WutheringWaves;
+﻿namespace Kuro.Features.WutheringWaves.Commands;
 
 [Post("wuthering-waves/test-command")]
 public record TestCommand(string Url, TestEnum Name) : ICommand<int>;

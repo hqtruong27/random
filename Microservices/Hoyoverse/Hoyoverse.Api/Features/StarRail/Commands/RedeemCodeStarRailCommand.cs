@@ -2,14 +2,13 @@
 using Hoyoverse.Features.Hoyolab.Events;
 using Microsoft.Playwright;
 
-namespace Hoyoverse.Features.Hoyolab.Activities;
+namespace Hoyoverse.Features.StarRail.Commands;
 
-[Post("hoyolab/activities/redeem-code/genshin-impact")]
-public record RedeemCodeGenshinImpactCommand(HoyolabAccount Account) : ICommand;
+public sealed record RedeemCodeStarRailCommand(LinkedAccount Account) : ICommand;
 
-public class RedeemCodeGenshinImpactCommandHandler(ILogger<RedeemCodeGenshinImpactCommandHandler> logger) : CommandHandler<RedeemCodeGenshinImpactCommand>
+public class RedeemCodeStarRailCommandHandler(ILogger<RedeemCodeStarRailCommandHandler> logger) : CommandHandler<RedeemCodeStarRailCommand>
 {
-    public override async Task Handle(RedeemCodeGenshinImpactCommand request, CancellationToken cancellationToken)
+    public override async Task Handle(RedeemCodeStarRailCommand request, CancellationToken cancellationToken)
     {
         var options = await Context.Queries<Option>().FirstAsync(
             x => x.Key == "REDEEM_CODE_CONFIG",
@@ -27,7 +26,7 @@ public class RedeemCodeGenshinImpactCommandHandler(ILogger<RedeemCodeGenshinImpa
 
         var page = await browser.NewPageAsync();
 
-        await page.GotoAsync(config.GenshinImpact.UrlRedeem, new()
+        await page.GotoAsync(config.Hsr.UrlRedeem, new()
         {
             WaitUntil = WaitUntilState.DOMContentLoaded,
             Timeout = 1000 * 60
@@ -35,7 +34,7 @@ public class RedeemCodeGenshinImpactCommandHandler(ILogger<RedeemCodeGenshinImpa
 
         var tableLocator = page.Locator(".wikitable.sortable.tdl3.tdl4.jquery-tablesorter");
 
-        var links = tableLocator.Locator("a[href^='https://genshin.hoyoverse.com/gift?code=']");
+        var links = tableLocator.Locator("a[href^='https://hsr.hoyoverse.com/gift?code=']");
 
         List<string> promotionalCodes = [];
         int count = await links.CountAsync();
@@ -43,7 +42,7 @@ public class RedeemCodeGenshinImpactCommandHandler(ILogger<RedeemCodeGenshinImpa
         {
             logger.LogInformation("Matching link found!");
 
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < 10; i++)
             {
                 var href = await links.Nth(i).GetAttributeAsync("href");
                 if (href != null)
@@ -66,43 +65,79 @@ public class RedeemCodeGenshinImpactCommandHandler(ILogger<RedeemCodeGenshinImpa
 
         await browser.CloseAsync();
 
+        var redemptionCodes = await Context
+           .Queries<RedemptionCode>()
+           .Where(x => x.Type == "StarRail" && promotionalCodes.Contains(x.Code))
+           .ToListAsync(cancellationToken);
+
+        promotionalCodes = [.. promotionalCodes.Except(redemptionCodes.Select(x => x.Code))];
+        if (promotionalCodes.Count == 0)
+        {
+            logger.LogWarning("No new promotional codes found.");
+            return;
+        }
+
+        await Context.Set<RedemptionCode>().BulkInsertAsync(
+            promotionalCodes.Select(code => new RedemptionCode
+            {
+                Code = code,
+                Type = "StarRail"
+            }),
+            cancellationToken
+            );
+
         var setting = await Context.Queries<Option>().FirstAsync(x => x.Key == "ACTIVITY_CONFIG", cancellationToken);
         var configure = BsonSerializer.Deserialize<ActivityConfig>(setting.Value);
 
         List<RedeemCodeMessage> redeems = [];
 
-        foreach (var code in promotionalCodes.Take(3))
+        foreach (var code in promotionalCodes)
         {
-            var response = await GetAsync(request.Account, config.GenshinImpact.Url, code);
+            var response = await PostAsync(request.Account, config.Hsr.Url, code);
             redeems.Add(new RedeemCodeMessage
             {
                 Code = code,
                 Message = response.Message
             });
 
-            await Task.Delay(5000 + 10, cancellationToken);
+            await Task.Delay(1002 * 5, cancellationToken);
         }
 
+        var hoyolabAccount = request.Account.FromJson<HoyolabAccount>()!;
         await Event.PublishAsync(new RedeemCodeRedeemed
         {
             Redeems = redeems,
             Discord = new()
             {
-                GuildId = 735540677294948414,
-                ChannelId = 735543117163397141,
-                Game = "Genshin Impact"
-
+                GuildId = hoyolabAccount.GuildId,
+                ChannelId = hoyolabAccount.ChannelId,
+                Game = "Star Rail"
             }
         }, cancellationToken);
     }
 
-    private static async Task<HoyoverseResponse> GetAsync(HoyolabAccount hoyolab, string url, string code)
+    private static async Task<HoyoverseResponse> PostAsync(LinkedAccount account, string url, string code)
     {
         using HttpClient client = new();
 
-        client.DefaultRequestHeaders.Add("Cookie", hoyolab.Cookie);
+        client.DefaultRequestHeaders.Add("Cookie", account.Token);
+        var body = new
+        {
+            lang = "en",
+            game_biz = "hkrpg_global",
+            uid = "830364485",
+            region = "prod_official_asia",
+            cdkey = code,
+            platform = "4"
+        };
 
-        var response = await client.GetAsync(string.Format(url, code));
+        var content = new StringContent(
+            JsonSerializer.Serialize(body),
+            Encoding.UTF8,
+            "application/json"
+            );
+
+        var response = await client.PostAsync(url, content);
 
         var stream = await response.Content.ReadAsStreamAsync();
         var result = await JsonSerializer.DeserializeAsync<HoyoverseResponse>(stream);
