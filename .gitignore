@@ -369,3 +369,5 @@ FodyWeavers.xsd
 /Microservices/Discord/Discord.Bot/Properties/launchSettings.json
 /Microservices/Kuro/Kuro.Api/Properties/launchSettings.json
 /Microservices/Hoyoverse/Hoyoverse.Api/Properties/launchSettings.json
+/Microservices/Discord/Discord.Bot/Lavalink/application.yml
+/Microservices/Discord/Discord.Bot/Lavalink/Lavalink.jar
